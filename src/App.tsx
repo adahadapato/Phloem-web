@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from 'react-router'
 import { ApiError } from './api/apiError'
 import { router } from './routes'
+import { CartProvider } from './state/CartContext'
 import { CountryProvider } from './state/CountryContext'
 import { SessionProvider } from './state/SessionContext'
 
@@ -20,13 +21,15 @@ const queryClient = new QueryClient({
   },
 })
 
-/** The whole website: data cache → signed-in person → picked country → pages. */
+/** The whole website: data cache → signed-in person → picked country → basket → pages. */
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider>
         <CountryProvider>
-          <RouterProvider router={router} />
+          <CartProvider>
+            <RouterProvider router={router} />
+          </CartProvider>
         </CountryProvider>
       </SessionProvider>
     </QueryClientProvider>

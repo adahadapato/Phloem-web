@@ -88,6 +88,44 @@
   margin-left: auto;
 }
 
+/* Basket icon with the orange count, shown only when the basket has something */
+.basket {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.12);
+  color: var(--white);
+}
+
+.basket:hover {
+  background: rgb(255 255 255 / 0.2);
+}
+
+.basket svg {
+  width: 24px;
+  height: 24px;
+}
+
+.badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border: 2px solid var(--brand-dark);
+  border-radius: 10px;
+  background: var(--brand-orange);
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 16px;
+  text-align: center;
+}
+
 .signIn {
   display: inline-flex;
   align-items: center;

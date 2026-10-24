@@ -1,0 +1,142 @@
+/* Basket, Checkout and My orders: white cards per shop, like the app. */
+.page {
+  padding-block: 28px 8px;
+}
+
+.inner {
+  max-width: 820px;
+  margin-inline: auto;
+}
+
+.heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px 18px 14px;
+  margin-bottom: 16px;
+  background: var(--white);
+  border-radius: 18px;
+  box-shadow: var(--shadow-card);
+}
+
+.shopHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.shopName {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--brand-text-dark);
+}
+
+.line {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.line + .line {
+  border-top: 1px solid var(--brand-border);
+}
+
+.thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  object-fit: cover;
+  aspect-ratio: 1;
+}
+
+.lineText {
+  min-width: 0;
+}
+
+.lineName {
+  font-weight: 700;
+}
+
+.lineEnd {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.remove {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--brand-text-muted);
+  font: inherit;
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.remove:hover {
+  color: var(--brand-danger);
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--brand-border);
+  font-weight: 700;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 48px 16px;
+  text-align: center;
+}
+
+.empty img {
+  width: 140px;
+}
+
+@media (max-width: 480px) {
+  .line {
+    grid-template-columns: 52px 1fr;
+  }
+
+  .thumb {
+    width: 52px;
+    height: 52px;
+  }
+
+  .lineEnd {
+    grid-column: 2;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

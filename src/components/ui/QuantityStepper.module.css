@@ -1,0 +1,60 @@
+/* The app's round green "+"; once in the basket: "− 2 +" in a pale pill. */
+.add,
+.step {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--brand-green);
+  color: var(--white);
+  font: inherit;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.add:hover,
+.step:hover {
+  background: var(--brand-dark);
+}
+
+.add:active,
+.step:active {
+  transform: scale(0.94);
+}
+
+.step:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--brand-mint-pale);
+}
+
+.minus {
+  background: var(--white);
+  color: var(--brand-green);
+  box-shadow: inset 0 0 0 1px var(--brand-mint);
+}
+
+.minus:hover {
+  background: var(--brand-mint);
+  color: var(--brand-dark);
+}
+
+.count {
+  min-width: 26px;
+  font-weight: 700;
+  text-align: center;
+}

@@ -30,6 +30,39 @@
   text-decoration: none;
 }
 
+/* A dish card on its shop's own page: nothing to open, so no lift on hover */
+.static:hover {
+  transform: none;
+  box-shadow: var(--shadow-card);
+}
+
+/* The dish name's link stretches over the whole card (so the card opens the shop) ... */
+.card {
+  position: relative;
+}
+
+.stretched {
+  color: inherit;
+  text-decoration: none;
+}
+
+.stretched:hover {
+  text-decoration: none;
+}
+
+.stretched::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* ... while the basket buttons sit above that link and stay clickable */
+.aboveLink {
+  position: relative;
+  z-index: 2;
+}
+
 .photo {
   width: 100%;
   aspect-ratio: 4 / 3;

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router'
+import { useCart } from '../../state/CartContext'
 import { useSession } from '../../state/SessionContext'
 import { AccountMenu } from './AccountMenu'
 import { CountryPicker } from './CountryPicker'
@@ -16,10 +17,11 @@ const links = [
 
 /**
  * The green bar at the top of every page, like the app's header: logo, links, the country (flag) picker, and
- * Log in / the account menu. On phones the links fold into a ☰ menu.
+ * Log in / the account menu, and the basket (with its count) once something is in it. On phones the links fold into a ☰ menu.
  */
 export function Header() {
   const { status } = useSession()
+  const { count } = useCart()
   const { pathname } = useLocation()
 
   // The phone menu belongs to the page it was opened on, so moving to another page closes it by itself
@@ -54,6 +56,17 @@ export function Header() {
         </nav>
 
         <div className={styles.actions}>
+          {count > 0 && (
+            <Link to="/cart" className={styles.basket} aria-label={`Basket: ${count} ${count === 1 ? 'item' : 'items'}`}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                   strokeLinejoin="round" aria-hidden="true">
+                <path d="M3 4h2l2.4 11.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 8H6.2" />
+                <circle cx="9.5" cy="20" r="1.3" />
+                <circle cx="17.5" cy="20" r="1.3" />
+              </svg>
+              <span className={styles.badge} aria-hidden="true">{count > 99 ? '99+' : count}</span>
+            </Link>
+          )}
           <CountryPicker />
 
           {status === 'signedIn' ? (

@@ -1,18 +1,22 @@
 import { Link } from 'react-router'
 import type { DishCardDto } from '../../api/contracts/dtos'
+import { useCart } from '../../state/CartContext'
 import { ApiImage } from './ApiImage'
 import styles from './Cards.module.css'
 import { Price } from './Price'
+import { QuantityStepper } from './QuantityStepper'
 
 /**
- * A dish tile, like the app's Popular Dishes cards: photo (from the API) with the rating as a dark "★ 4.7" badge on
- * it, then name, shop and price.
- * In lists it opens the dish's shop, where it can be ordered; on the shop's own page (`onShopPage`) it isn't a link.
- * ("Add to basket" arrives with the basket.)
+ * A dish tile, like the app's Popular Dishes cards: photo (from the API) with the rating as a dark "★ 4.7" badge,
+ * then name, shop, price and the round green "+" (then "− 2 +") to put it in the basket.
+ * In lists the whole card opens the dish's shop (an invisible link over the card, with the basket buttons above
+ * it); on the shop's own page (`onShopPage`) only the basket buttons do something.
  */
 export function DishCard({ dish, onShopPage = false }: { dish: DishCardDto; onShopPage?: boolean }) {
-  const content = (
-    <>
+  const cart = useCart()
+
+  return (
+    <article className={`${styles.card} ${onShopPage ? styles.static : ''}`}>
       <div className={styles.photoBox}>
         <ApiImage src={dish.imageUrl} alt={`${dish.name} from ${dish.vendorName}`} className={styles.photo} />
         <span className={styles.ratingBadge}
@@ -25,7 +29,11 @@ export function DishCard({ dish, onShopPage = false }: { dish: DishCardDto; onSh
         </span>
       </div>
       <div className={styles.body}>
-        <span className={styles.name}>{dish.name}</span>
+        {onShopPage ? (
+          <span className={styles.name}>{dish.name}</span>
+        ) : (
+          <Link to={`/shops/${dish.vendorId}`} className={`${styles.name} ${styles.stretched}`}>{dish.name}</Link>
+        )}
         {onShopPage ? (
           dish.description && <span className="muted">{dish.description}</span>
         ) : (
@@ -37,12 +45,12 @@ export function DishCard({ dish, onShopPage = false }: { dish: DishCardDto; onSh
         )}
         <div className={styles.footer}>
           <Price amount={dish.price} currency={dish.currency} />
+          <span className={styles.aboveLink}>
+            <QuantityStepper quantity={cart.quantityOf(dish.id)} label={dish.name}
+                             onAdd={() => cart.add(dish)} onChange={(q) => cart.setQuantity(dish.id, q)} />
+          </span>
         </div>
       </div>
-    </>
+    </article>
   )
-
-  return onShopPage
-    ? <article className={styles.card} style={{ transform: 'none' }}>{content}</article>
-    : <Link to={`/shops/${dish.vendorId}`} className={styles.card}>{content}</Link>
 }

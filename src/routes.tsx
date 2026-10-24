@@ -36,10 +36,11 @@ export const router = createBrowserRouter([
       { path: 'confirm-email', ...page(() => import('./pages/auth/ConfirmEmailPage')) },
       { path: 'reset-password', ...page(() => import('./pages/auth/ResetPasswordPage')) },
 
+      { path: 'cart', ...page(() => import('./pages/orders/CartPage')) },
+
       // TEMPORARY: open to everyone
       { path: 'track', ...comingSoon('Track a parcel') },
       { path: 'send-parcel', ...comingSoon('Send a parcel') },
-      { path: 'cart', ...comingSoon('Your basket') },
       { path: 'sell', ...comingSoon('Sell food on Phloem') },
 
       // Signed-in only
