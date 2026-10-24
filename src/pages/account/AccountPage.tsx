@@ -23,12 +23,13 @@ function Row({ to, icon, title, sub }: { to: string; icon: string; title: string
 }
 
 /**
- * My account, like the app's: who you are (photo, name, email, country, member since), then My orders, Delivery
- * addresses, the settings (Edit profile, Change password, Two-step sign-in, Notifications), Log out and
+ * My account, like the app's: who you are (photo, name, email, country, member since, Admin / Seller), then
+ * My orders, Delivery addresses, Seller dashboard (or "Become a seller" without a shop), Admin dashboard (admins
+ * only), the settings (Edit profile, Change password, Two-step sign-in, Notifications), Log out and
  * "Delete my account".
  */
 export default function AccountPage() {
-  const { profile, logout } = useSession()
+  const { profile, logout, isAdmin } = useSession()
   const { countries } = useCountry()
   const navigate = useNavigate()
   const [deleteNote, setDeleteNote] = useState(false)
@@ -55,7 +56,12 @@ export default function AccountPage() {
               ? <ApiImage src={profile.photoUrl} alt="Your profile photo" className={styles.avatar} />
               : <span className={styles.initial} aria-hidden="true">{profile.firstName.charAt(0).toUpperCase()}</span>}
             <div>
-              <h2>{profile.fullName}</h2>
+              <h2>
+                {profile.fullName}
+                {(isAdmin || profile.hasShop) && (
+                  <span className={styles.pill}>{isAdmin ? 'Admin' : 'Seller'}</span>
+                )}
+              </h2>
               <p className="muted">{profile.email}</p>
               <p className="muted">
                 {country ? `${country.name} · ` : ''}Member since {since}
@@ -75,6 +81,13 @@ export default function AccountPage() {
             <Row to="/account/addresses" icon="📍" title="Delivery addresses"
                  sub={profile.addresses.length === 0 ? 'Add where your food should go'
                    : `${profile.addresses.length} saved`} />
+            {/* Like the app: the seller area once the person has a shop, otherwise the way to open one */}
+            {profile.hasShop
+              ? <Row to="/seller" icon="🏪" title="Seller dashboard" sub="Your shop, orders and dishes" />
+              : <Row to="/sell" icon="🏪" title="Become a seller" sub="Start selling your food on Phloem" />}
+            {isAdmin && (
+              <Row to="/admin" icon="🛡️" title="Admin dashboard" sub="Approve sellers, users and shipments" />
+            )}
           </ul>
         </section>
 

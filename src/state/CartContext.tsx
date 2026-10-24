@@ -51,6 +51,8 @@ interface CartState {
   quantityOf: (dishId: string) => number
   /** Adds one (or puts it in with 1). */
   add: (dish: DishCardDto) => void
+  /** Adds several of a dish at once (Buy again), on top of any already in the basket. Kept at most 99. */
+  addLine: (line: Omit<CartLine, 'quantity'>, quantity: number) => void
   /** Sets the number of one dish; 0 removes it. Kept between 0 and 99. */
   setQuantity: (dishId: string, quantity: number) => void
   remove: (dishId: string) => void
@@ -135,6 +137,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
           dishId: dish.id, name: dish.name, imageUrl: dish.imageUrl, price: dish.price, currency: dish.currency,
           country: dish.country, shopId: dish.vendorId, shopName: dish.vendorName, quantity: 1,
         }]
+      }),
+      addLine: (line, quantity) => update((current) => {
+        const existing = current.find((l) => l.dishId === line.dishId)
+        if (!existing) return [...current, { ...line, quantity: Math.min(MAX_QUANTITY, Math.max(1, quantity)) }]
+        return current.map((l) => (l.dishId === line.dishId
+          ? { ...line, quantity: Math.min(MAX_QUANTITY, l.quantity + quantity) }
+          : l))
       }),
       setQuantity,
       remove: (dishId) => setQuantity(dishId, 0),

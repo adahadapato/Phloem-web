@@ -119,8 +119,8 @@
   text-align: center;
 }
 
-.empty img {
-  width: 140px;
+.emptyHeading {
+  margin-bottom: 18px;
 }
 
 @media (max-width: 480px) {
@@ -138,5 +138,447 @@
     flex-direction: row-reverse;
     align-items: center;
     justify-content: space-between;
+  }
+}
+
+/* ───────────── Checkout ───────────── */
+
+/* Desktop: the page on the left, the total and "Place order" on the right (stays in view while scrolling). */
+.checkout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 0 24px;
+  max-width: 1080px;
+  margin-inline: auto;
+}
+
+.main {
+  min-width: 0;
+}
+
+.side {
+  position: sticky;
+  top: 88px;
+  align-self: start;
+}
+
+.side .card {
+  gap: 10px;
+}
+
+.sectionTitle {
+  margin: 0 0 10px 2px;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.sectionTitle .muted {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* Delivery times / countries: the app's pill choices */
+.choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.choice {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--brand-border);
+  border-radius: 14px;
+  background: var(--white);
+  color: var(--brand-text-dark);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.choice .muted {
+  font-size: 12px;
+}
+
+.choice[aria-checked="true"] {
+  border-color: var(--brand-green);
+  background: var(--brand-mint-pale);
+  box-shadow: inset 0 0 0 1px var(--brand-green);
+}
+
+.choice:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Saved addresses */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--brand-border);
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+.option:has(input:checked) {
+  border-color: var(--brand-green);
+  background: var(--brand-mint-pale);
+}
+
+.option input {
+  margin-top: 4px;
+  accent-color: var(--brand-green);
+}
+
+.optionSub {
+  display: block;
+  font-size: 13px;
+  white-space: pre-line;
+}
+
+.smallLink {
+  align-self: flex-start;
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.note {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--brand-peach);
+  font-size: 13px;
+  white-space: pre-line;
+}
+
+.warning {
+  border-left: 4px solid var(--brand-orange);
+}
+
+.unavailable .thumb,
+.unavailable .lineName {
+  opacity: 0.55;
+}
+
+.outOfStock {
+  color: var(--brand-danger);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.changed {
+  color: var(--brand-orange);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.sums {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  margin: 6px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--brand-border);
+  font-size: 14px;
+}
+
+.sums dt {
+  color: var(--brand-text-muted);
+}
+
+.sums dd {
+  margin: 0;
+  text-align: right;
+  font-weight: 700;
+}
+
+.grandTotal {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--brand-border);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.payment {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 14px;
+}
+
+/* A price inside a button or a choice keeps the surrounding colour */
+.plain {
+  color: inherit;
+}
+
+/* Confirmation */
+.tick {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--brand-green);
+  color: var(--white);
+  font-size: 36px;
+  font-weight: 800;
+}
+
+.orderNumbers {
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+@media (max-width: 900px) {
+  .checkout {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 820px;
+  }
+
+  .side {
+    position: static;
+  }
+}
+
+/* The totals card starts with the sums: no line above them */
+.side .sums {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* ───────────── My orders ───────────── */
+
+/* The whole card opens the order; the buttons sit above that link */
+.orderCard {
+  position: relative;
+  gap: 10px;
+}
+
+.orderCard:hover {
+  box-shadow: 0 6px 20px rgb(0 0 0 / 0.1);
+}
+
+.stretched::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.aboveLink {
+  position: relative;
+  z-index: 2;
+}
+
+.orderTop {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  align-items: start;
+  gap: 12px;
+}
+
+.summaryText {
+  margin-top: 4px;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--brand-peach);
+}
+
+.banner {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+  white-space: pre-line;
+}
+
+/* Status chips */
+.chip {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.chipWaiting {
+  background: var(--brand-peach);
+  color: var(--brand-orange);
+}
+
+.chipActive {
+  background: var(--brand-mint-pale);
+  color: var(--brand-green);
+  box-shadow: inset 0 0 0 1px rgb(4 99 52 / 0.25);
+}
+
+.chipDone {
+  background: var(--brand-green);
+  color: var(--white);
+}
+
+.chipCancelled {
+  background: #eceae5;
+  color: var(--brand-text-muted);
+}
+
+/* Order details: the journey */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.steps li {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  padding-bottom: 16px;
+}
+
+.steps li:last-child {
+  padding-bottom: 0;
+}
+
+/* The line between the dots */
+.steps li:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 11px;
+  top: 26px;
+  bottom: 2px;
+  width: 2px;
+  background: var(--brand-border);
+}
+
+.steps li.stepDone:not(:last-child)::before {
+  background: var(--brand-green);
+}
+
+.steps li > span:last-child {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+
+.steps li > span:last-child .muted {
+  font-size: 13px;
+}
+
+.steps li:not(.stepDone):not(.stepNext) strong {
+  color: var(--brand-text-muted);
+}
+
+.stepDot {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--brand-border);
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.stepDone .stepDot {
+  border-color: var(--brand-green);
+  background: var(--brand-green);
+}
+
+.stepNext .stepDot {
+  border-color: var(--brand-green);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 8px 12px;
+  margin: 0;
+  font-size: 14px;
+}
+
+.facts dt {
+  color: var(--brand-text-muted);
+}
+
+.facts dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.detailButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 480px) {
+  .orderTop {
+    grid-template-columns: 52px 1fr;
+  }
+
+  .orderTop .lineEnd {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .facts {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .facts dd + dt {
+    margin-top: 8px;
   }
 }

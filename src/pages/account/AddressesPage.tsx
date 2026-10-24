@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import type { ApiResult } from '../../api/apiError'
 import type { AddressDto } from '../../api/contracts/dtos'
 import type { Country } from '../../api/contracts/enums'
@@ -8,6 +8,7 @@ import { Button } from '../../components/ui/Button'
 import { StatusBanner } from '../../components/ui/StatusBanner'
 import { useCountry } from '../../state/CountryContext'
 import { useSession } from '../../state/SessionContext'
+import { safeReturnTo } from '../auth/returnTo'
 import styles from './Account.module.css'
 
 /** The app's label choices; "Other" lets the person type their own (e.g. "Mum's house"). */
@@ -31,7 +32,8 @@ interface Draft {
 /**
  * Delivery addresses, like the app's: saved addresses (the default marked), each with Make default / Edit / Delete,
  * and "Add a new address" (Home / Work / Other, the address, the country, "Set as my default address").
- * Checkout uses these; an order's address must be in the shop's country.
+ * Checkout uses these; an order's address must be in the shop's country. Opened from Checkout
+ * (`?returnTo=/checkout`), the back link goes back there.
  */
 export default function AddressesPage() {
   const { profile, refreshProfile } = useSession()
@@ -40,6 +42,8 @@ export default function AddressesPage() {
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState<Message>(null)
+  const [params] = useSearchParams()
+  const returnTo = params.get('returnTo') ? safeReturnTo(params.get('returnTo')) : null
 
   if (!profile) return null
   const addresses = [...profile.addresses].sort((a, b) => Number(b.isDefault) - Number(a.isDefault))
@@ -94,7 +98,9 @@ export default function AddressesPage() {
   return (
     <div className={`container ${styles.page}`}>
       <div className={styles.inner}>
-        <Link to="/account" className={styles.back}>‹ My account</Link>
+        {returnTo === '/checkout'
+          ? <Link to="/checkout" className={styles.back}>‹ Back to checkout</Link>
+          : <Link to="/account" className={styles.back}>‹ My account</Link>}
         <div className={styles.heading}>
           <h1>Delivery addresses</h1>
           <p className="muted">Where your food should go. Each order goes to an address in the shop's country.</p>

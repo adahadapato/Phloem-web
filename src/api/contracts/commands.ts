@@ -2,7 +2,7 @@
  * What the website sends to the API (request bodies). Same shapes as the API's commands (JSON, camelCase).
  * Grows feature by feature; keep in step with the app's Services/Api/Contracts/Commands.
  */
-import type { Country } from './enums'
+import type { Country, DeliveryWindow } from './enums'
 
 /** POST /api/auth/login */
 export interface LoginCommand {
@@ -113,4 +113,25 @@ export interface ChangePasswordCommand {
   currentPassword: string
   newPassword: string
   confirmNewPassword: string
+}
+
+// ───────────────────────────── Checkout ─────────────────────────────
+
+/** One dish and how many (the API looks up every price itself). */
+export interface BasketItemDto {
+  dishId: string
+  quantity: number
+}
+
+/** POST /api/orders/basket/check (works signed out too). */
+export interface CheckBasketQuery {
+  items: BasketItemDto[]
+  deliveryWindow: DeliveryWindow
+}
+
+/** POST /api/orders: one UNPAID order per shop. The address must be a saved one, in the shops' country. */
+export interface PlaceOrderCommand {
+  items: BasketItemDto[]
+  deliveryAddressId: string
+  deliveryWindow: DeliveryWindow
 }

@@ -2,7 +2,7 @@
  * What the API sends back. Same shapes as the API's DTOs (JSON, camelCase). Dates arrive as ISO text.
  * Grows feature by feature; keep in step with the app's Services/Api/Contracts/Dtos.
  */
-import type { Country, Currency, DishCategory } from './enums'
+import type { Country, Currency, DeliveryWindow, DishCategory, OrderStatus } from './enums'
 
 /** Answer of login, register, two-factor, refresh and Google exchange. */
 export interface AuthTokensDto {
@@ -155,4 +155,173 @@ export interface TwoFactorSetupDto {
   manualEntryKey: string
   /** The otpauth:// link the QR code holds. */
   authenticatorUri: string
+}
+
+// ───────────────────────────── Checkout ─────────────────────────────
+
+/** One dish in the checked basket, at TODAY's price. */
+export interface BasketLineDto {
+  dishId: string
+  dishName: string
+  imageUrl: string | null
+  quantity: number
+  unitPrice: number
+  /** 0 when the dish can't be ordered now. */
+  lineTotal: number
+  /** False: out of stock or no longer sold (the order would leave it out). */
+  isAvailable: boolean
+}
+
+/** One shop of the checked basket (it becomes its own order). */
+export interface BasketShopDto {
+  vendorId: string
+  shopName: string
+  currency: Currency
+  lines: BasketLineDto[]
+  /** Available dishes only. */
+  subtotal: number
+  /** Null when this shop can't deliver at the picked time (see `deliveryProblem`). */
+  deliveryFee: number | null
+  /** Why there's no fee, ready to show (e.g. "… Please choose Tomorrow"). */
+  deliveryProblem: string | null
+  total: number | null
+  /** The delivery times this shop takes right now. */
+  openWindows: DeliveryWindow[]
+  /** After this time (shop's local "HH:mm:ss"), same-day orders close. */
+  orderCutoffTime: string
+}
+
+/** POST /api/orders/basket/check: today's prices, stock and delivery fees, per shop. Nothing is saved. */
+export interface BasketCheckDto {
+  shops: BasketShopDto[]
+  /** Dishes that are no longer on Phloem. */
+  missingDishIds: string[]
+  /** True when every dish can be ordered and every shop delivers at the picked time. */
+  canPlaceOrder: boolean
+}
+
+/** A delivery time offered in a country and what it adds to each order. */
+export interface DeliveryWindowOptionDto {
+  window: DeliveryWindow
+  /** 0 = free. */
+  extraCharge: number
+  currency: Currency
+}
+
+/** One order made by Place order (one per shop). */
+export interface PlacedOrderDto {
+  orderNumber: string
+  shopName: string
+  total: number
+  currency: Currency
+}
+
+/** "Pay": the amount at today's prices and the dishes dropped because they ran out. */
+export interface OrderPaymentDto {
+  orderNumber: string
+  amountToPay: number
+  currency: Currency
+  removedDishes: string[]
+}
+
+// ───────────────────────────── My orders ─────────────────────────────
+
+/** One row of My orders (GET /api/orders). */
+export interface OrderSummaryDto {
+  orderNumber: string
+  shopName: string
+  status: OrderStatus
+  placedAt: string
+  paidAt: string | null
+  itemCount: number
+  /** "2 × Jollof Rice, 1 × Kelewele". */
+  itemsSummary: string
+  imageUrl: string | null
+  /** Unpaid orders: at TODAY's prices. */
+  total: number
+  currency: Currency
+  /** Unpaid: a price changed since ordering. */
+  hasPriceChanges: boolean
+  /** Unpaid: dishes that ran out (they'd be dropped at payment). */
+  outOfStockCount: number
+  canCancel: boolean
+}
+
+/** One dish of an order. */
+export interface OrderLineDto {
+  dishId: string
+  dishName: string
+  imageUrl: string | null
+  quantity: number
+  unitPrice: number
+  /** Unpaid orders: the price when ordered (null when unchanged or paid). */
+  priceWhenAdded: number | null
+  priceChanged: boolean
+  isOutOfStock: boolean
+  lineTotal: number
+}
+
+/** GET /api/orders/{orderNumber}: the whole order. */
+export interface OrderDetailsDto {
+  orderNumber: string
+  shopName: string
+  customerName: string
+  status: OrderStatus
+  lines: OrderLineDto[]
+  subtotal: number
+  deliveryFee: number
+  total: number
+  currency: Currency
+  deliveryWindow: DeliveryWindow
+  /** "As soon as possible", "Tomorrow"… ready to show. */
+  deliveryLabel: string
+  deliveryAddress: string
+  placedAt: string
+  paidAt: string | null
+  deliveredAt: string | null
+  cancelledAt: string | null
+  canCancel: boolean
+  /** Paid orders: seconds left to cancel (null otherwise). */
+  cancelSecondsLeft: number | null
+  /** Paid then cancelled: the payment will be refunded. */
+  needsRefund: boolean
+  viewedBySeller: boolean
+  declinedByShop: boolean
+  declineReason: string | null
+}
+
+/** GET /api/orders/{n}/buy-again: what can go back in the basket (today's dishes only). */
+export interface BuyAgainDto {
+  items: { dishId: string; quantity: number }[]
+  /** Names of dishes no longer on sale. */
+  unavailableDishes: string[]
+}
+
+/** A dish photo (dish page). */
+export interface DishPhotoDto {
+  id: string
+  url: string
+  thumbnailUrl: string | null
+  altText: string
+  displayOrder: number
+  isPrimary: boolean
+}
+
+/** GET /api/dishes/{dishId}: one dish with its shop. */
+export interface DishDetailsDto {
+  id: string
+  name: string
+  category: DishCategory
+  description: string | null
+  price: number
+  currency: Currency
+  country: Country
+  rating: number
+  ratingCount: number
+  canBeOrdered: boolean
+  photos: DishPhotoDto[]
+  shopId: string
+  shopName: string
+  isVerifiedShop: boolean
+  shopLogoUrl: string | null
 }

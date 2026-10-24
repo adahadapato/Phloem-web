@@ -1,6 +1,7 @@
 import { Link } from 'react-router'
 import { ApiImage } from '../../components/ui/ApiImage'
 import { ButtonLink } from '../../components/ui/Button'
+import { EmptyState } from '../../components/ui/EmptyState'
 import { Price } from '../../components/ui/Price'
 import { QuantityStepper } from '../../components/ui/QuantityStepper'
 import { useCart } from '../../state/CartContext'
@@ -16,11 +17,11 @@ export default function CartPage() {
   if (cart.count === 0) {
     return (
       <div className={`container ${styles.page}`}>
-        <div className={`${styles.inner} ${styles.empty}`}>
-          <img src="/images/buy-food.webp" alt="" width="640" height="536" />
-          <h1>Your basket is empty</h1>
-          <p className="muted">Tap the green + on any dish to add it.</p>
-          <ButtonLink to="/explore">Browse dishes</ButtonLink>
+        <div className={styles.inner}>
+          <h1 className={styles.emptyHeading}>Your basket</h1>
+          <EmptyState icon="cart" title="Your basket is empty"
+                      text="Add some delicious dishes to get started: tap the green + on any dish."
+                      action={<ButtonLink to="/explore">Browse dishes</ButtonLink>} />
         </div>
       </div>
     )

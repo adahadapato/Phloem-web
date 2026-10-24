@@ -17,6 +17,7 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;   /* phones: the visible height, without the browser's address bar */
   font-family: var(--font-body);
   font-size: var(--text-md);
   line-height: 1.5;
@@ -101,6 +102,19 @@ p {
 }
 
 /* "Skip to content": hidden until reached with the keyboard */
+/* The page frame: header, page, footer. The page grows to fill the screen, so on a short page (an empty
+   basket, "No orders yet") the footer still sits at the bottom of the window instead of halfway up. */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+#main {
+  flex: 1 0 auto;
+}
+
 .skip-link {
   position: absolute;
   left: 8px;

@@ -9,6 +9,7 @@ import type { ComponentType } from 'react'
 import { createBrowserRouter, type RouteObject } from 'react-router'
 import { PageShell } from './components/layout/PageShell'
 import { ProtectedRoute } from './components/layout/ProtectedRoute'
+import { Roles } from './api/contracts/roles'
 
 /** Loads a page file only when its address is opened. */
 const page = (load: () => Promise<{ default: ComponentType }>): Pick<RouteObject, 'lazy'> => ({
@@ -47,16 +48,27 @@ export const router = createBrowserRouter([
       {
         element: <ProtectedRoute />,
         children: [
-          // TEMPORARY
-          { path: 'checkout', ...comingSoon('Checkout') },
-          { path: 'orders', ...comingSoon('My orders') },
-          { path: 'orders/:orderId', ...comingSoon('Order details') },
+          { path: 'checkout', ...page(() => import('./pages/orders/CheckoutPage')) },
+          { path: 'orders', ...page(() => import('./pages/orders/OrdersPage')) },
+          { path: 'orders/:orderNumber', ...page(() => import('./pages/orders/OrderDetailsPage')) },
           { path: 'account', ...page(() => import('./pages/account/AccountPage')) },
           { path: 'account/edit', ...page(() => import('./pages/account/EditProfilePage')) },
           { path: 'account/addresses', ...page(() => import('./pages/account/AddressesPage')) },
           { path: 'account/notifications', ...page(() => import('./pages/account/NotificationsPage')) },
           { path: 'account/password', ...page(() => import('./pages/account/ChangePasswordPage')) },
           { path: 'account/two-factor', ...page(() => import('./pages/account/TwoFactorPage')) },
+
+          // TEMPORARY: the seller area (people with a shop; linked from My account and the account menu)
+          { path: 'seller', ...comingSoon('Seller dashboard') },
+        ],
+      },
+
+      // Admins only (others are sent Home)
+      {
+        element: <ProtectedRoute role={Roles.Admin} />,
+        children: [
+          // TEMPORARY
+          { path: 'admin', ...comingSoon('Admin dashboard') },
         ],
       },
 
