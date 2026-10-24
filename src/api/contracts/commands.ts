@@ -68,3 +68,49 @@ export interface ConfirmEmailCommand {
   userId: string
   token: string
 }
+
+/** PUT /api/me */
+export interface UpdateProfileCommand {
+  firstName: string
+  lastName: string
+  country: Country
+  phoneNumber: string | null
+}
+
+/** PUT /api/me/personal-details (both needed to open a shop or send a parcel). */
+export interface UpdatePersonalDetailsCommand {
+  /** "yyyy-MM-dd" */
+  dateOfBirth: string
+  homeAddress: HomeAddressInput
+}
+
+/** POST /api/me/addresses */
+export interface AddAddressCommand {
+  label: string
+  fullAddress: string
+  country: Country
+  makeDefault: boolean
+}
+
+/** PUT /api/me/addresses/{id} */
+export interface AddressRequest {
+  label: string
+  fullAddress: string
+  country: Country
+}
+
+/** PUT /api/me/notifications */
+export interface UpdateNotificationsCommand {
+  orderUpdates: boolean
+  shipmentUpdates: boolean
+  offers: boolean
+  newDishes: boolean
+  shopOrders: boolean
+}
+
+/** PUT /api/me/password (signs out every device afterwards). */
+export interface ChangePasswordCommand {
+  currentPassword: string
+  newPassword: string
+  confirmNewPassword: string
+}

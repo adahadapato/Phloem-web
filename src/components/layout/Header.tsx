@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router'
 import { useSession } from '../../state/SessionContext'
+import { AccountMenu } from './AccountMenu'
 import { CountryPicker } from './CountryPicker'
 import styles from './Header.module.css'
 
@@ -15,10 +16,10 @@ const links = [
 
 /**
  * The green bar at the top of every page, like the app's header: logo, links, the country (flag) picker, and
- * Log in / the person's name. On phones the links fold into a ☰ menu.
+ * Log in / the account menu. On phones the links fold into a ☰ menu.
  */
 export function Header() {
-  const { status, profile } = useSession()
+  const { status } = useSession()
   const { pathname } = useLocation()
 
   // The phone menu belongs to the page it was opened on, so moving to another page closes it by itself
@@ -55,8 +56,8 @@ export function Header() {
         <div className={styles.actions}>
           <CountryPicker />
 
-          {status === 'signedIn' && profile ? (
-            <Link to="/account" className={styles.account}>{profile.firstName}</Link>
+          {status === 'signedIn' ? (
+            <AccountMenu />
           ) : status === 'signedOut' ? (
             <Link to="/login" className={styles.signIn}>Log in</Link>
           ) : null}

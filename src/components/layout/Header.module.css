@@ -88,12 +88,6 @@
   margin-left: auto;
 }
 
-.account {
-  color: var(--white);
-  font-weight: 700;
-  font-size: 15px;
-}
-
 .signIn {
   display: inline-flex;
   align-items: center;
@@ -154,10 +148,6 @@
 
   .navOpen .navLink {
     padding: 12px;
-  }
-
-  .account {
-    display: none;
   }
 }
 

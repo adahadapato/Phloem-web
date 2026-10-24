@@ -1,0 +1,174 @@
+/* Log in, Sign up, Confirm email, Reset password: the app's look. A title, then one white card with soft shadow,
+   a mint circle behind it on the right. */
+.page {
+  position: relative;
+  overflow: hidden;
+  padding-block: 32px 16px;
+}
+
+/* The app's soft mint circle behind the card */
+.page::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  right: -110px;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background: var(--brand-mint-pale);
+  pointer-events: none;
+}
+
+.inner {
+  position: relative;
+  max-width: 520px;
+  margin-inline: auto;
+}
+
+.heading {
+  margin-bottom: 18px;
+}
+
+.heading h1 {
+  font-size: 28px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 22px;
+  background: var(--white);
+  border-radius: 18px;
+  box-shadow: var(--shadow-card);
+}
+
+/* The app's round mint badge with a tick, above the card title */
+.badge {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: var(--brand-mint-pale);
+  color: var(--brand-dark);
+}
+
+.cardTitle {
+  text-align: center;
+  font-size: 18px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--brand-text-muted);
+  cursor: pointer;
+}
+
+.check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--brand-green);
+}
+
+.linkButton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--brand-dark);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.linkButton:hover {
+  text-decoration: underline;
+}
+
+.footer {
+  margin-top: 22px;
+  text-align: center;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  color: var(--brand-orange);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Sign up: "I want to buy | I want to sell" */
+.toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 14px;
+  background: var(--brand-mint-pale);
+}
+
+.toggle button {
+  padding: 10px 8px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--brand-dark);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.toggle button[aria-pressed="true"] {
+  background: var(--brand-dark);
+  color: var(--white);
+  font-weight: 700;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 6px;
+  border-top: 1px solid var(--brand-border);
+}
+
+.sectionTitle {
+  margin-top: 8px;
+  font-size: 15px;
+}
+
+/* Two-step code: big, spaced digits */
+.code input {
+  font-size: 22px;
+  letter-spacing: 6px;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .two {
+    grid-template-columns: 1fr;
+  }
+}

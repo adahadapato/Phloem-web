@@ -31,11 +31,12 @@ export const router = createBrowserRouter([
       { path: 'shops', ...page(() => import('./pages/explore/ShopsPage')) },
       { path: 'shops/:shopId', ...page(() => import('./pages/explore/ShopPage')) },
 
+      { path: 'login', ...page(() => import('./pages/auth/LoginPage')) },
+      { path: 'register', ...page(() => import('./pages/auth/RegisterPage')) },
+      { path: 'confirm-email', ...page(() => import('./pages/auth/ConfirmEmailPage')) },
+      { path: 'reset-password', ...page(() => import('./pages/auth/ResetPasswordPage')) },
+
       // TEMPORARY: open to everyone
-      { path: 'login', ...comingSoon('Log in') },
-      { path: 'register', ...comingSoon('Create an account') },
-      { path: 'confirm-email', ...comingSoon('Confirm your email') },
-      { path: 'reset-password', ...comingSoon('Choose a new password') },
       { path: 'track', ...comingSoon('Track a parcel') },
       { path: 'send-parcel', ...comingSoon('Send a parcel') },
       { path: 'cart', ...comingSoon('Your basket') },
@@ -49,7 +50,12 @@ export const router = createBrowserRouter([
           { path: 'checkout', ...comingSoon('Checkout') },
           { path: 'orders', ...comingSoon('My orders') },
           { path: 'orders/:orderId', ...comingSoon('Order details') },
-          { path: 'account', ...comingSoon('My account') },
+          { path: 'account', ...page(() => import('./pages/account/AccountPage')) },
+          { path: 'account/edit', ...page(() => import('./pages/account/EditProfilePage')) },
+          { path: 'account/addresses', ...page(() => import('./pages/account/AddressesPage')) },
+          { path: 'account/notifications', ...page(() => import('./pages/account/NotificationsPage')) },
+          { path: 'account/password', ...page(() => import('./pages/account/ChangePasswordPage')) },
+          { path: 'account/two-factor', ...page(() => import('./pages/account/TwoFactorPage')) },
         ],
       },
 

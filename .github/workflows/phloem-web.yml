@@ -1,4 +1,4 @@
-name: Backend CI/CD
+name: Website CI/CD
 
 on:
   push:
@@ -13,12 +13,12 @@ on:
 
 # One deployment at a time; a newer push waits for the running one to finish
 concurrency:
-  group: phloem-backend-${{ github.ref }}
+  group: phloem-website-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   build_and_deploy:
-    name: Build and Deploy Phloem API
+    name: Build and Deploy Phloem Website
     runs-on: windows-latest
 
     steps:
@@ -31,273 +31,110 @@ jobs:
 
 
       # ============================================================
-      # .NET SETUP
-      # ============================================================
-
-      - name: Set up .NET 10
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
-
-      - name: Display .NET information
-        run: dotnet --info
-
-
-      # ============================================================
-      # RESTORE AND BUILD
-      # ============================================================
-
-      - name: Restore dependencies
-        run: dotnet restore Phloem.sln
-
-      - name: Build solution
-        run: dotnet build Phloem.sln --configuration Release --no-restore
-
-
-      # ============================================================
-      # PUBLISH
+      # NODE SETUP
       #
-      # Self-contained win-x86: brings its own .NET 10, so the host
-      # doesn't need it installed, and runs in SmarterASP.NET's
-      # default 32-bit application pool. Magick.NET (AnyCPU) works
-      # in 32-bit and 64-bit pools.
+      # Vite needs a current Node (22 LTS). npm's download cache is
+      # kept between runs, keyed on package-lock.json.
       # ============================================================
 
-      - name: Publish production API
-        run: >
-          dotnet publish Phloem.Presentation/Phloem.Presentation.csproj
-          --configuration Release
-          --runtime win-x86
-          --self-contained true
-          --output ./publish
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Display Node information
+        run: |
+          node --version
+          npm --version
+
+
+      # ============================================================
+      # INSTALL, CHECK AND BUILD
+      #
+      # npm ci installs exactly what package-lock.json says (and
+      # fails if package.json and the lock file disagree).
+      #
+      # The API's address comes from .env.production
+      # (VITE_API_BASE_URL). To build against another API without
+      # changing the repo, set the repository VARIABLE
+      # API_BASE_URL (Settings → Secrets and variables → Actions →
+      # Variables); it is used instead when it's set.
+      #
+      # Nothing secret ever goes into the website: everything in it
+      # is downloaded by every visitor's browser.
+      # ============================================================
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build website
+        shell: powershell
+        env:
+          API_BASE_URL: ${{ vars.API_BASE_URL }}
+        run: |
+          if (-not [string]::IsNullOrWhiteSpace($env:API_BASE_URL)) {
+              # Vite reads real environment variables before the .env files
+              $env:VITE_API_BASE_URL = $env:API_BASE_URL.TrimEnd('/')
+              Write-Host "Building against API_BASE_URL: $env:VITE_API_BASE_URL"
+          }
+          else {
+              Write-Host "Building against the API in .env.production"
+          }
+
+          npm run build
+          if ($LASTEXITCODE -ne 0) { throw "npm run build failed with exit code $LASTEXITCODE" }
+
+          # The site can't work without these two files
+          if (-not (Test-Path ".\dist\index.html")) { throw "dist\index.html was not produced." }
+          if (-not (Test-Path ".\dist\web.config")) { throw "dist\web.config is missing (it comes from public\web.config)." }
 
 
       # ============================================================
       # BUILD ARTIFACT
       #
-      # IMPORTANT:
-      # Upload the artifact BEFORE injecting production secrets.
-      #
-      # This keeps the connection string, JWT key, storage signing
-      # key, admin password and email password out of the GitHub
-      # Actions artifact.
+      # The built site, downloadable from the run's page (useful to
+      # see exactly what was deployed). Contains no secrets.
       # ============================================================
 
-      - name: Upload production artifact
+      - name: Upload website artifact
         uses: actions/upload-artifact@v4
         with:
-          name: phloem-api
-          path: ./publish
+          name: phloem-website
+          path: ./dist
           if-no-files-found: error
-
-
-      # ============================================================
-      # PRODUCTION CONFIGURATION
-      #
-      # Sensitive configuration is stored locally using .NET User
-      # Secrets during development. User Secrets are not deployed.
-      #
-      # In production, sensitive values are supplied securely through
-      # GitHub Actions repository secrets.
-      #
-      # Required GitHub repository secrets:
-      #
-      # DEFAULT_CONNECTION     ConnectionStrings:DefaultConnection
-      # JWT_KEY                Jwt:Key (32+ characters)
-      # STORAGE_SIGNING_KEY    Storage:Local:SigningKey (32+ characters, not the JWT key)
-      # SEED_ADMIN_PASSWORD    SeedData:AdminPassword (first admin only)
-      #
-      # Optional GitHub repository secret:
-      #
-      # SEED_DEMO_OWNER_PASSWORD  SeedData:DemoOwnerPassword (lets the owners sign in as
-      #                           the demo sellers; unset = random passwords nobody knows)
-      # EMAIL_PASSWORD         Email:Password
-      #
-      # Non-sensitive production settings remain in
-      # appsettings.Production.json (committed, with "" placeholders).
-      #
-      # This step runs AFTER artifact upload so the GitHub artifact
-      # remains free of production secrets.
-      #
-      # This step is skipped for pull requests because pull requests
-      # are build/test operations and are not deployed.
-      # ============================================================
-
-      - name: Configure production secrets
-        if: github.event_name != 'pull_request'
-        shell: powershell
-        env:
-          DEFAULT_CONNECTION: ${{ secrets.DEFAULT_CONNECTION }}
-          JWT_KEY: ${{ secrets.JWT_KEY }}
-          STORAGE_SIGNING_KEY: ${{ secrets.STORAGE_SIGNING_KEY }}
-          SEED_ADMIN_PASSWORD: ${{ secrets.SEED_ADMIN_PASSWORD }}
-          SEED_DEMO_OWNER_PASSWORD: ${{ secrets.SEED_DEMO_OWNER_PASSWORD }}
-          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-        run: |
-          $configPath = ".\publish\appsettings.Production.json"
-
-          if (-not (Test-Path $configPath)) {
-              throw "Published appsettings.Production.json was not found at: $configPath"
-          }
-
-          # --------------------------------------------------------
-          # Validate GitHub secrets
-          # --------------------------------------------------------
-
-          if ([string]::IsNullOrWhiteSpace($env:DEFAULT_CONNECTION)) {
-              throw "DEFAULT_CONNECTION GitHub secret is not configured."
-          }
-
-          if ([string]::IsNullOrWhiteSpace($env:JWT_KEY) -or $env:JWT_KEY.Length -lt 32) {
-              throw "JWT_KEY GitHub secret is not configured or is shorter than 32 characters."
-          }
-
-          if ([string]::IsNullOrWhiteSpace($env:STORAGE_SIGNING_KEY) -or $env:STORAGE_SIGNING_KEY.Length -lt 32) {
-              throw "STORAGE_SIGNING_KEY GitHub secret is not configured or is shorter than 32 characters."
-          }
-
-          if ($env:STORAGE_SIGNING_KEY -eq $env:JWT_KEY) {
-              throw "STORAGE_SIGNING_KEY must be different from JWT_KEY."
-          }
-
-          if ([string]::IsNullOrWhiteSpace($env:SEED_ADMIN_PASSWORD)) {
-              throw "SEED_ADMIN_PASSWORD GitHub secret is not configured."
-          }
-
-          if ([string]::IsNullOrWhiteSpace($env:EMAIL_PASSWORD)) {
-              throw "EMAIL_PASSWORD GitHub secret is not configured."
-          }
-
-          Write-Host "Applying Phloem production configuration..."
-
-          # --------------------------------------------------------
-          # Load published appsettings.Production.json
-          # --------------------------------------------------------
-
-          $config = Get-Content $configPath -Raw | ConvertFrom-Json
-
-          # --------------------------------------------------------
-          # Validate required configuration sections
-          # --------------------------------------------------------
-
-          if ($null -eq $config.ConnectionStrings) {
-              throw "ConnectionStrings configuration section was not found in appsettings.Production.json."
-          }
-
-          if ($null -eq $config.Jwt) {
-              throw "Jwt configuration section was not found in appsettings.Production.json."
-          }
-
-          if ($null -eq $config.Storage -or $null -eq $config.Storage.Local) {
-              throw "Storage:Local configuration section was not found in appsettings.Production.json."
-          }
-
-          if ($null -eq $config.SeedData) {
-              throw "SeedData configuration section was not found in appsettings.Production.json."
-          }
-
-          if ($null -eq $config.Email) {
-              throw "Email configuration section was not found in appsettings.Production.json."
-          }
-
-          # --------------------------------------------------------
-          # Database
-          # --------------------------------------------------------
-
-          $config.ConnectionStrings.DefaultConnection = $env:DEFAULT_CONNECTION
-
-          # --------------------------------------------------------
-          # JWT (sign-in tokens)
-          # --------------------------------------------------------
-
-          $config.Jwt.Key = $env:JWT_KEY
-
-          # --------------------------------------------------------
-          # Storage (signed links to private documents)
-          # --------------------------------------------------------
-
-          $config.Storage.Local.SigningKey = $env:STORAGE_SIGNING_KEY
-
-          # --------------------------------------------------------
-          # First admin (used only when the admin doesn't exist yet)
-          # --------------------------------------------------------
-
-          $config.SeedData.AdminPassword = $env:SEED_ADMIN_PASSWORD
-
-          # Optional: demo sellers' shared password (only used while SeedData:DemoDataEnabled is true)
-          if (-not [string]::IsNullOrWhiteSpace($env:SEED_DEMO_OWNER_PASSWORD)) {
-              $config.SeedData.DemoOwnerPassword = $env:SEED_DEMO_OWNER_PASSWORD
-          }
-
-          # --------------------------------------------------------
-          # Phloem Email
-          #
-          # no-reply@phloem.app
-          #     Sends every system email; replies go to the
-          #     Support / Sellers / Shipping addresses.
-          # --------------------------------------------------------
-
-          $config.Email.Password = $env:EMAIL_PASSWORD
-
-          # --------------------------------------------------------
-          # Save production configuration
-          # --------------------------------------------------------
-
-          $config |
-              ConvertTo-Json -Depth 100 |
-              Set-Content $configPath -Encoding UTF8
-
-          # appsettings.Development.json must never reach the server
-          Remove-Item ".\publish\appsettings.Development.json" -ErrorAction SilentlyContinue
-
-          Write-Host "Production configuration applied successfully."
-          Write-Host "Database connection string configured."
-          Write-Host "JWT key configured."
-          Write-Host "Storage signing key configured."
-          Write-Host "First admin password configured."
-          Write-Host "Email credentials configured."
 
 
       # ============================================================
       # DEPLOY TO SMARTERASP.NET
       #
-      # IMPORTANT:
+      # Copies dist\ to the website's folder with Web Deploy, the
+      # same way as the API.
       #
-      # The following directories contain runtime-generated data
-      # and must survive future deployments:
+      # Required GitHub repository SECRETS (in THIS repo; the API
+      # repo's secrets aren't visible here):
       #
-      # wwwroot/uploads
-      #     Public files: profile photos, shop logos and cover
-      #     photos, dish photos and thumbnails.
+      # WEBSITE_NAME            The WEBSITE's site name on SmarterASP
+      #                         (the one for phloemmarket.com), NOT the
+      #                         API's site.
+      # SERVER_COMPUTER_NAME    Web Deploy service URL (same as the API's
+      #                         if both sites are on the same account)
+      # SERVER_USERNAME         Web Deploy user name
+      # SERVER_PASSWORD         Web Deploy password
       #
-      # wwwroot/private-uploads
-      #     PRIVATE shop documents (registration, hygiene
-      #     certificates, owner ID). Served only through signed,
-      #     expiring /private-files links.
+      # DoNotDeleteRule: files on the server that aren't in this build
+      # are left alone. Old build files (dist\assets\*-hash.js) simply
+      # stay unused, and a wrong WEBSITE_NAME can never wipe another
+      # site. To clean old builds out, delete the assets folder on the
+      # server now and then; the next deploy puts the current one back.
       #
-      # App_Data
-      #     Data-protection keys. Losing them breaks every email
-      #     confirmation and password-reset link already sent.
-      #
-      # logs
-      #     Rolling Serilog application logs generated by the
-      #     production API.
-      #
-      # These files are NOT deployment artifacts.
-      #
-      # Protection is provided in two ways:
-      #
-      # 1. DoNotDeleteRule prevents MSDeploy from deleting files
-      #    simply because they are absent from the publish package.
-      #
-      # 2. Explicit skip rules exclude the runtime directories from
-      #    deployment synchronisation altogether.
-      #
-      # The application remains responsible for managing files that
-      # it creates in these directories at runtime.
+      # Skipped for pull requests (they are only built and checked).
       # ============================================================
 
-      - name: Deploy API to SmarterASP.NET
+      - name: Deploy website to SmarterASP.NET
         if: github.event_name != 'pull_request'
         shell: powershell
         env:
@@ -306,21 +143,23 @@ jobs:
           SMARTERASP_USERNAME: ${{ secrets.SERVER_USERNAME }}
           SMARTERASP_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         run: |
+          foreach ($name in 'SMARTERASP_SITE_NAME', 'SMARTERASP_SERVICE_URL', 'SMARTERASP_USERNAME', 'SMARTERASP_PASSWORD') {
+              if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($name))) {
+                  throw "$name is empty: add the matching secret to this repository (see the comment above this step)."
+              }
+          }
+
           $msdeploy = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
 
           if (-not (Test-Path $msdeploy)) {
               throw "MSDeploy was not found at: $msdeploy"
           }
 
-          $sourcePath = (Resolve-Path ".\publish").Path
+          $sourcePath = (Resolve-Path ".\dist").Path
 
-          Write-Host "Deploying Phloem API..."
+          Write-Host "Deploying Phloem website..."
           Write-Host "Site: $env:SMARTERASP_SITE_NAME"
           Write-Host "Source: $sourcePath"
-          Write-Host "Public uploads will be preserved."
-          Write-Host "Private documents will be preserved."
-          Write-Host "Data-protection keys will be preserved."
-          Write-Host "Application logs will be preserved."
 
           & $msdeploy `
             -verb:sync `
@@ -330,56 +169,56 @@ jobs:
             -disableLink:AppPoolExtension `
             -disableLink:ContentExtension `
             -disableLink:CertificateExtension `
-            -enableRule:AppOffline `
             -enableRule:DoNotDeleteRule `
-            -skip:objectName=filePath,absolutePath=".*\\wwwroot\\uploads\\.*" `
-            -skip:objectName=dirPath,absolutePath=".*\\wwwroot\\uploads($|\\.*)" `
-            -skip:objectName=filePath,absolutePath=".*\\wwwroot\\private-uploads\\.*" `
-            -skip:objectName=dirPath,absolutePath=".*\\wwwroot\\private-uploads($|\\.*)" `
-            -skip:objectName=filePath,absolutePath=".*\\App_Data\\.*" `
-            -skip:objectName=dirPath,absolutePath=".*\\App_Data($|\\.*)" `
-            -skip:objectName=filePath,absolutePath=".*\\logs\\.*" `
-            -skip:objectName=dirPath,absolutePath=".*\\logs($|\\.*)" `
             -verbose
 
           if ($LASTEXITCODE -ne 0) {
               throw "MSDeploy failed with exit code $LASTEXITCODE"
           }
 
-          Write-Host "Phloem API deployment completed successfully."
+          Write-Host "Phloem website deployment completed successfully."
 
 
       # ============================================================
-      # HEALTH CHECK
+      # CHECK THE SITE IS UP
       #
-      # The API migrates the database and seeds on start, so the
-      # first request after a deploy can take a little longer.
+      # Runs only when the WEBSITE_BASE_URL repository VARIABLE is
+      # set, e.g. https://phloemmarket.com
       #
-      # Runs only when the API_BASE_URL repository VARIABLE is set
-      # (Settings → Secrets and variables → Actions → Variables),
-      # e.g. https://api.phloem.app
+      # Checks the home page AND a deep link (/explore): the deep link
+      # only works when web.config's single-page-app rule is active on
+      # the server (IIS URL Rewrite), which is exactly what breaks
+      # refreshing a page or opening an emailed link.
       # ============================================================
 
-      - name: Check the API is running
-        if: github.event_name != 'pull_request' && vars.API_BASE_URL != ''
+      - name: Check the website is up
+        if: github.event_name != 'pull_request' && vars.WEBSITE_BASE_URL != ''
         shell: powershell
         env:
-          API_BASE_URL: ${{ vars.API_BASE_URL }}
+          WEBSITE_BASE_URL: ${{ vars.WEBSITE_BASE_URL }}
         run: |
-          $health = "$env:API_BASE_URL/health"
+          $base = $env:WEBSITE_BASE_URL.TrimEnd('/')
 
-          for ($i = 1; $i -le 10; $i++) {
-              try {
-                  $response = Invoke-WebRequest -Uri $health -UseBasicParsing -TimeoutSec 30
-                  if ($response.StatusCode -eq 200) {
-                      Write-Host "Phloem API is healthy: $($response.Content)"
-                      exit 0
+          foreach ($path in '/', '/explore') {
+              $url = "$base$path"
+              $ok = $false
+              for ($i = 1; $i -le 6; $i++) {
+                  try {
+                      $response = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 30
+                      if ($response.StatusCode -eq 200 -and $response.Content -match 'id="root"') {
+                          Write-Host "OK: $url"
+                          $ok = $true
+                          break
+                      }
                   }
+                  catch {
+                      Write-Host "Attempt ${i} for ${url}: not ready yet ($($_.Exception.Message))"
+                  }
+                  Start-Sleep -Seconds 10
               }
-              catch {
-                  Write-Host "Attempt ${i}: not ready yet ($($_.Exception.Message))"
+              if (-not $ok) {
+                  throw "$url didn't answer with the website. If only /explore fails, the server is ignoring web.config's rewrite rule."
               }
-              Start-Sleep -Seconds 15
           }
 
-          throw "The API didn't answer $health after deploying. Check the logs folder on the server."
+          Write-Host "Phloem website is live at $base"

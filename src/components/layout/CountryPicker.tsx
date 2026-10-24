@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import type { CountryDto } from '../../api/contracts/dtos'
 import { useCountry } from '../../state/CountryContext'
-import styles from './CountryPicker.module.css'
+import styles from './HeaderMenu.module.css'
 
 /**
  * A country's flag as a picture. Windows browsers can't draw flag emojis (they show "GH"), so the flag comes from

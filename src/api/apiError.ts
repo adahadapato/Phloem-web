@@ -43,6 +43,15 @@ export class ApiError {
     return fields.length > 0 ? fields.join('\n') : this.message
   }
 
+  /**
+   * The API's message for one field, to show under that field. Field names are the command's properties
+   * ("Email", "HomeAddress.Line1"); matched ignoring case.
+   */
+  fieldError(name: string): string | undefined {
+    const key = Object.keys(this.fieldErrors).find((k) => k.toLowerCase() === name.toLowerCase())
+    return key ? this.fieldErrors[key][0] : undefined
+  }
+
   /** True when the person isn't (or is no longer) signed in. */
   get isUnauthorized(): boolean {
     return this.status === 401

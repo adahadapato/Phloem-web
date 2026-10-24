@@ -140,3 +140,19 @@ export interface ShopDetailsDto {
   /** When the shop was approved (ISO), or null. */
   onPhloemSince: string | null
 }
+
+/** GET /api/me/two-factor: is two-step sign-in on, and how many recovery codes are left. */
+export interface TwoFactorStatusDto {
+  isEnabled: boolean
+  recoveryCodesLeft: number
+  /** True for admins: they can't switch it off. */
+  isRequired: boolean
+}
+
+/** GET /api/me/two-factor/setup: what the authenticator app needs. */
+export interface TwoFactorSetupDto {
+  /** The key to type in by hand, if the QR code can't be scanned. */
+  manualEntryKey: string
+  /** The otpauth:// link the QR code holds. */
+  authenticatorUri: string
+}
