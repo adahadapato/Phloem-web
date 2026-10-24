@@ -2,7 +2,9 @@
  * What the API sends back. Same shapes as the API's DTOs (JSON, camelCase). Dates arrive as ISO text.
  * Grows feature by feature; keep in step with the app's Services/Api/Contracts/Dtos.
  */
-import type { Country, Currency, DeliveryWindow, DishCategory, OrderStatus } from './enums'
+import type {
+  Country, Currency, DeliverySpeed, DeliveryWindow, DishCategory, OrderStatus, ShipmentItemCategory, ShipmentStatus,
+} from './enums'
 
 /** Answer of login, register, two-factor, refresh and Google exchange. */
 export interface AuthTokensDto {
@@ -338,4 +340,130 @@ export interface DishDetailsDto {
   shopName: string
   isVerifiedShop: boolean
   shopLogoUrl: string | null
+}
+
+// ───────────────────────────── Parcels ─────────────────────────────
+
+/** One speed on a route: "Express · GH₵80 + GH₵45/kg · usually 3–5 days". */
+export interface ShipmentSpeedOptionDto {
+  speed: DeliverySpeed
+  baseCharge: number
+  /** Per chargeable kg (the weight is rounded up to the next 0.5 kg). */
+  pricePerKg: number
+  minTransitDays: number
+  maxTransitDays: number
+}
+
+/** GET /api/shipments/routes: where parcels can go (switched-on routes), with the drop-off hub and speeds. */
+export interface ShipmentRouteOptionDto {
+  fromCountry: Country
+  toCountry: Country
+  /** The origin's currency (every price on the route). */
+  currency: Currency
+  dropOffAddress: string
+  dropOffHours: string
+  speeds: ShipmentSpeedOptionDto[]
+}
+
+/** POST /api/shipments/quote: the price for an estimated weight (the final price is set when weighed). */
+export interface ShipmentQuoteDto {
+  speed: DeliverySpeed
+  estimatedWeightKg: number
+  chargeableWeightKg: number
+  estimatedPrice: number
+  currency: Currency
+  minTransitDays: number
+  maxTransitDays: number
+}
+
+/** POST /api/shipments: the new tracking number and where to drop the parcel off. */
+export interface BookedShipmentDto {
+  trackingNumber: string
+  estimatedPrice: number
+  currency: Currency
+  dropOffAddress: string
+  dropOffHours: string
+}
+
+/** One step of a parcel's journey. `note` is always null in public tracking. */
+export interface ShipmentEventDto {
+  status: ShipmentStatus
+  occurredAt: string
+  note: string | null
+}
+
+/** GET /api/track/{n}: public tracking (no names, addresses, items or prices). */
+export interface PublicTrackingDto {
+  trackingNumber: string
+  fromCountry: Country
+  toCountry: Country
+  speed: DeliverySpeed
+  status: ShipmentStatus
+  /** "yyyy-MM-dd"; null until it's in transit. */
+  estimatedArrivalFrom: string | null
+  estimatedArrivalTo: string | null
+  /** Oldest first. */
+  timeline: ShipmentEventDto[]
+}
+
+/** One row of My shipments. */
+export interface ShipmentSummaryDto {
+  trackingNumber: string
+  fromCountry: Country
+  toCountry: Country
+  recipientName: string
+  status: ShipmentStatus
+  speed: DeliverySpeed
+  itemCount: number
+  /** Final once weighed, otherwise the estimate. */
+  price: number
+  isPriceFinal: boolean
+  currency: Currency
+  bookedAt: string
+  /** Weighed and waiting for payment. */
+  canPay: boolean
+  canCancel: boolean
+}
+
+/** One declared item. */
+export interface ShipmentItemDto {
+  category: ShipmentItemCategory
+  description: string
+  quantity: number
+  unitDeclaredValue: number
+  totalDeclaredValue: number
+}
+
+/** GET /api/shipments/{n}: the sender's full view of a parcel. */
+export interface ShipmentDetailsDto {
+  trackingNumber: string
+  fromCountry: Country
+  toCountry: Country
+  status: ShipmentStatus
+  speed: DeliverySpeed
+  senderName: string
+  senderPhone: string
+  recipientName: string
+  recipientPhone: string
+  recipientAddressLine: string
+  recipientCity: string
+  recipientRegionOrPostcode: string
+  items: ShipmentItemDto[]
+  totalDeclaredValue: number
+  estimatedWeightKg: number
+  weighedWeightKg: number | null
+  estimatedPrice: number
+  finalPrice: number | null
+  currency: Currency
+  dropOffAddress: string | null
+  dropOffHours: string | null
+  estimatedArrivalFrom: string | null
+  estimatedArrivalTo: string | null
+  deliveredAt: string | null
+  /** Oldest first, with notes. */
+  timeline: ShipmentEventDto[]
+  canCancel: boolean
+  canPay: boolean
+  /** Paid, then cancelled. */
+  needsRefund: boolean
 }

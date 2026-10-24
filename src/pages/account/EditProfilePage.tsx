@@ -1,5 +1,5 @@
 import { useRef, useState, type ChangeEvent, type FormEvent } from 'react'
-import { Link } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { ApiError } from '../../api/apiError'
 import type { Country } from '../../api/contracts/enums'
 import { removePhoto, updatePersonalDetails, updateProfile, uploadPhoto } from '../../api/services/accountService'
@@ -9,6 +9,7 @@ import { Field } from '../../components/ui/Field'
 import { StatusBanner } from '../../components/ui/StatusBanner'
 import { useCountry } from '../../state/CountryContext'
 import { useSession } from '../../state/SessionContext'
+import { safeReturnTo } from '../auth/returnTo'
 import styles from './Account.module.css'
 
 /** What the API accepts for a profile photo (it checks again, and crops / converts it). */
@@ -24,6 +25,9 @@ type Message = { text: string; isError: boolean } | null
  */
 export default function EditProfilePage() {
   const { profile, refreshProfile } = useSession()
+  // Opened from Send a parcel (?returnTo=/send-parcel): the back link goes back there
+  const [params] = useSearchParams()
+  const returnTo = params.get('returnTo') === '/send-parcel' ? safeReturnTo('/send-parcel') : null
   const { countries } = useCountry()
   const fileInput = useRef<HTMLInputElement>(null)
 
@@ -147,7 +151,9 @@ export default function EditProfilePage() {
   return (
     <div className={`container ${styles.page}`}>
       <div className={styles.inner}>
-        <Link to="/account" className={styles.back}>‹ My account</Link>
+        {returnTo
+          ? <Link to={returnTo} className={styles.back}>‹ Back to Send a parcel</Link>
+          : <Link to="/account" className={styles.back}>‹ My account</Link>}
         <div className={styles.heading}>
           <h1>Edit profile</h1>
           <p className="muted">Your personal details</p>

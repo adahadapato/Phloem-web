@@ -1,0 +1,774 @@
+/* Parcels: Track, Send a parcel, My shipments, one parcel. App colours: green, orange, mint, cream. */
+.page {
+  padding-block: 24px 40px;
+}
+
+.narrow {
+  max-width: 860px;
+  margin-inline: auto;
+}
+
+.heading {
+  margin-bottom: 14px;
+}
+
+.heading h1,
+.narrow h1 {
+  margin: 4px 0 4px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 18px 20px;
+  background: var(--white);
+  border: 1px solid var(--brand-border);
+  border-radius: 18px;
+  box-shadow: var(--shadow-card);
+}
+
+.cardHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.number {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.route {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.place {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.arrival {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--brand-mint-pale);
+  color: var(--brand-green);
+  font-weight: 700;
+}
+
+.strongLink {
+  font-weight: 700;
+}
+
+.plain {
+  color: inherit;
+}
+
+/* ── Track ── */
+.trackForm {
+  display: flex;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.trackForm input {
+  flex: 1;
+  min-width: 0;
+  height: var(--control-height);
+  padding: 0 16px;
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-field);
+  background: var(--white);
+  font: inherit;
+  font-size: 17px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.trackForm input::placeholder {
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.trackForm input:focus {
+  outline: none;
+  border-color: var(--brand-green);
+  box-shadow: 0 0 0 3px rgb(4 99 52 / 0.15);
+}
+
+.howItWorks {
+  margin-top: 24px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: var(--brand-mint-pale);
+}
+
+.howItWorks h2 {
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+
+/* ── Status chips ── */
+.chip {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.chipAct {
+  background: var(--brand-peach);
+  color: var(--brand-orange);
+}
+
+.chipMoving {
+  background: var(--brand-mint-pale);
+  color: var(--brand-green);
+  box-shadow: inset 0 0 0 1px rgb(4 99 52 / 0.25);
+}
+
+.chipDone {
+  background: var(--brand-green);
+  color: var(--white);
+}
+
+.chipCancelled {
+  background: #eceae5;
+  color: var(--brand-text-muted);
+}
+
+/* ── Journey ── */
+.steps {
+  display: flex;
+  flex-direction: column;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.steps li {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  padding-bottom: 16px;
+}
+
+.steps li:last-child {
+  padding-bottom: 0;
+}
+
+.steps li:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 11px;
+  top: 26px;
+  bottom: 2px;
+  width: 2px;
+  background: var(--brand-border);
+}
+
+.steps li.stepDone:not(:last-child)::before {
+  background: var(--brand-green);
+}
+
+.steps li > span:last-child {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+
+.steps li > span:last-child .muted {
+  font-size: 13px;
+}
+
+.steps li:not(.stepDone):not(.stepNext):not(.stepCancelled) strong {
+  color: var(--brand-text-muted);
+}
+
+.stepDot {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--brand-border);
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.stepDone .stepDot {
+  border-color: var(--brand-green);
+  background: var(--brand-green);
+}
+
+.stepNext .stepDot {
+  border-color: var(--brand-green);
+}
+
+.stepCancelled .stepDot {
+  border-color: var(--brand-text-muted);
+  background: var(--brand-text-muted);
+}
+
+/* ── Send a parcel ── */
+.howSteps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.howSteps li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--brand-mint-pale);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.howSteps strong {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--brand-green);
+  color: var(--white);
+  font-size: 13px;
+}
+
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--brand-peach);
+  font-size: 14px;
+}
+
+.bannerLinks {
+  display: flex;
+  gap: 16px;
+  font-weight: 700;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 24px;
+  align-items: start;
+}
+
+.main {
+  min-width: 0;
+}
+
+.side {
+  position: sticky;
+  top: 88px;
+}
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+
+.sectionTitle .muted {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.num {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--brand-orange);
+  color: var(--white);
+  font-size: 14px;
+}
+
+.label {
+  margin: 4px 0 0 2px;
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.select {
+  min-height: var(--control-height);
+  padding: 0 12px;
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-field);
+  background: var(--white);
+  font: inherit;
+  color: var(--brand-text-dark);
+}
+
+.choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+}
+
+.choice {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--brand-border);
+  border-radius: 14px;
+  background: var(--white);
+  color: var(--brand-text-dark);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.choice .muted {
+  font-size: 12px;
+}
+
+.choice[aria-checked="true"] {
+  border-color: var(--brand-green);
+  background: var(--brand-mint-pale);
+  box-shadow: inset 0 0 0 1px var(--brand-green);
+}
+
+.item {
+  margin: 0;
+  padding: 12px 0 0;
+  border: 0;
+  border-top: 1px solid var(--brand-border);
+}
+
+.itemGrid {
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr) 100px 140px;
+  gap: 10px;
+  align-items: start;
+}
+
+.inline {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.inline .label {
+  margin: 0 0 0 2px;
+}
+
+.remove {
+  margin-top: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--brand-text-muted);
+  font: inherit;
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.check input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--brand-green);
+}
+
+.sums {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  margin: 0;
+  font-size: 14px;
+}
+
+.sums dt {
+  color: var(--brand-text-muted);
+}
+
+.sums dd {
+  margin: 0;
+  font-weight: 700;
+  text-align: right;
+}
+
+.total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--brand-border);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.dropOff {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--brand-mint-pale);
+  font-size: 14px;
+}
+
+/* Booked! */
+.done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.done .card {
+  width: 100%;
+  text-align: left;
+}
+
+.tick {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--brand-green);
+  color: var(--white);
+  font-size: 36px;
+  font-weight: 800;
+}
+
+.bigNumber {
+  margin: 0 0 18px;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.note {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--brand-peach);
+  font-size: 14px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* ── My shipments ── */
+.crumbs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: var(--brand-text-muted);
+}
+
+.crumbs a {
+  font-weight: 700;
+}
+
+.topRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.topRow h1 {
+  margin: 0;
+}
+
+.parcel {
+  margin-bottom: 18px;
+  overflow: hidden;
+  border: 1px solid var(--brand-border);
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+}
+
+.strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px 24px;
+  padding: 12px 20px;
+  background: var(--brand-mint-pale);
+  border-bottom: 1px solid var(--brand-border);
+  font-size: 14px;
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 32px;
+  margin: 0;
+}
+
+.facts dt,
+.numberCol span {
+  color: var(--brand-text-muted);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.facts dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.numberCol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.numberCol a {
+  font-weight: 700;
+}
+
+.parcelBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 20px;
+  padding: 18px 20px 20px;
+}
+
+.parcelBody p {
+  margin: 4px 0 0;
+}
+
+.routeLine {
+  margin-top: 10px !important;
+}
+
+.next {
+  font-weight: 600;
+}
+
+.buttonCol {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--brand-peach);
+}
+
+.trackLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--control-height);
+  padding: 0 18px;
+  border-radius: var(--radius-field);
+  background: var(--brand-orange);
+  color: var(--white);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.trackLink:hover {
+  filter: brightness(1.05);
+  text-decoration: none;
+}
+
+.trackPlain {
+  border: 1.5px solid var(--brand-border);
+  background: var(--white);
+  color: var(--brand-green);
+}
+
+/* ── One parcel ── */
+.highlight {
+  border-left: 4px solid var(--brand-orange);
+}
+
+.detailButtons {
+  margin-bottom: 16px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.factsList {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 8px 12px;
+  margin: 0;
+  font-size: 14px;
+}
+
+.factsList dt {
+  color: var(--brand-text-muted);
+}
+
+.factsList dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.block {
+  display: block;
+  font-weight: 400;
+}
+
+.smallTitle {
+  margin: 8px 0 0;
+  font-size: 15px;
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+}
+
+.itemsList li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* ── Smaller screens ── */
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .side {
+    position: static;
+  }
+
+  .itemGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .detailGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .howSteps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .two,
+  .itemGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .parcelBody {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .strip,
+  .parcelBody,
+  .card {
+    padding-inline: 16px;
+  }
+
+  .numberCol {
+    align-items: flex-start;
+  }
+
+  .trackForm {
+    flex-direction: column;
+  }
+
+  /* Stacked: the box keeps its full height (flex: 1 would squash it to nothing in a column) */
+  .trackForm input {
+    flex: none;
+  }
+
+  .factsList {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .factsList dd + dt {
+    margin-top: 8px;
+  }
+}

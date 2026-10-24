@@ -78,6 +78,7 @@ export default function AccountPage() {
         <section className={styles.card} aria-label="Shopping">
           <ul className={styles.list}>
             <Row to="/orders" icon="🧾" title="My orders" sub="Track, pay or buy again" />
+            <Row to="/shipments" icon="📦" title="My shipments" sub="Parcels you've sent: track, pay or cancel" />
             <Row to="/account/addresses" icon="📍" title="Delivery addresses"
                  sub={profile.addresses.length === 0 ? 'Add where your food should go'
                    : `${profile.addresses.length} saved`} />

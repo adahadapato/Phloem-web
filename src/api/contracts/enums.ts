@@ -24,3 +24,15 @@ export type OrderStatus = 'AwaitingPayment' | 'Paid' | 'Preparing' | 'OutForDeli
 
 /** The tabs on My orders (GET /api/orders?show=…): orders grouped the way buyers think about them. */
 export type OrderStatusGroup = 'All' | 'WaitingForPayment' | 'InProgress' | 'Completed' | 'Cancelled'
+
+/** Where a parcel is: Booked → ReceivedAtHub (weighed, final price) → Paid → InTransit → ArrivedInDestination →
+ *  OutForDelivery → Delivered (or Cancelled before it leaves). */
+export type ShipmentStatus =
+  | 'Booked' | 'ReceivedAtHub' | 'Paid' | 'InTransit' | 'ArrivedInDestination' | 'OutForDelivery' | 'Delivered'
+  | 'Cancelled'
+
+/** How fast a parcel travels (each route prices its own speeds). */
+export type DeliverySpeed = 'Standard' | 'Express' | 'Bulk'
+
+/** What kind of item is in a parcel (for customs). */
+export type ShipmentItemCategory = 'PackagedFood' | 'Clothing' | 'Documents' | 'Electronics' | 'Other'

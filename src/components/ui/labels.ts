@@ -1,5 +1,7 @@
 /** Names people see for the API's values. Kept in one place so every page says the same. */
-import type { DeliveryWindow, DishCategory, DishSort, OrderStatus } from '../../api/contracts/enums'
+import type {
+  DeliveryWindow, DishCategory, DishSort, OrderStatus, ShipmentItemCategory, ShipmentStatus,
+} from '../../api/contracts/enums'
 
 /** The category tabs, in the app's order. */
 export const dishCategories: { value: DishCategory; label: string }[] = [
@@ -44,4 +46,53 @@ export function dateTimeText(iso: string): string {
   return new Date(iso).toLocaleString('en-GB', {
     day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
   })
+}
+
+/** A parcel's status in the app's words (My shipments). */
+export const shipmentStatusText: Record<ShipmentStatus, string> = {
+  Booked: 'Booked · drop it at the hub',
+  ReceivedAtHub: 'At the hub · ready to pay',
+  Paid: 'Paid · waiting to leave',
+  InTransit: 'In transit',
+  ArrivedInDestination: 'Arrived in destination',
+  OutForDelivery: 'Out for delivery',
+  Delivered: 'Delivered',
+  Cancelled: 'Cancelled',
+}
+
+/** A step on a parcel's timeline (short). */
+export const shipmentStepText: Record<ShipmentStatus, string> = {
+  Booked: 'Booked',
+  ReceivedAtHub: 'Received and weighed at the hub',
+  Paid: 'Paid',
+  InTransit: 'In transit',
+  ArrivedInDestination: 'Arrived in the destination country',
+  OutForDelivery: 'Out for delivery',
+  Delivered: 'Delivered',
+  Cancelled: 'Cancelled',
+}
+
+/** The journey in order (Cancelled is not a step). */
+export const shipmentJourney: ShipmentStatus[] =
+  ['Booked', 'ReceivedAtHub', 'Paid', 'InTransit', 'ArrivedInDestination', 'OutForDelivery', 'Delivered']
+
+/** What each item category is called. */
+export const shipmentCategories: { value: ShipmentItemCategory; label: string }[] = [
+  { value: 'PackagedFood', label: 'Packaged food' },
+  { value: 'Clothing', label: 'Clothing' },
+  { value: 'Documents', label: 'Documents' },
+  { value: 'Electronics', label: 'Electronics' },
+  { value: 'Other', label: 'Other' },
+]
+
+/** "24 Oct" from "2026-10-24" (a date without a time). */
+export function dayMonthText(isoDate: string): string {
+  const [y, m, d] = isoDate.split('-').map(Number)
+  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' })
+}
+
+/** "Expected 3 Nov – 7 Nov", "Expected 3 Nov", or null before it leaves. */
+export function arrivalText(from: string | null, to: string | null): string | null {
+  if (!from || !to) return null
+  return from === to ? `Expected ${dayMonthText(from)}` : `Expected ${dayMonthText(from)} – ${dayMonthText(to)}`
 }

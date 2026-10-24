@@ -39,9 +39,11 @@ export const router = createBrowserRouter([
 
       { path: 'cart', ...page(() => import('./pages/orders/CartPage')) },
 
+      { path: 'track', ...page(() => import('./pages/shipping/TrackPage')) },
+      { path: 'track/:trackingNumber', ...page(() => import('./pages/shipping/TrackPage')) },
+      { path: 'send-parcel', ...page(() => import('./pages/shipping/SendParcelPage')) },
+
       // TEMPORARY: open to everyone
-      { path: 'track', ...comingSoon('Track a parcel') },
-      { path: 'send-parcel', ...comingSoon('Send a parcel') },
       { path: 'sell', ...comingSoon('Sell food on Phloem') },
 
       // Signed-in only
@@ -51,6 +53,8 @@ export const router = createBrowserRouter([
           { path: 'checkout', ...page(() => import('./pages/orders/CheckoutPage')) },
           { path: 'orders', ...page(() => import('./pages/orders/OrdersPage')) },
           { path: 'orders/:orderNumber', ...page(() => import('./pages/orders/OrderDetailsPage')) },
+          { path: 'shipments', ...page(() => import('./pages/shipping/ShipmentsPage')) },
+          { path: 'shipments/:trackingNumber', ...page(() => import('./pages/shipping/ShipmentDetailsPage')) },
           { path: 'account', ...page(() => import('./pages/account/AccountPage')) },
           { path: 'account/edit', ...page(() => import('./pages/account/EditProfilePage')) },
           { path: 'account/addresses', ...page(() => import('./pages/account/AddressesPage')) },

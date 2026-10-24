@@ -2,7 +2,7 @@
  * What the website sends to the API (request bodies). Same shapes as the API's commands (JSON, camelCase).
  * Grows feature by feature; keep in step with the app's Services/Api/Contracts/Commands.
  */
-import type { Country, DeliveryWindow } from './enums'
+import type { Country, DeliverySpeed, DeliveryWindow, ShipmentItemCategory } from './enums'
 
 /** POST /api/auth/login */
 export interface LoginCommand {
@@ -134,4 +134,40 @@ export interface PlaceOrderCommand {
   items: BasketItemDto[]
   deliveryAddressId: string
   deliveryWindow: DeliveryWindow
+}
+
+// ───────────────────────────── Parcels ─────────────────────────────
+
+/** POST /api/shipments/quote (no sign-in needed). */
+export interface GetShipmentQuoteQuery {
+  fromCountry: Country
+  toCountry: Country
+  speed: DeliverySpeed
+  estimatedWeightKg: number
+}
+
+/** One item as the sender types it. */
+export interface ShipmentItemInputDto {
+  category: ShipmentItemCategory
+  description: string
+  quantity: number
+  /** Value of ONE item, in the origin currency (for customs). */
+  unitDeclaredValue: number
+}
+
+/** POST /api/shipments: book a parcel. The sender is the signed-in person. */
+export interface BookShipmentCommand {
+  fromCountry: Country
+  toCountry: Country
+  senderPhone: string
+  recipientName: string
+  recipientPhone: string
+  recipientAddressLine: string
+  recipientCity: string
+  recipientRegionOrPostcode: string
+  items: ShipmentItemInputDto[]
+  speed: DeliverySpeed
+  estimatedWeightKg: number
+  confirmedNoProhibitedItems: boolean
+  acceptedTerms: boolean
 }

@@ -6,7 +6,7 @@ import styles from './HeaderMenu.module.css'
 
 /**
  * The signed-in person in the header: their photo (or initial) and first name; opens a menu with My account,
- * My orders, Seller dashboard (people with a shop), Admin dashboard (admins) and Log out. Closes on a pick, on Escape, or on a click outside.
+ * My orders, My shipments, Seller dashboard (people with a shop), Admin dashboard (admins) and Log out. Closes on a pick, on Escape, or on a click outside.
  */
 export function AccountMenu() {
   const { profile, logout, isAdmin } = useSession()
@@ -65,6 +65,11 @@ export function AccountMenu() {
           <li role="none">
             <Link role="menuitem" className={styles.option} to="/orders" onClick={() => setOpen(false)}>
               My orders
+            </Link>
+          </li>
+          <li role="none">
+            <Link role="menuitem" className={styles.option} to="/shipments" onClick={() => setOpen(false)}>
+              My shipments
             </Link>
           </li>
           {profile.hasShop && (

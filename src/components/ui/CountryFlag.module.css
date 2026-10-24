@@ -1,0 +1,8 @@
+.flag {
+  width: 30px;
+  height: 20px;
+  border-radius: 3px;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.08);
+  vertical-align: middle;
+}
