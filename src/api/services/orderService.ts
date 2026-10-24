@@ -9,6 +9,7 @@ import type { CheckBasketQuery, PlaceOrderCommand } from '../contracts/commands'
 import type {
   BasketCheckDto,
   BuyAgainDto,
+  DishCardDto,
   DeliveryWindowOptionDto,
   OrderDetailsDto,
   OrderPaymentDto,
@@ -16,7 +17,7 @@ import type {
   PagedResult,
   PlacedOrderDto,
 } from '../contracts/dtos'
-import type { Country } from '../contracts/enums'
+import type { Country, OrderStatusGroup } from '../contracts/enums'
 
 const order = (orderNumber: string) => `api/orders/${encodeURIComponent(orderNumber)}`
 
@@ -47,10 +48,26 @@ export const payWithTestPayment = (orderNumber: string): Promise<ApiResult<Order
 
 // ───────────────────────────── My orders ─────────────────────────────
 
-/** GET /api/orders: my orders, newest first. */
-export const getMyOrders = (page: number, pageSize: number, signal?: AbortSignal):
+/** What My orders can be narrowed down by. Everything is optional. */
+export interface MyOrdersSearch {
+  /** The tab (default: all). */
+  show?: OrderStatusGroup
+  /** Only orders placed on or after this day ("yyyy-MM-dd", UTC). */
+  from?: string
+  /** Order number, shop or dish name. */
+  search?: string
+  page?: number
+  pageSize?: number
+}
+
+/** GET /api/orders: my orders, newest first, optionally one tab, since a day, matching a search. */
+export const getMyOrders = (search: MyOrdersSearch, signal?: AbortSignal):
   Promise<ApiResult<PagedResult<OrderSummaryDto>>> =>
-  get<PagedResult<OrderSummaryDto>>(withQuery('api/orders', { page, pageSize }), signal)
+  get<PagedResult<OrderSummaryDto>>(withQuery('api/orders', { ...search }), signal)
+
+/** GET /api/orders/recent-dishes: "Buy it again", dishes from my paid orders still on sale (dish cards). */
+export const getRecentlyOrderedDishes = (take: number, signal?: AbortSignal): Promise<ApiResult<DishCardDto[]>> =>
+  get<DishCardDto[]>(withQuery('api/orders/recent-dishes', { take }), signal)
 
 /** GET /api/orders/{n}: one of my orders (unpaid ones at today's prices). */
 export const getOrder = (orderNumber: string, signal?: AbortSignal): Promise<ApiResult<OrderDetailsDto>> =>

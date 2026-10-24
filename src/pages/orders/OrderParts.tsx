@@ -31,18 +31,22 @@ export function ActionBanner({ actions }: { actions: Actions }) {
 
 /**
  * The buttons for one order: Pay now (unpaid), Buy again, Cancel (asks "Cancel this order?" first, saying whether
- * a refund follows).
+ * a refund follows). `stacked` (My orders) puts them in a column, the main one first in orange: Pay now while
+ * unpaid, otherwise Track order (opens the order).
  */
-export function OrderButtons({ orderNumber, status, canCancel, actions, full }: {
+export function OrderButtons({ orderNumber, status, canCancel, actions, full, stacked }: {
   orderNumber: string
   status: OrderStatus
   canCancel: boolean
   actions: Actions
   /** Big buttons (Order details) instead of small ones (list). */
   full?: boolean
+  /** One full-width button per line, main one first (My orders). */
+  stacked?: boolean
 }) {
   const { busy } = actions
-  const small = !full
+  const small = !full && !stacked
+  const column = stacked ? `${styles.buttons} ${styles.stacked}` : styles.buttons
 
   if (actions.confirmCancel === orderNumber) {
     return (
@@ -51,7 +55,7 @@ export function OrderButtons({ orderNumber, status, canCancel, actions, full }: 
         <span className="muted">
           {status === 'AwaitingPayment' ? 'Nothing has been paid for it yet.' : 'Your payment will be refunded.'}
         </span>
-        <div className={styles.buttons}>
+        <div className={column}>
           <Button small={small} variant="cta" busy={busy === `cancel:${orderNumber}`} busyText="Cancelling…"
                   onClick={() => actions.cancel(orderNumber)}>
             Cancel order
@@ -63,7 +67,13 @@ export function OrderButtons({ orderNumber, status, canCancel, actions, full }: 
   }
 
   return (
-    <div className={styles.buttons}>
+    <div className={column}>
+      {stacked && status !== 'AwaitingPayment' && (
+        <Link to={`/orders/${encodeURIComponent(orderNumber)}`}
+              className={`${styles.trackLink} ${status === 'Cancelled' || status === 'Delivered' ? styles.trackPlain : ''}`}>
+          {status === 'Cancelled' || status === 'Delivered' ? 'View order' : 'Track order'}
+        </Link>
+      )}
       {status === 'AwaitingPayment' && (
         <Button small={small} variant="cta" busy={busy === `pay:${orderNumber}`} busyText="Paying…"
                 disabled={!!busy} onClick={() => actions.pay(orderNumber)}>

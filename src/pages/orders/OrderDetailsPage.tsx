@@ -6,7 +6,7 @@ import type { OrderDetailsDto } from '../../api/contracts/dtos'
 import { getOrder } from '../../api/services/orderService'
 import { ApiImage } from '../../components/ui/ApiImage'
 import { Button } from '../../components/ui/Button'
-import { dateTimeText } from '../../components/ui/labels'
+import { dateTimeText, deliveryWindows } from '../../components/ui/labels'
 import { Price } from '../../components/ui/Price'
 import { StatusBanner } from '../../components/ui/StatusBanner'
 import { ActionBanner, OrderButtons, StatusChip } from './OrderParts'
@@ -172,9 +172,12 @@ export default function OrderDetailsPage() {
         <section className={styles.card} aria-label="Delivery and payment">
           <dl className={styles.facts}>
             <dt>Delivery time</dt>
-            <dd>{order.deliveryLabel}</dd>
+            <dd>{deliveryWindows.find((w) => w.value === order.deliveryWindow)?.label ?? order.deliveryWindow}</dd>
             <dt>Delivery address</dt>
-            <dd style={{ whiteSpace: 'pre-line' }}>{order.deliveryAddress}</dd>
+            <dd style={{ whiteSpace: 'pre-line' }}>
+              {order.deliveryLabel && <span className={styles.addressLabel}>{order.deliveryLabel}</span>}
+              {order.deliveryAddress}
+            </dd>
             <dt>Payment</dt>
             <dd>{unpaid ? 'Not paid yet' : order.paidAt ? `Paid ${dateTimeText(order.paidAt)}` : 'Not paid'}</dd>
           </dl>

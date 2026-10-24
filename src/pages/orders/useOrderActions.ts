@@ -17,7 +17,8 @@ export interface ActionMessage {
  * - **Pay now** (unpaid orders): TEMPORARY test payment, no money moves, until a real payment provider is connected.
  *   The API brings prices to today's and drops dishes that ran out.
  * - **Cancel** (asks first): unpaid any time; paid within 30 minutes of payment and before the shop starts.
- * - **Buy again**: the dishes still on sale go back in the basket (looked up one by one for their shop and photo).
+ * - **Buy again**: the dishes still on sale go back in the basket (looked up one by one for their shop and photo);
+ *   or just one dish of the order ("Buy it again" beside it).
  * Each reloads the orders afterwards, so the page shows the API's view.
  */
 export function useOrderActions() {
@@ -102,5 +103,22 @@ export function useOrderActions() {
         }
   })
 
-  return { busy, message, confirmCancel, setConfirmCancel, pay, cancel, buyAgain }
+  /** One dish from an order back in the basket ("Buy it again" next to a dish). */
+  const buyDishAgain = (orderNumber: string, dishId: string, quantity: number) =>
+    run(`dish:${orderNumber}:${dishId}`, async () => {
+      const dish = await getDish(dishId)
+      if (!dish.ok || !dish.value.canBeOrdered) {
+        return { isError: true, text: dish.ok ? `${dish.value.name} isn't on sale right now.`
+          : 'This dish is no longer on Phloem.' }
+      }
+      const d = dish.value
+      const photo = d.photos.find((p) => p.isPrimary) ?? d.photos[0]
+      cart.addLine({
+        dishId: d.id, name: d.name, imageUrl: photo ? photo.thumbnailUrl ?? photo.url : null, price: d.price,
+        currency: d.currency, country: d.country, shopId: d.shopId, shopName: d.shopName,
+      }, quantity)
+      return { isError: false, toCheckout: true, text: `${quantity} × ${d.name} added to your basket.` }
+    })
+
+  return { busy, message, confirmCancel, setConfirmCancel, pay, cancel, buyAgain, buyDishAgain }
 }

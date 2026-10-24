@@ -1,0 +1,431 @@
+/* My orders: list on the left, "Buy it again" on the right; app colours (green, orange, mint, cream). */
+.page {
+  padding-block: 20px 32px;
+}
+
+.crumbs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: var(--brand-text-muted);
+}
+
+.crumbs a {
+  font-weight: 700;
+}
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-bottom: 14px;
+}
+
+.top h1 {
+  margin: 0;
+}
+
+.search {
+  display: flex;
+  flex: 1 1 320px;
+  gap: 8px;
+  max-width: 520px;
+}
+
+.search input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  font: inherit;
+  font-size: 15px;
+}
+
+.search input:focus {
+  outline: none;
+  border-color: var(--brand-green);
+  box-shadow: 0 0 0 3px rgb(4 99 52 / 0.15);
+}
+
+/* Tabs: an underline under the picked one, scrolls sideways on a phone */
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--brand-border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tab {
+  flex: none;
+  padding: 10px 14px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: none;
+  color: var(--brand-green);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tab[aria-selected="true"] {
+  border-bottom-color: var(--brand-orange);
+  color: var(--brand-text-dark);
+  font-weight: 800;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 24px;
+  align-items: start;
+}
+
+.list {
+  min-width: 0;
+}
+
+.countRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.count select {
+  margin-left: 4px;
+  padding: 6px 10px;
+  border: 1px solid var(--brand-border);
+  border-radius: 10px;
+  background: var(--white);
+  font: inherit;
+  font-size: 14px;
+}
+
+.clear {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--brand-green);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 20px;
+  border-radius: 18px;
+  background: var(--white);
+}
+
+/* ── One order ── */
+.order {
+  margin-bottom: 18px;
+  overflow: hidden;
+  border: 1px solid var(--brand-border);
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+}
+
+/* The summary strip */
+.strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px 24px;
+  padding: 12px 20px;
+  background: var(--brand-mint-pale);
+  border-bottom: 1px solid var(--brand-border);
+  font-size: 14px;
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 32px;
+  margin: 0;
+}
+
+.facts dt,
+.number span {
+  color: var(--brand-text-muted);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.facts dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.deliverTo details {
+  position: relative;
+}
+
+.deliverTo summary {
+  color: var(--brand-green);
+  cursor: pointer;
+}
+
+.addressPop {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 6px);
+  left: 0;
+  width: max-content;
+  max-width: 260px;
+  padding: 10px 12px;
+  border: 1px solid var(--brand-border);
+  border-radius: 12px;
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+  font-weight: 400;
+  white-space: pre-line;
+}
+
+.number {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  text-align: right;
+}
+
+.number a {
+  font-weight: 700;
+}
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 20px;
+  padding: 18px 20px 20px;
+}
+
+.main {
+  min-width: 0;
+}
+
+.headline {
+  margin: 0;
+  font-size: 20px;
+}
+
+.toneWaiting {
+  color: var(--brand-orange);
+}
+
+.toneActive,
+.toneDone {
+  color: var(--brand-green);
+}
+
+.toneCancelled {
+  color: var(--brand-text-muted);
+}
+
+.sub {
+  margin: 2px 0 10px;
+  color: var(--brand-text-muted);
+  font-size: 14px;
+}
+
+.note {
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--brand-peach);
+  font-size: 13px;
+}
+
+.dishes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dish {
+  display: grid;
+  grid-template-columns: 76px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.dishThumb {
+  width: 76px;
+  height: 76px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.dishOut .dishThumb,
+.dishOut .dishName {
+  opacity: 0.55;
+}
+
+.dishText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+  font-size: 14px;
+}
+
+.dishName {
+  color: var(--brand-text-dark);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.dishAgain {
+  margin-top: 6px;
+}
+
+.changed {
+  color: var(--brand-orange);
+  font-weight: 700;
+}
+
+.out {
+  color: var(--brand-danger);
+  font-weight: 700;
+}
+
+/* A price inside text keeps the text's colour */
+.plain {
+  color: inherit;
+}
+
+.side {
+  min-width: 0;
+}
+
+/* ── Buy it again ── */
+.panel {
+  position: sticky;
+  top: 88px;
+  padding: 18px;
+  border: 1px solid var(--brand-border);
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+}
+
+.panelTitle {
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+
+.panelList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.panelItem {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 12px;
+}
+
+.panelItem + .panelItem {
+  padding-top: 14px;
+  border-top: 1px solid var(--brand-border);
+}
+
+.panelThumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.panelText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 13px;
+}
+
+.panelName {
+  overflow: hidden;
+  color: var(--brand-text-dark);
+  font-size: 15px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.panelEnd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* ── Tablet and phone: everything stacks ── */
+@media (max-width: 1000px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .panel {
+    position: static;
+  }
+}
+
+@media (max-width: 640px) {
+  .body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .strip {
+    padding: 12px 16px;
+  }
+
+  .facts {
+    gap: 8px 20px;
+  }
+
+  .number {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .body {
+    padding: 16px;
+  }
+
+  .dish {
+    grid-template-columns: 64px 1fr;
+  }
+
+  .dishThumb {
+    width: 64px;
+    height: 64px;
+  }
+}

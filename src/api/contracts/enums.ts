@@ -21,3 +21,6 @@ export type DeliveryWindow = 'Asap' | 'TodayEvening' | 'Tomorrow'
 
 /** Where an order is: AwaitingPayment → Paid → Preparing → OutForDelivery → Delivered (or Cancelled). */
 export type OrderStatus = 'AwaitingPayment' | 'Paid' | 'Preparing' | 'OutForDelivery' | 'Delivered' | 'Cancelled'
+
+/** The tabs on My orders (GET /api/orders?show=…): orders grouped the way buyers think about them. */
+export type OrderStatusGroup = 'All' | 'WaitingForPayment' | 'InProgress' | 'Completed' | 'Cancelled'

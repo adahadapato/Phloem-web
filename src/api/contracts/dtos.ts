@@ -245,6 +245,20 @@ export interface OrderSummaryDto {
   /** Unpaid: dishes that ran out (they'd be dropped at payment). */
   outOfStockCount: number
   canCancel: boolean
+  /** When it should arrive. */
+  deliveryWindow: DeliveryWindow
+  /** The address's name when ordered, e.g. "Home". */
+  deliveryLabel: string
+  /** The full address when ordered. */
+  deliveryAddress: string
+  deliveredAt: string | null
+  cancelledAt: string | null
+  /** The shop couldn't make it (it cancelled the order). */
+  declinedByShop: boolean
+  /** Paid, then cancelled: the payment is being refunded. */
+  needsRefund: boolean
+  /** The dishes (unpaid: at today's prices, with what changed or ran out). */
+  lines: OrderLineDto[]
 }
 
 /** One dish of an order. */
@@ -273,7 +287,7 @@ export interface OrderDetailsDto {
   total: number
   currency: Currency
   deliveryWindow: DeliveryWindow
-  /** "As soon as possible", "Tomorrow"… ready to show. */
+  /** The address's name when ordered, e.g. "Home". */
   deliveryLabel: string
   deliveryAddress: string
   placedAt: string
