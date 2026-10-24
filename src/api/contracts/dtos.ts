@@ -2,7 +2,7 @@
  * What the API sends back. Same shapes as the API's DTOs (JSON, camelCase). Dates arrive as ISO text.
  * Grows feature by feature; keep in step with the app's Services/Api/Contracts/Dtos.
  */
-import type { Country, Currency } from './enums'
+import type { Country, Currency, DishCategory } from './enums'
 
 /** Answer of login, register, two-factor, refresh and Google exchange. */
 export interface AuthTokensDto {
@@ -79,4 +79,64 @@ export interface ProfileDto {
 /** GET /api/auth/external/providers: which "Continue with …" buttons to show. */
 export interface ExternalProvidersDto {
   google: boolean
+}
+
+/** One page of a long list. `totalPages`, `hasPrevious` and `hasNext` are worked out by the API. */
+export interface PagedResult<T> {
+  items: T[]
+  totalCount: number
+  page: number
+  pageSize: number
+  totalPages: number
+  hasPrevious: boolean
+  hasNext: boolean
+}
+
+/** A dish in a list (GET /api/dishes). `imageUrl` is the 400×300 thumbnail. */
+export interface DishCardDto {
+  id: string
+  name: string
+  category: DishCategory
+  description: string | null
+  price: number
+  currency: Currency
+  country: Country
+  rating: number
+  ratingCount: number
+  imageUrl: string | null
+  /** The shop's Id (the API says "vendor" here). */
+  vendorId: string
+  vendorName: string
+  isVerifiedShop: boolean
+}
+
+/** A shop in a list (GET /api/shops, /api/shops/top). */
+export interface ShopListItemDto {
+  id: string
+  name: string
+  country: Country
+  isVerified: boolean
+  rating: number
+  ratingCount: number
+  dishCount: number
+  logoUrl: string | null
+  coverPhotoUrl: string | null
+}
+
+/** A shop's page header (GET /api/shops/{id}); its menu is GET /api/dishes?shopId=…. */
+export interface ShopDetailsDto {
+  id: string
+  name: string
+  country: Country
+  currency: Currency
+  isVerified: boolean
+  rating: number
+  ratingCount: number
+  dishCount: number
+  /** The shop's own delivery fee; null = the country's minimum. */
+  deliveryFee: number | null
+  logoUrl: string | null
+  coverPhotoUrl: string | null
+  /** When the shop was approved (ISO), or null. */
+  onPhloemSince: string | null
 }

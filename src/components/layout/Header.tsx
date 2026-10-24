@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router'
-import type { Country } from '../../api/contracts/enums'
-import { useCountry } from '../../state/CountryContext'
 import { useSession } from '../../state/SessionContext'
+import { CountryPicker } from './CountryPicker'
 import styles from './Header.module.css'
 
 /** The main links. Same places as the app's tabs (Home, Explore, Orders, Account), plus parcel tracking. */
@@ -19,7 +18,6 @@ const links = [
  * Log in / the person's name. On phones the links fold into a ☰ menu.
  */
 export function Header() {
-  const { countries, selected, select } = useCountry()
   const { status, profile } = useSession()
   const { pathname } = useLocation()
 
@@ -30,6 +28,7 @@ export function Header() {
 
   return (
     <header className={styles.header}>
+      <span className={styles.ring} aria-hidden="true" />
       <div className={`container ${styles.bar}`}>
         <button type="button" className={styles.menuButton} onClick={() => setMenuOpen((o) => !o)}
                 aria-expanded={menuOpen} aria-controls="main-nav" aria-label="Menu">
@@ -54,18 +53,7 @@ export function Header() {
         </nav>
 
         <div className={styles.actions}>
-          {countries.length > 0 && (
-            <label className={styles.country}>
-              <span className="visually-hidden">Country</span>
-              <select value={selected?.country ?? ''} onChange={(e) => select(e.target.value as Country)}>
-                {countries.map((c) => (
-                  <option key={c.country} value={c.country}>
-                    {c.flag} {c.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
+          <CountryPicker />
 
           {status === 'signedIn' && profile ? (
             <Link to="/account" className={styles.account}>{profile.firstName}</Link>

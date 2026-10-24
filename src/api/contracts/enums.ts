@@ -9,3 +9,9 @@ export type Country = 'Ghana' | 'Nigeria' | 'UnitedKingdom'
 
 /** A currency (each country has one). */
 export type Currency = 'GHS' | 'NGN' | 'GBP'
+
+/** A dish's category (the tabs on Home and Explore). */
+export type DishCategory = 'LocalMeals' | 'Snacks' | 'Drinks'
+
+/** How a dish list is ordered. */
+export type DishSort = 'Rating' | 'PriceLow' | 'PriceHigh'

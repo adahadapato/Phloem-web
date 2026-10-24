@@ -5,11 +5,17 @@
   z-index: 20;
   background: var(--brand-dark);
   color: var(--white);
-  overflow: hidden;
 }
 
-/* The faint ring from the app's header (Ellipse, white 10% stroke) */
-.header::before {
+/* The faint ring from the app's header, in its own clipped layer so drop-downs can still hang below the bar */
+.ring {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ring::before {
   content: "";
   position: absolute;
   top: -230px;
@@ -82,42 +88,6 @@
   margin-left: auto;
 }
 
-/* White flag pill, like the app */
-.country {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  height: 34px;
-  padding: 0 28px 0 10px;
-  background: var(--white);
-  border-radius: 17px;
-  color: var(--brand-text-dark);
-}
-
-.country select {
-  appearance: none;
-  border: 0;
-  background: transparent;
-  font: inherit;
-  font-size: 15px;
-  color: inherit;
-  cursor: pointer;
-  outline: none;
-}
-
-.country::after {
-  content: "";
-  position: absolute;
-  right: 11px;
-  top: 12px;
-  width: 7px;
-  height: 7px;
-  border-right: 2px solid var(--brand-text-dark);
-  border-bottom: 2px solid var(--brand-text-dark);
-  transform: rotate(45deg);
-  pointer-events: none;
-}
-
 .account {
   color: var(--white);
   font-weight: 700;
@@ -182,10 +152,6 @@
     box-shadow: var(--shadow-raised);
   }
 
-  .header:has(.navOpen) {
-    overflow: visible;
-  }
-
   .navOpen .navLink {
     padding: 12px;
   }
@@ -198,11 +164,5 @@
 @media (max-width: 420px) {
   .brand span {
     display: none;
-  }
-
-  /* Phones: the pill keeps the flag and as much of the name as fits */
-  .country select {
-    max-width: 96px;
-    text-overflow: ellipsis;
   }
 }

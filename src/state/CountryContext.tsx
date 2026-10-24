@@ -26,6 +26,8 @@ interface CountryState {
   isLoading: boolean
   /** Set when the list couldn't be loaded. */
   error: Error | null
+  /** Tries to load the list again (after an error). */
+  reload: () => void
 }
 
 const CountryContext = createContext<CountryState | null>(null)
@@ -52,6 +54,7 @@ export function CountryProvider({ children }: { children: ReactNode }) {
     staleTime: 60 * 60 * 1000,   // countries change rarely: one load an hour is plenty
   })
 
+  const { refetch } = query
   const [picked, setPicked] = useState<Country | null>(readSaved)
 
   const value = useMemo<CountryState>(() => {
@@ -72,8 +75,9 @@ export function CountryProvider({ children }: { children: ReactNode }) {
       },
       isLoading: query.isPending,
       error: query.error,
+      reload: () => void refetch(),
     }
-  }, [query.data, query.isPending, query.error, picked])
+  }, [query.data, query.isPending, query.error, refetch, picked])
 
   return <CountryContext.Provider value={value}>{children}</CountryContext.Provider>
 }

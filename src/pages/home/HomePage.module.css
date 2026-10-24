@@ -1,17 +1,80 @@
-/* Home: the app's green hero, Buy / Sell cards and the orange shipping banner. */
+/* Home, laid out like the app: green hero (search on top, title left, dish right), Buy/Sell cards overlapping it,
+   the UK banner, chips, dishes, top sellers. */
+
+/* ── Hero ── */
 .hero {
   position: relative;
   overflow: hidden;
   color: var(--white);
   background: var(--brand-hero-green) url("/images/green-wallpaper.webp") center / cover no-repeat;
+  border-radius: 0 0 28px 28px;
+  padding-top: 22px;
+}
+
+.search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 760px;
+  height: 58px;
+  padding: 0 8px 0 18px;
+  background: var(--white);
+  border-radius: 18px;
+  box-shadow: var(--shadow-raised);
+  color: var(--brand-text-dark);
+}
+
+.searchIcon {
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+
+.search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 16px;
+  color: var(--brand-text-dark);
+  outline: none;
+}
+
+.search input::placeholder {
+  color: var(--brand-text-muted);
+}
+
+.searchDivider {
+  width: 1px;
+  height: 30px;
+  background: var(--brand-border);
+}
+
+.filterButton {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  color: var(--brand-text-dark);
+}
+
+.filterButton:hover {
+  background: var(--brand-mint-pale);
+}
+
+.filterButton svg {
+  width: 26px;
+  height: 26px;
 }
 
 .heroInner {
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: 1.2fr 1fr;
   align-items: center;
-  gap: 32px;
-  padding-block: 48px 72px;
+  gap: 24px;
+  padding-block: 20px 64px;
 }
 
 .greeting {
@@ -20,66 +83,43 @@
 }
 
 .title {
-  margin-top: 8px;
+  margin-top: 4px;
   color: var(--white);
   font-size: var(--text-hero);
   line-height: 1.1;
 }
 
 .subtitle {
-  margin-top: 14px;
+  margin-top: 12px;
   max-width: 460px;
-  color: var(--brand-gold-light);
+  color: rgb(255 255 255 / 0.9);
   font-size: 17px;
-}
-
-.search {
-  display: flex;
-  gap: 8px;
-  margin-top: 24px;
-  max-width: 520px;
-  padding: 6px;
-  background: var(--white);
-  border-radius: 14px;
-  box-shadow: var(--shadow-raised);
-}
-
-.search input {
-  flex: 1;
-  min-width: 0;
-  padding: 0 12px;
-  border: 0;
-  font: inherit;
-  font-size: 16px;
-  color: var(--brand-text-dark);
-  outline: none;
 }
 
 .heroImage {
   width: 100%;
-  max-width: 440px;
-  max-height: 380px;
+  max-width: 420px;
+  max-height: 300px;
   object-fit: contain;
-  justify-self: center;
+  justify-self: end;
   filter: drop-shadow(0 18px 30px rgb(0 0 0 / 0.35));
 }
 
-/* Buy / Sell, overlapping the bottom of the hero like the app's two big buttons */
+/* ── Buy / Sell: tinted cards (mint / peach), icon in a coloured circle, round arrow ── */
 .choices {
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-top: -36px;
+  gap: 14px;
+  margin-top: -34px;
 }
 
 .choice {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 18px 20px;
-  background: var(--white);
-  border-radius: var(--radius-card);
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 20px;
   box-shadow: var(--shadow-card);
   color: var(--brand-text-dark);
   text-decoration: none;
@@ -92,88 +132,272 @@
   text-decoration: none;
 }
 
-.choice img {
-  width: 84px;
-  height: 70px;
+.buy {
+  background: var(--brand-mint-pale);
+}
+
+.sell {
+  background: var(--brand-peach);
+}
+
+.choiceIcon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+}
+
+.buy .choiceIcon {
+  background: var(--brand-green);
+}
+
+.sell .choiceIcon {
+  background: var(--brand-orange-light);
+}
+
+.choiceIcon img {
+  width: 48px;
+  height: 48px;
   object-fit: contain;
 }
 
-.choiceTitle {
-  font-size: 19px;
-  font-weight: 800;
-  color: var(--brand-dark);
+.choiceText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
 }
 
-.choiceSell .choiceTitle {
+.choiceTitle {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.choiceSub {
+  color: var(--brand-text-muted);
+  font-size: 14px;
+}
+
+.arrow {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.buy .arrow {
+  background: var(--brand-mint);
+  color: var(--brand-green);
+}
+
+.sell .arrow {
+  background: var(--white);
   color: var(--brand-orange);
 }
 
-/* Orange "send food to the diaspora" banner: text on the left, the picture on the right fading in from the left
-   (a mask), so there is never a visible edge whatever the banner's height */
-.shipping {
+/* ── UK banner: the WHOLE picture is always shown at the banner's height, anchored left so the plane is never cut.
+   When the banner is wider than the picture, the rest continues in the picture's own oranges (the gradient below
+   matches its right edge, top to bottom) and the picture fades into it. Text sits after the plane, as in the app. ── */
+.banner {
+  --banner-height: clamp(120px, 10vw, 190px);
   position: relative;
   display: flex;
   align-items: center;
-  min-height: 170px;
-  margin-top: 40px;
-  padding: 24px 28px;
+  justify-content: flex-end;
+  gap: 16px;
+  height: var(--banner-height);
+  margin-top: 22px;
+  /* The plane and boxes fill roughly the first third of the picture (picture width ≈ 3 × its height) */
+  padding: 12px 22px 12px calc(var(--banner-height) * 1.05);
   overflow: hidden;
-  border-radius: var(--radius-card);
-  background: linear-gradient(90deg, var(--brand-orange) 30%, #fc4f00);
+  border-radius: 20px;
+  background: linear-gradient(180deg, #fe4d02, #fe5a02 45%, #ea3a03 75%, #f93d04);
   color: var(--white);
+  text-decoration: none;
 }
 
-.shippingImage {
+.banner:hover {
+  text-decoration: none;
+}
+
+.bannerImage {
   position: absolute;
   top: 0;
-  right: 0;
+  left: 0;
   height: 100%;
   width: auto;
   max-width: none;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 22%);
-  mask-image: linear-gradient(90deg, transparent, #000 22%);
-  pointer-events: none;
+  -webkit-mask-image: linear-gradient(270deg, transparent, #000 18%);
+  mask-image: linear-gradient(270deg, transparent, #000 18%);
 }
 
-.shippingText {
+.bannerText {
   position: relative;
-  max-width: 380px;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 520px;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
 }
 
-.shippingText h2 {
+.bannerTitle {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.bannerSub {
+  font-size: 15px;
+}
+
+.bannerArrow {
+  position: relative;
+  background: rgb(255 255 255 / 0.25);
   color: var(--white);
+}
+
+/* ── Chips: Popular · Local Meals · Snacks · Drinks ── */
+.chips {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  margin-top: 26px;
+  padding-bottom: 4px;
+}
+
+.chip {
+  flex: none;
+  padding: 10px 22px;
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  color: var(--brand-text-dark);
+  font: inherit;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.chip:hover {
+  border-color: var(--brand-mint);
+}
+
+.chip[aria-pressed="true"] {
+  background: var(--brand-green);
+  border-color: var(--brand-green);
+  color: var(--white);
+  font-weight: 700;
+}
+
+/* ── Dishes / Top sellers ── */
+.row {
+  margin-top: 26px;
+}
+
+.row + .row {
+  margin-top: 40px;
+}
+
+.rowHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.rowHead h2 {
   font-size: 22px;
 }
 
-.shippingText p {
-  margin: 6px 0 14px;
-}
-
-.next {
-  margin-top: 40px;
-  text-align: center;
-}
-
-@media (max-width: 860px) {
+/* ── Phones ── */
+@media (max-width: 760px) {
   .heroInner {
-    grid-template-columns: 1fr;
-    padding-block: 40px 64px;
+    grid-template-columns: 1fr 0.8fr;
+    gap: 8px;
+    padding-block: 14px 52px;
+  }
+
+  .title {
+    font-size: 28px;
+  }
+
+  .subtitle {
+    font-size: 15px;
   }
 
   .heroImage {
-    max-width: 230px;
-    max-height: 200px;
-    order: -1;
+    max-height: 170px;
+    margin-right: -24px;
+  }
+
+  .choices {
+    gap: 10px;
+  }
+
+  .choice {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .choiceIcon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .choiceIcon img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .choiceTitle {
+    font-size: 16px;
+  }
+
+  .choiceSub {
+    font-size: 12px;
+  }
+
+  .arrow {
+    width: 26px;
+    height: 26px;
+    font-size: 18px;
+  }
+
+  .banner {
+    padding-right: 14px;
+  }
+
+  .bannerTitle {
+    font-size: 16px;
+  }
+
+  .bannerSub {
+    font-size: 12px;
   }
 }
 
-@media (max-width: 560px) {
-  .choices {
-    grid-template-columns: 1fr;
+@media (max-width: 420px) {
+  .search {
+    height: 52px;
   }
 
-  /* Narrow screens: the picture sits faintly behind the text so the text stays readable */
-  .shippingImage {
-    opacity: 0.3;
+  .choice {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+  }
+
+  .choice .arrow {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
   }
 }

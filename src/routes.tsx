@@ -27,16 +27,17 @@ export const router = createBrowserRouter([
     children: [
       { index: true, ...page(() => import('./pages/home/HomePage')) },
       { path: 'about', ...page(() => import('./pages/about/AboutPage')) },
+      { path: 'explore', ...page(() => import('./pages/explore/FoodListingPage')) },
+      { path: 'shops', ...page(() => import('./pages/explore/ShopsPage')) },
+      { path: 'shops/:shopId', ...page(() => import('./pages/explore/ShopPage')) },
 
       // TEMPORARY: open to everyone
-      { path: 'explore', ...comingSoon('Explore dishes') },
-      { path: 'shops', ...comingSoon('Shops') },
-      { path: 'shops/:shopId', ...comingSoon('Shop') },
       { path: 'login', ...comingSoon('Log in') },
       { path: 'register', ...comingSoon('Create an account') },
       { path: 'confirm-email', ...comingSoon('Confirm your email') },
       { path: 'reset-password', ...comingSoon('Choose a new password') },
       { path: 'track', ...comingSoon('Track a parcel') },
+      { path: 'send-parcel', ...comingSoon('Send a parcel') },
       { path: 'cart', ...comingSoon('Your basket') },
       { path: 'sell', ...comingSoon('Sell food on Phloem') },
 

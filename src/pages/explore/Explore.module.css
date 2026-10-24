@@ -1,0 +1,144 @@
+/* Shared by Explore, Shops and a shop's page. */
+.page {
+  padding-block: 28px 8px;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.search {
+  display: flex;
+  flex: 1 1 280px;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 12px;
+  background: var(--white);
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-field);
+}
+
+.search:focus-within {
+  border-color: var(--brand-green);
+  box-shadow: 0 0 0 3px rgb(4 99 52 / 0.15);
+}
+
+.search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  outline: none;
+}
+
+.select {
+  min-height: 48px;
+  padding: 0 12px;
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-field);
+  background: var(--white);
+  font: inherit;
+  color: var(--brand-text-dark);
+}
+
+/* Category tabs, like the app's (Popular · Local Meals · Snacks · Drinks) */
+.tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin-bottom: 20px;
+  padding-bottom: 4px;
+}
+
+.tab {
+  flex: none;
+  padding: 8px 16px;
+  border: 1px solid var(--brand-mint);
+  border-radius: var(--radius-pill);
+  background: var(--brand-mint-pale);
+  color: var(--brand-green);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tab[aria-pressed="true"] {
+  background: var(--brand-dark);
+  border-color: var(--brand-dark);
+  color: var(--white);
+}
+
+.count {
+  margin-bottom: 12px;
+}
+
+/* A shop's page */
+.shopHero {
+  position: relative;
+  height: 220px;
+  background: var(--brand-dark) url("/images/green-wallpaper.webp") center / cover no-repeat;
+}
+
+.shopHero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Only the round logo overlaps the cover; the name sits below it on the page background */
+.shopHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  padding-top: 14px;
+  margin-bottom: 24px;
+}
+
+.shopLogo {
+  position: relative;
+  width: 104px;
+  height: 104px;
+  border: 4px solid var(--white);
+  border-radius: 50%;
+  object-fit: cover;
+  aspect-ratio: 1;
+  background: var(--brand-mint-pale);
+  box-shadow: var(--shadow-card);
+  margin-top: -66px;
+}
+
+.shopFacts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-top: 6px;
+}
+
+@media (max-width: 560px) {
+  .shopHero {
+    height: 150px;
+  }
+
+  .shopLogo {
+    width: 84px;
+    height: 84px;
+  }
+}
