@@ -1,0 +1,19 @@
+/* The app's StatusBanner: a soft green note, or red for a problem. */
+.banner {
+  padding: 12px 14px;
+  border-radius: var(--radius-field);
+  font-size: 14px;
+  white-space: pre-line;   /* the API's field errors arrive one per line */
+}
+
+.info {
+  background: var(--brand-mint-pale);
+  color: var(--brand-dark);
+  border: 1px solid var(--brand-mint);
+}
+
+.error {
+  background: #fdecea;
+  color: var(--brand-danger);
+  border: 1px solid #f5c6c0;
+}

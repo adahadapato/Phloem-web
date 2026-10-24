@@ -1,0 +1,76 @@
+.footer {
+  margin-top: 56px;
+  background: var(--brand-nav-green);
+  color: rgb(255 255 255 / 0.8);
+  font-size: 14px;
+}
+
+.inner {
+  display: grid;
+  grid-template-columns: 2fr repeat(2, 1fr);
+  gap: 32px;
+  padding-block: 40px 28px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--white);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.brand img {
+  width: 40px;
+  height: 40px;
+}
+
+.about {
+  margin-top: 10px;
+  max-width: 380px;
+}
+
+.heading {
+  margin-bottom: 10px;
+  color: var(--brand-gold);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.links a {
+  color: rgb(255 255 255 / 0.85);
+  font-weight: 500;
+}
+
+.links a:hover {
+  color: var(--white);
+}
+
+.bottom {
+  padding-block: 16px;
+  border-top: 1px solid rgb(255 255 255 / 0.1);
+  font-size: var(--text-xs);
+  color: rgb(255 255 255 / 0.6);
+}
+
+@media (max-width: 700px) {
+  .inner {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .inner > :first-child {
+    grid-column: 1 / -1;
+  }
+}

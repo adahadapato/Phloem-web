@@ -1,0 +1,88 @@
+/* The app's buttons (Styles.xaml): 52px high, 12px rounded, bold. */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: var(--control-height);
+  padding: 0 20px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-field);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.button:hover {
+  text-decoration: none;
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.full {
+  width: 100%;
+}
+
+/* PrimaryButton: deep emerald */
+.primary {
+  background: var(--brand-dark);
+  color: var(--white);
+}
+.primary:hover:not(:disabled) {
+  background: var(--brand-green);
+}
+
+/* SecondaryButton: mint */
+.secondary {
+  background: var(--brand-mint);
+  color: var(--brand-dark);
+}
+.secondary:hover:not(:disabled) {
+  background: #bfe2cb;
+}
+
+/* CtaButton: orange call-to-action */
+.cta {
+  background: var(--brand-orange);
+  color: var(--white);
+}
+.cta:hover:not(:disabled) {
+  background: var(--brand-orange-dark);
+}
+
+/* OutlineButton: pale mint with a border */
+.outline {
+  background: var(--brand-mint-pale);
+  color: var(--brand-green);
+  border-color: var(--brand-mint);
+}
+.outline:hover:not(:disabled) {
+  background: var(--brand-mint);
+}
+
+/* White button with a grey border (e.g. "Continue with Google") */
+.plain {
+  background: var(--white);
+  color: #1f1f1f;
+  border-color: #747775;
+}
+.plain:hover:not(:disabled) {
+  background: #f7f7f7;
+}
+
+.small {
+  min-height: 40px;
+  padding: 0 14px;
+  font-size: 14px;
+}

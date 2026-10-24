@@ -1,0 +1,53 @@
+/*
+  Phloem design tokens: the SAME colours as the mobile app (Resources/Styles/Colors.xaml).
+  Change a colour here and the whole website follows. Keep the names in step with the app.
+*/
+:root {
+  /* ── Brand (Colors.xaml) ── */
+  --brand-dark: #043d1f;          /* BrandDark: headers, main buttons */
+  --brand-green: #046334;         /* BrandGreen: primary buttons, links */
+  --brand-green-dark: #012411;    /* BrandGreenDark */
+  --brand-hero-green: #013a1d;    /* BrandHeroGreen */
+  --brand-leaf-green: #125329;    /* BrandLeafGreen */
+  --brand-nav-green: #002f1d;     /* BrandNavGreen: footer */
+  --brand-gold: #f4a51a;          /* BrandGold: eyebrows, accents */
+  --brand-gold-light: #d0ebd9;    /* BrandGoldLight */
+  --brand-orange: #e23902;        /* BrandOrange: call-to-action */
+  --brand-orange-light: #f44d08;  /* BrandOrangeLight */
+  --brand-orange-dark: #b22a01;   /* BrandOrangeDark */
+  --brand-price: #e34b11;         /* BrandPrice: prices */
+  --brand-star: #f4a51a;          /* BrandStar: ratings */
+  --brand-cream: #f8f5ef;         /* BrandCream: page background */
+  --brand-card: #fcfbfa;          /* BrandCard: cards, fields */
+  --brand-mint: #d0ebd9;          /* BrandMint: secondary buttons */
+  --brand-mint-pale: #f2f9f3;     /* BrandMintPale */
+  --brand-peach: #fdf3e6;         /* BrandPeach */
+  --brand-border: #e7e2d7;        /* BrandBorder */
+  --brand-text-dark: #070f19;     /* BrandTextDark */
+  --brand-text-muted: #4a5861;    /* BrandTextMuted */
+  --brand-danger: #c0392b;        /* BrandDanger */
+  --brand-success: #046334;       /* BrandSuccess */
+  --white: #ffffff;
+
+  /* ── Shape and depth (Styles.xaml: CornerRadius 12 / 16, soft shadows) ── */
+  --radius-field: 12px;
+  --radius-card: 16px;
+  --radius-pill: 999px;
+  --shadow-card: 0 4px 14px rgb(0 0 0 / 0.07);
+  --shadow-raised: 0 8px 24px rgb(0 0 0 / 0.12);
+
+  /* ── Type (the app uses each phone's system font; so does the site) ── */
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --text-xs: 12px;     /* SubtleLabel */
+  --text-sm: 13px;     /* LinkLabel, Eyebrow */
+  --text-md: 15px;     /* fields */
+  --text-lg: 19px;     /* SectionTitle */
+  --text-xl: 26px;     /* page titles */
+  --text-hero: clamp(30px, 5vw, 46px);  /* HeroTitle (34 on the phone) */
+
+  /* ── Layout ── */
+  --page-max: 1200px;
+  --gutter: 16px;
+  --header-height: 72px;
+  --control-height: 52px;   /* buttons and fields, like the app */
+}

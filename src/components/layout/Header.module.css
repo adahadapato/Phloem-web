@@ -1,0 +1,208 @@
+/* The app's green header: deep emerald, a faint ring in the corner, logo + "Phloem", white flag pill. */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--brand-dark);
+  color: var(--white);
+  overflow: hidden;
+}
+
+/* The faint ring from the app's header (Ellipse, white 10% stroke) */
+.header::before {
+  content: "";
+  position: absolute;
+  top: -230px;
+  left: -140px;
+  width: 320px;
+  height: 320px;
+  border: 10px solid rgb(255 255 255 / 0.05);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: var(--header-height);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--white);
+  font-size: 22px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.brand:hover {
+  text-decoration: none;
+}
+
+.brand img {
+  width: 38px;
+  height: 38px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 12px;
+}
+
+.navLink {
+  padding: 8px 12px;
+  border-radius: 10px;
+  color: rgb(255 255 255 / 0.85);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.navLink:hover {
+  background: rgb(255 255 255 / 0.08);
+  color: var(--white);
+  text-decoration: none;
+}
+
+.active {
+  color: var(--white);
+  background: rgb(255 255 255 / 0.12);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+/* White flag pill, like the app */
+.country {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0 28px 0 10px;
+  background: var(--white);
+  border-radius: 17px;
+  color: var(--brand-text-dark);
+}
+
+.country select {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 15px;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+.country::after {
+  content: "";
+  position: absolute;
+  right: 11px;
+  top: 12px;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid var(--brand-text-dark);
+  border-bottom: 2px solid var(--brand-text-dark);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+.account {
+  color: var(--white);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.signIn {
+  display: inline-flex;
+  align-items: center;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 10px;
+  background: var(--brand-orange);
+  color: var(--white);
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.signIn:hover {
+  background: var(--brand-orange-dark);
+  text-decoration: none;
+}
+
+.menuButton {
+  display: none;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--white);
+  cursor: pointer;
+}
+
+/* Phones and small tablets: links move into a drop-down menu (the app's ☰) */
+@media (max-width: 860px) {
+  .menuButton {
+    display: grid;
+    place-items: center;
+    order: -1;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .navOpen {
+    position: absolute;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    margin: 0;
+    padding: 8px var(--gutter) 16px;
+    background: var(--brand-dark);
+    box-shadow: var(--shadow-raised);
+  }
+
+  .header:has(.navOpen) {
+    overflow: visible;
+  }
+
+  .navOpen .navLink {
+    padding: 12px;
+  }
+
+  .account {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .brand span {
+    display: none;
+  }
+
+  /* Phones: the pill keeps the flag and as much of the name as fits */
+  .country select {
+    max-width: 96px;
+    text-overflow: ellipsis;
+  }
+}
