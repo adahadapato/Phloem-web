@@ -34,7 +34,10 @@ export function Footer() {
           </ul>
         </nav>
       </div>
-      <div className={`container ${styles.bottom}`}>© {new Date().getFullYear()} Phloem</div>
+      <div className={`container ${styles.bottom}`}>
+        © {new Date().getFullYear()} Phloem · <Link to="/terms">Terms &amp; Conditions</Link> ·{' '}
+        <Link to="/privacy">Privacy Policy</Link>
+      </div>
     </footer>
   )
 }

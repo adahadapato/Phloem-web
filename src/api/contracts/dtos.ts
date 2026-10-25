@@ -4,7 +4,7 @@
  */
 import type {
   CatalogGroup, Country, Currency, DeliverySpeed, DeliveryWindow, DishCategory, DocumentStatus, OrderStatus, ShipmentItemCategory,
-  ShipmentStatus, VendorDocumentType, VendorStatus,
+  LegalDocumentType, ShipmentStatus, VendorDocumentType, VendorStatus,
 } from './enums'
 
 /** Answer of login, register, two-factor, refresh and Google exchange. */
@@ -596,4 +596,16 @@ export interface MyDeliveryFeeDto {
   minAllowed: number
   maxAllowed: number
   currency: Currency
+}
+
+/** GET /api/legal/{type}: the current Terms or Privacy Policy. */
+export interface LegalDocumentDto {
+  type: LegalDocumentType
+  version: number
+  title: string
+  /** Markdown; headings may end with {#anchor} so links can open a section. */
+  content: string
+  /** Temporary wording: show a "Draft" note. */
+  isDraft: boolean
+  publishedAt: string
 }

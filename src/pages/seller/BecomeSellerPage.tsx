@@ -184,7 +184,10 @@ export default function BecomeSellerPage() {
                   Submit seller profile
                 </Button>
               </div>
-              <p className="muted" style={{ fontSize: 13 }}>Your store goes live after approval.</p>
+              <p className="muted" style={{ fontSize: 13 }}>
+                Your store goes live after approval. By opening a shop you agree to the{' '}
+                <a href="/terms#sellers" target="_blank" rel="noopener">Seller terms</a>.
+              </p>
             </form>
           </>
         )}

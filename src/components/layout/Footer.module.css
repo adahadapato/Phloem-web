@@ -74,3 +74,11 @@
     grid-column: 1 / -1;
   }
 }
+
+.bottom a {
+  color: rgb(255 255 255 / 0.8);
+}
+
+.bottom a:hover {
+  color: var(--white);
+}

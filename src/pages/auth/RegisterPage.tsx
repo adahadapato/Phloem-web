@@ -138,7 +138,10 @@ export default function RegisterPage() {
 
           <label className={styles.check}>
             <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} />
-            I agree to the Terms &amp; Conditions
+            <span>
+              I agree to the <a href="/terms" target="_blank" rel="noopener">Terms &amp; Conditions</a> and have read
+              the <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>
+            </span>
           </label>
 
           {/* Next to the button, so the message is seen on this long form */}

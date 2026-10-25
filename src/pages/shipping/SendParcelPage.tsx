@@ -345,7 +345,7 @@ export default function SendParcelPage() {
               </label>
               <label className={styles.check}>
                 <input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} />
-                <span>I accept the shipping terms.</span>
+                <span>I accept the <a href="/terms#parcels" target="_blank" rel="noopener">shipping terms</a>.</span>
               </label>
             </section>
           </div>

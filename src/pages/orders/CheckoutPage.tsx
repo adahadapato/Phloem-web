@@ -409,6 +409,9 @@ export default function CheckoutPage() {
                                                                                  className={styles.plain} /></>}
             </Button>
             {!address && <p className="muted" style={{ fontSize: 13 }}>Add a delivery address to place your order.</p>}
+            <p className="muted" style={{ fontSize: 12 }}>
+              By placing your order you agree to the <a href="/terms#buyers" target="_blank" rel="noopener">Terms</a>.
+            </p>
           </div>
         </aside>
       </div>
