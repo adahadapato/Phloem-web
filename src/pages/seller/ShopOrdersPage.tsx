@@ -79,8 +79,14 @@ function ShopOrderCard({ o, highlighted, busy, onAction }: {
           <p className={styles.ordered}><span className="muted">What they ordered:</span> {o.itemsSummary}
             <span className="muted"> · {o.itemCount} {o.itemCount === 1 ? 'item' : 'items'}</span></p>
           <p className={styles.deliverTo}>
-            <span className="muted">Deliver to</span> <strong>{o.deliveryLabel}</strong>
+            <span className="muted">Deliver to</span> <strong>{o.deliveryRecipientName ?? o.customerName}</strong>
+            <span className="muted"> · {o.deliveryLabel}</span>
             <span className={styles.block} style={{ whiteSpace: 'pre-line' }}>{o.deliveryAddress}</span>
+            {o.deliveryPhone && (
+              <span className={styles.block}>
+                <span className="muted">Call</span> <a href={`tel:${o.deliveryPhone}`}>{o.deliveryPhone}</a>
+              </span>
+            )}
           </p>
         </div>
 

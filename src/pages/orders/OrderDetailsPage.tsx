@@ -176,7 +176,9 @@ export default function OrderDetailsPage() {
             <dt>Delivery address</dt>
             <dd style={{ whiteSpace: 'pre-line' }}>
               {order.deliveryLabel && <span className={styles.addressLabel}>{order.deliveryLabel}</span>}
+              {order.deliveryRecipientName && <strong>{order.deliveryRecipientName}{'\n'}</strong>}
               {order.deliveryAddress}
+              {order.deliveryPhone && `\n${order.deliveryPhone}`}
             </dd>
             <dt>Payment</dt>
             <dd>{unpaid ? 'Not paid yet' : order.paidAt ? `Paid ${dateTimeText(order.paidAt)}` : 'Not paid'}</dd>

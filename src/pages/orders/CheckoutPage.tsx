@@ -334,7 +334,8 @@ export default function CheckoutPage() {
                       <input type="radio" name="address" checked={a.id === address?.id}
                              onChange={() => setPickedAddressId(a.id)} />
                       <span>
-                        <strong>📍 {a.label}</strong>{a.isDefault && <span className="muted"> · default</span>}
+                        <strong>📍 {a.label}</strong>{a.isDefault && <span className="muted"> · primary</span>}
+                        {a.recipientName && <span className={styles.optionSub}>For {a.recipientName}</span>}
                         <span className={`muted ${styles.optionSub}`}>{a.fullAddress}</span>
                       </span>
                     </label>

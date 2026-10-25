@@ -42,6 +42,10 @@ export interface AddressDto {
   fullAddress: string
   country: Country
   isDefault: boolean
+  /** Who receives the food; null = the account holder (show their name). Missing on an older API. */
+  recipientName?: string | null
+  /** Who the seller calls, e.g. "+447700900123"; null = the account holder's phone. */
+  phoneNumber?: string | null
 }
 
 /** The home address on the profile (needed to open a shop or send a parcel). */
@@ -305,6 +309,10 @@ export interface OrderDetailsDto {
   viewedBySeller: boolean
   declinedByShop: boolean
   declineReason: string | null
+  /** Who receives it (the address's name, else the customer's). Missing on an older API. */
+  deliveryRecipientName?: string
+  /** Who the seller calls (the address's phone, else the customer's); null if neither. */
+  deliveryPhone?: string | null
 }
 
 /** GET /api/orders/{n}/buy-again: what can go back in the basket (today's dishes only). */
@@ -528,6 +536,10 @@ export interface ShopOrderSummaryDto {
   deliveryWindow: DeliveryWindow
   deliveryLabel: string
   deliveryAddress: string
+  /** Who receives it (the address's name, else the customer's). Missing on an older API. */
+  deliveryRecipientName?: string
+  /** Who to call (the address's phone, else the customer's); null if neither. */
+  deliveryPhone?: string | null
 }
 
 /** One bar of the weekly sales chart. */

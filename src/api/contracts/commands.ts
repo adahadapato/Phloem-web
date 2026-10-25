@@ -92,6 +92,10 @@ export interface AddAddressCommand {
   fullAddress: string
   country: Country
   makeDefault: boolean
+  /** Who receives the food; empty = me. */
+  recipientName?: string | null
+  /** Who the seller calls; empty = my phone. */
+  phoneNumber?: string | null
 }
 
 /** PUT /api/me/addresses/{id} */
@@ -99,6 +103,8 @@ export interface AddressRequest {
   label: string
   fullAddress: string
   country: Country
+  recipientName?: string | null
+  phoneNumber?: string | null
 }
 
 /** PUT /api/me/notifications */

@@ -1,0 +1,152 @@
+/* Delivery addresses: primary on its own, then the others; text on the left, buttons on the right. */
+.inner {
+  max-width: 900px;
+  margin-inline: auto;
+}
+
+.card {
+  padding: 8px 28px 24px;
+  border: 1px solid var(--brand-border);
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+}
+
+.section {
+  padding-top: 20px;
+}
+
+.section + .section {
+  margin-top: 8px;
+}
+
+.sectionTitle {
+  margin: 0 0 4px;
+  font-size: 22px;
+}
+
+/* One address */
+.entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 16px 32px;
+  align-items: start;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--brand-border);
+}
+
+.entry:has(form) {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.tag {
+  align-self: flex-start;
+  margin-bottom: 4px;
+  padding: 1px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--brand-mint-pale);
+  color: var(--brand-green);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.name {
+  color: var(--brand-text-dark);
+  font-size: 16px;
+}
+
+.lines {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+/* The buttons: one per line, full width of the column */
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.buttons > * {
+  width: 100%;
+}
+
+.delete {
+  border-color: var(--brand-danger) !important;
+  color: var(--brand-danger) !important;
+}
+
+.confirm {
+  font-weight: 700;
+  text-align: center;
+}
+
+.hint {
+  margin: 8px 0 0;
+  color: var(--brand-text-muted);
+  font-size: 13px;
+}
+
+.add {
+  padding-top: 20px;
+}
+
+/* The add / edit form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--brand-border);
+  border-radius: 14px;
+  background: var(--brand-cream);
+}
+
+.formTitle {
+  margin: 0;
+  font-size: 18px;
+}
+
+.two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.two + .hint {
+  margin-top: -8px;
+}
+
+/* Phone: buttons under the address, side by side */
+@media (max-width: 640px) {
+  .card {
+    padding: 4px 16px 20px;
+  }
+
+  .entry {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .buttons > * {
+    width: auto;
+    flex: 1 1 auto;
+  }
+
+  .two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
