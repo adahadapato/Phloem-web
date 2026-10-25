@@ -17,7 +17,9 @@ import styles from './MyOrders.module.css'
 import { ActionBanner, OrderButtons } from './OrderParts'
 import { useOrderActions } from './useOrderActions'
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 5
+/** Dishes shown per order in the list; the rest are counted ("+2 more") and shown on the order's page. */
+const DISHES_SHOWN = 3
 
 /** The tabs, in order. */
 const TABS: { value: OrderStatusGroup; label: string }[] = [
@@ -126,12 +128,14 @@ function OrderCard({ order: o, actions }: { order: OrderSummaryDto; actions: Ret
             </p>
           )}
 
+          {/* An older API (before 25 Oct 2026) sends no dishes: show its one-line summary instead */}
+          {!o.lines && <p className={styles.sub}>{o.itemsSummary}</p>}
           <ul className={styles.dishes}>
-            {o.lines.map((line) => (
+            {(o.lines ?? []).slice(0, DISHES_SHOWN).map((line) => (
               <li key={line.dishId} className={`${styles.dish} ${line.isOutOfStock ? styles.dishOut : ''}`}>
                 <ApiImage src={line.imageUrl} alt="" className={styles.dishThumb} />
                 <div className={styles.dishText}>
-                  <Link to={link} className={styles.dishName}>{line.dishName}</Link>
+                  <Link to={link} className={styles.dishName} title={line.dishName}>{line.dishName}</Link>
                   <span className="muted">
                     {line.quantity} × <Price amount={line.unitPrice} currency={o.currency} className={styles.plain} />
                     {line.priceChanged && line.priceWhenAdded !== null && (
@@ -139,20 +143,25 @@ function OrderCard({ order: o, actions }: { order: OrderSummaryDto; actions: Ret
                     )}
                     {line.isOutOfStock && <> · <span className={styles.out}>Out of stock</span></>}
                   </span>
-                  <Button small variant="secondary" className={styles.dishAgain}
-                          busy={actions.busy === `dish:${o.orderNumber}:${line.dishId}`} busyText="Adding…"
+                  <button type="button" className={styles.dishAgain}
                           disabled={!!actions.busy || line.isOutOfStock}
+                          aria-label={`Buy ${line.dishName} again`}
                           onClick={() => actions.buyDishAgain(o.orderNumber, line.dishId, line.quantity)}>
-                    ↻ Buy it again
-                  </Button>
+                    {actions.busy === `dish:${o.orderNumber}:${line.dishId}` ? 'Adding…' : '↻ Buy it again'}
+                  </button>
                 </div>
               </li>
             ))}
+            {(o.lines?.length ?? 0) > DISHES_SHOWN && (
+              <li className={styles.moreDishes}>
+                <Link to={link}>+{o.lines!.length - DISHES_SHOWN} more</Link>
+              </li>
+            )}
           </ul>
         </div>
 
         <div className={styles.side}>
-          <OrderButtons orderNumber={o.orderNumber} status={o.status} canCancel={o.canCancel} actions={actions} stacked />
+          <OrderButtons orderNumber={o.orderNumber} status={o.status} canCancel={o.canCancel} actions={actions} stacked compact />
         </div>
       </div>
     </article>
@@ -161,10 +170,11 @@ function OrderCard({ order: o, actions }: { order: OrderSummaryDto; actions: Ret
 
 /**
  * My orders, laid out for a big screen (ideas from big shops' order pages, in Phloem's colours):
+ * - 5 orders a page, with a small page switcher at the top as well as Previous / Next at the bottom;
  * - tabs (All, Waiting for payment, In progress, Completed, Cancelled), how far back ("in the past 3 months"),
  *   and a search box (order number, shop or dish); all kept in the address, so Back and refresh keep them;
  * - each order: a mint summary strip (placed, total, deliver to, order number + details), the status as a heading
- *   ("Delivered 24 October"), each dish with its own "Buy it again", and the buttons in a column on the right
+ *   ("Delivered 24 October"), up to 3 dishes side by side (each with "Buy it again"; "+2 more" for the rest), and the buttons in a column on the right
  *   (Pay now / Track order in orange, then Buy again and Cancel);
  * - "Buy it again" beside the list: favourites still on sale, with the green +.
  * On a phone everything stacks: buttons under the order, the panel under the list.
@@ -202,6 +212,7 @@ export default function OrdersPage() {
   })
   const orders = query.data?.items ?? []
   const total = query.data?.totalCount ?? 0
+  const totalPages = query.data?.totalPages ?? 1
   const filtered = show !== 'All' || !!search || period !== 'all'
 
   const onSearch = (event: FormEvent) => {
@@ -248,6 +259,15 @@ export default function OrdersPage() {
                 Clear search
               </button>
             )}
+            {totalPages > 1 && (
+              <nav className={styles.miniPager} aria-label="Pages (top)">
+                <button type="button" disabled={page <= 1} onClick={() => update({ page: page - 1 })}
+                        aria-label="Previous page">‹</button>
+                <span>Page {page} of {totalPages}</span>
+                <button type="button" disabled={page >= totalPages} onClick={() => update({ page: page + 1 })}
+                        aria-label="Next page">›</button>
+              </nav>
+            )}
           </div>
 
           <ActionBanner actions={actions} />
@@ -275,7 +295,7 @@ export default function OrdersPage() {
 
           {orders.map((o) => <OrderCard key={o.orderNumber} order={o} actions={actions} />)}
 
-          <Pager page={page} totalPages={query.data?.totalPages ?? 1}
+          <Pager page={page} totalPages={totalPages}
                  onChange={(p) => { update({ page: p }); globalThis.scrollTo?.({ top: 0 }) }} />
         </div>
 

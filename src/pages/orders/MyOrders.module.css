@@ -213,9 +213,9 @@
 
 .body {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 220px;
+  grid-template-columns: minmax(0, 1fr) 200px;
   gap: 20px;
-  padding: 18px 20px 20px;
+  padding: 14px 20px 16px;
 }
 
 .main {
@@ -224,7 +224,7 @@
 
 .headline {
   margin: 0;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .toneWaiting {
@@ -254,10 +254,11 @@
   font-size: 13px;
 }
 
+/* Dishes side by side as small tiles (3 at most, then "+2 more") */
 .dishes {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -265,15 +266,18 @@
 
 .dish {
   display: grid;
-  grid-template-columns: 76px 1fr;
-  gap: 14px;
-  align-items: start;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  padding: 8px;
+  border: 1px solid var(--brand-border);
+  border-radius: 14px;
 }
 
 .dishThumb {
-  width: 76px;
-  height: 76px;
-  border-radius: 12px;
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
   object-fit: cover;
 }
 
@@ -285,20 +289,50 @@
 .dishText {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
   min-width: 0;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .dishName {
+  overflow: hidden;
   color: var(--brand-text-dark);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
+/* "↻ Buy it again": a small link-style button, not a big block */
 .dishAgain {
-  margin-top: 6px;
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--brand-green);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.dishAgain:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.dishAgain:disabled {
+  color: var(--brand-text-muted);
+  cursor: not-allowed;
+}
+
+.moreDishes {
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  border: 1px dashed var(--brand-border);
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .changed {
@@ -318,6 +352,36 @@
 
 .side {
   min-width: 0;
+}
+
+/* The small page switcher next to the count */
+.miniPager {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  font-size: 14px;
+}
+
+.miniPager button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1.5px solid var(--brand-border);
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--brand-green);
+  font: inherit;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.miniPager button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 /* ── Buy it again ── */
@@ -420,12 +484,7 @@
     padding: 16px;
   }
 
-  .dish {
-    grid-template-columns: 64px 1fr;
-  }
-
-  .dishThumb {
-    width: 64px;
-    height: 64px;
+  .dishes {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

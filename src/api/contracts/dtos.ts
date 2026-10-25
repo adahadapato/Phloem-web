@@ -260,8 +260,8 @@ export interface OrderSummaryDto {
   declinedByShop: boolean
   /** Paid, then cancelled: the payment is being refunded. */
   needsRefund: boolean
-  /** The dishes (unpaid: at today's prices, with what changed or ran out). */
-  lines: OrderLineDto[]
+  /** The dishes (unpaid: at today's prices, with what changed or ran out). Missing from APIs before 25 Oct 2026. */
+  lines?: OrderLineDto[]
 }
 
 /** One dish of an order. */

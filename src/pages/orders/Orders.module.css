@@ -623,3 +623,9 @@
   background: var(--white);
   color: var(--brand-green);
 }
+
+/* The smaller "Track order" in the My orders list */
+.trackSmall {
+  min-height: 40px;
+  font-size: 15px;
+}

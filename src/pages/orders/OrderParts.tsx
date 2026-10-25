@@ -34,7 +34,7 @@ export function ActionBanner({ actions }: { actions: Actions }) {
  * a refund follows). `stacked` (My orders) puts them in a column, the main one first in orange: Pay now while
  * unpaid, otherwise Track order (opens the order).
  */
-export function OrderButtons({ orderNumber, status, canCancel, actions, full, stacked }: {
+export function OrderButtons({ orderNumber, status, canCancel, actions, full, stacked, compact }: {
   orderNumber: string
   status: OrderStatus
   canCancel: boolean
@@ -43,9 +43,11 @@ export function OrderButtons({ orderNumber, status, canCancel, actions, full, st
   full?: boolean
   /** One full-width button per line, main one first (My orders). */
   stacked?: boolean
+  /** Smaller buttons (the My orders list, so each order takes less room). */
+  compact?: boolean
 }) {
   const { busy } = actions
-  const small = !full && !stacked
+  const small = (!full && !stacked) || !!compact
   const column = stacked ? `${styles.buttons} ${styles.stacked}` : styles.buttons
 
   if (actions.confirmCancel === orderNumber) {
@@ -70,7 +72,8 @@ export function OrderButtons({ orderNumber, status, canCancel, actions, full, st
     <div className={column}>
       {stacked && status !== 'AwaitingPayment' && (
         <Link to={`/orders/${encodeURIComponent(orderNumber)}`}
-              className={`${styles.trackLink} ${status === 'Cancelled' || status === 'Delivered' ? styles.trackPlain : ''}`}>
+              className={[styles.trackLink, (status === 'Cancelled' || status === 'Delivered') && styles.trackPlain,
+                           compact && styles.trackSmall].filter(Boolean).join(' ')}>
           {status === 'Cancelled' || status === 'Delivered' ? 'View order' : 'Track order'}
         </Link>
       )}
