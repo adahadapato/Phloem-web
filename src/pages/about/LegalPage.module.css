@@ -40,6 +40,8 @@
 }
 
 .other {
+  display: block;
+  margin-top: 8px;
   font-weight: 700;
 }
 

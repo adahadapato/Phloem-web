@@ -426,6 +426,90 @@
   accent-color: var(--brand-green);
 }
 
+/* "What we can't carry" (from the API), above the tick boxes */
+.rules {
+  scroll-margin-top: 96px;
+  padding: 14px 16px;
+  border: 1px solid var(--brand-border);
+  border-radius: 14px;
+  background: var(--brand-cream);
+  font-size: 14px;
+}
+
+.rulesTitle {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
+.rulesGroups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px 24px;
+}
+
+.rulesHead {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.rulesNo {
+  color: var(--brand-danger);
+}
+
+.rulesMaybe {
+  color: var(--brand-orange);
+}
+
+.rulesList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rulesList li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.ruleMark {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  border-radius: 50%;
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.ruleMarkNo {
+  background: var(--brand-danger);
+}
+
+.ruleMarkMaybe {
+  background: var(--brand-orange);
+}
+
+.rulesNote {
+  margin: 10px 0 0;
+  color: var(--brand-text-muted);
+  font-size: 13px;
+}
+
+.rulesError {
+  margin: 0;
+  color: var(--brand-text-muted);
+}
+
 .sums {
   display: grid;
   grid-template-columns: auto 1fr;

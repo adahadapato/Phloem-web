@@ -29,6 +29,7 @@ export function Footer() {
           <p className={styles.heading}>Phloem</p>
           <ul className={styles.links}>
             <li><Link to="/track">Track a parcel</Link></li>
+            <li><Link to="/help">Help &amp; support</Link></li>
             <li><Link to="/about">About Phloem</Link></li>
             <li><Link to="/register">Create an account</Link></li>
           </ul>

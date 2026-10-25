@@ -13,6 +13,7 @@ import { Price } from '../../components/ui/Price'
 import { StatusBanner } from '../../components/ui/StatusBanner'
 import { useCountry } from '../../state/CountryContext'
 import { useSession } from '../../state/SessionContext'
+import { ParcelRules } from './ParcelRules'
 import { RouteText } from './ShipmentParts'
 import styles from './Shipping.module.css'
 
@@ -339,9 +340,10 @@ export default function SendParcelPage() {
             {/* 6. Confirm */}
             <section className={styles.card} aria-labelledby="s6">
               <h2 id="s6" className={styles.sectionTitle}><span className={styles.num}>6</span> Please confirm</h2>
+              <ParcelRules />
               <label className={styles.check}>
                 <input type="checkbox" checked={noProhibited} onChange={(e) => setNoProhibited(e.target.checked)} />
-                <span>My parcel contains no prohibited items (no fresh meat, liquids over 1 litre, weapons, drugs or cash).</span>
+                <span>My parcel contains none of the items we can't carry, and follows the conditions above.</span>
               </label>
               <label className={styles.check}>
                 <input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} />

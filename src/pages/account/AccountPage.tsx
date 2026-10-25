@@ -20,6 +20,10 @@ const ICONS: Record<string, ReactNode> = {
   lock: <><rect x="5" y="10" width="14" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></>,
   phone: <><rect x="7" y="2.5" width="10" height="19" rx="2" /><path d="M11 18h2" /></>,
   bell: <><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z" /><path d="M10 20a2 2 0 0 0 4 0" /></>,
+  help: <><circle cx="12" cy="12" r="9" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17.2v.1" /></>,
+  info: <><circle cx="12" cy="12" r="9" /><path d="M12 11v6M12 7.5v.1" /></>,
+  doc: <><path d="M6 3h9l4 4v14H6z" /><path d="M15 3v4h4M9 11h7M9 14h7M9 17h4" /></>,
+  privacy: <><path d="M12 3 20 6v6c0 4.5-3.5 8-8 9-4.5-1-8-4.5-8-9V6z" /><rect x="9" y="11" width="6" height="5" rx="1" /><path d="M10 11V9.5a2 2 0 0 1 4 0V11" /></>,
 }
 
 /** One tile: icon, title, a line about it; the whole tile is the link. */
@@ -45,8 +49,8 @@ function Tile({ to, icon, title, sub, tone }: { to: string; icon: keyof typeof I
  * My account, laid out for a big screen (tiles in a grid rather than the app's one long list): a profile band
  * (photo, name, Admin / Seller, email, country, member since, Edit profile), then the tiles in three groups:
  * Shopping (orders, shipments, addresses, send a parcel), Selling & admin (Seller dashboard or Become a seller;
- * Admin dashboard for admins), Account & security (profile, password, two-step sign-in, notifications); then
- * Log out and "Delete my account". On a phone the tiles stack one under the other.
+ * Admin dashboard for admins), Account & security (profile, password, two-step sign-in, notifications), Help & info
+ * (Help & support, About, Terms, Privacy); then Log out and "Delete my account". On a phone the tiles stack one under the other.
  */
 export default function AccountPage() {
   const { profile, logout, isAdmin } = useSession()
@@ -135,6 +139,17 @@ export default function AccountPage() {
           <Tile to="/account/password" icon="lock" title="Change password" sub="Keep your account safe" />
           <Tile to="/account/two-factor" icon="phone" title="Two-step sign-in" sub="A code from your phone when you log in" />
           <Tile to="/account/notifications" icon="bell" title="Notifications" sub="Choose what Phloem tells you about" />
+        </ul>
+      </section>
+
+      {/* ── Help & info ── */}
+      <section aria-labelledby="help-title" className={styles.group}>
+        <h2 id="help-title" className={styles.groupTitle}>Help &amp; info</h2>
+        <ul className={styles.tiles}>
+          <Tile to="/help" icon="help" title="Help & support" sub="Common questions and how to contact us" />
+          <Tile to="/about" icon="info" title="About Phloem" sub="Our story" />
+          <Tile to="/terms" icon="doc" title="Terms & Conditions" sub="The rules for buying, selling and parcels" />
+          <Tile to="/privacy" icon="privacy" title="Privacy Policy" sub="What we keep about you and why" />
         </ul>
       </section>
 

@@ -31,6 +31,7 @@ export const router = createBrowserRouter([
       { path: 'about', ...page(() => import('./pages/about/AboutPage')) },
       { path: 'terms', handle: { legal: 'Terms' }, ...page(() => import('./pages/about/LegalPage')) },
       { path: 'privacy', handle: { legal: 'Privacy' }, ...page(() => import('./pages/about/LegalPage')) },
+      { path: 'help', handle: { legal: 'Help' }, ...page(() => import('./pages/about/LegalPage')) },
       { path: 'explore', ...page(() => import('./pages/explore/FoodListingPage')) },
       { path: 'shops', ...page(() => import('./pages/explore/ShopsPage')) },
       { path: 'shops/:shopId', ...page(() => import('./pages/explore/ShopPage')) },

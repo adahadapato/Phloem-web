@@ -10,10 +10,18 @@ import { sections } from '../../components/ui/markdownParts'
 import { StatusBanner } from '../../components/ui/StatusBanner'
 import styles from './LegalPage.module.css'
 
+/** The other two pages, linked under "On this page". */
+const OTHERS: Record<LegalDocumentType, { to: string; label: string }[]> = {
+  Terms: [{ to: '/privacy', label: 'Privacy Policy' }, { to: '/help', label: 'Help & support' }],
+  Privacy: [{ to: '/terms', label: 'Terms & Conditions' }, { to: '/help', label: 'Help & support' }],
+  Help: [{ to: '/terms', label: 'Terms & Conditions' }, { to: '/privacy', label: 'Privacy Policy' }],
+}
+
 /**
- * Terms & Conditions (/terms) and Privacy Policy (/privacy), shown from the API's database (the same text the app
- * shows): title, version and date, a "Draft" note while the wording is temporary, an "On this page" list of
- * sections on the left (big screens), and the text. A link like /terms#sellers opens at that section.
+ * Terms & Conditions (/terms), Privacy Policy (/privacy) and Help & support (/help), shown from the API's database
+ * (the same text the app shows): title, version and date ("Updated …" for Help), a "Draft" note while the wording
+ * is temporary, an "On this page" list of sections on the left (big screens), and the text. A link like
+ * /terms#sellers opens at that section.
  */
 export default function LegalPage() {
   const matches = useMatches()
@@ -32,7 +40,7 @@ export default function LegalPage() {
     document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView({ block: 'start' })
   }, [doc, hash])
 
-  const other = type === 'Terms' ? { to: '/privacy', label: 'Privacy Policy' } : { to: '/terms', label: 'Terms & Conditions' }
+  const others = OTHERS[type]
   const date = doc ? new Date(doc.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : ''
   const toc = doc ? sections(doc.content) : []
 
@@ -54,13 +62,13 @@ export default function LegalPage() {
             <ul>
               {toc.map((s) => <li key={s.id}><a href={`#${s.id}`}>{s.text}</a></li>)}
             </ul>
-            <Link to={other.to} className={styles.other}>{other.label} ›</Link>
+            {others.map((o) => <Link key={o.to} to={o.to} className={styles.other}>{o.label} ›</Link>)}
           </aside>
 
           <article className={styles.doc}>
             <p className="eyebrow">Phloem</p>
             <h1>{doc.title}</h1>
-            <p className="muted">Version {doc.version} · in effect from {date}</p>
+            <p className="muted">{type === 'Help' ? `Updated ${date}` : `Version ${doc.version} · in effect from ${date}`}</p>
             {doc.isDraft && (
               <p className={styles.draft} role="note">
                 <strong>Draft.</strong> This is a temporary wording while the final version is prepared.

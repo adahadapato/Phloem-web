@@ -9,6 +9,7 @@ import type { BookShipmentCommand, GetShipmentQuoteQuery } from '../contracts/co
 import type {
   BookedShipmentDto,
   PagedResult,
+  ParcelItemRuleDto,
   PublicTrackingDto,
   ShipmentDetailsDto,
   ShipmentQuoteDto,
@@ -23,6 +24,10 @@ const mine = (trackingNumber: string) => `api/shipments/${encodeURIComponent(tra
 /** GET /api/shipments/routes: routes switched on, with drop-off hub, opening hours and speeds. */
 export const getShipmentRoutes = (signal?: AbortSignal): Promise<ApiResult<ShipmentRouteOptionDto[]>> =>
   get<ShipmentRouteOptionDto[]>('api/shipments/routes', signal)
+
+/** GET /api/parcel-rules: what parcels may not contain, or only with a condition (kept in the database). */
+export const getParcelItemRules = (signal?: AbortSignal): Promise<ApiResult<ParcelItemRuleDto[]>> =>
+  get<ParcelItemRuleDto[]>('api/parcel-rules', signal)
 
 /** POST /api/shipments/quote: estimated price and transit time for a weight. */
 export const getShipmentQuote = (query: GetShipmentQuoteQuery, signal?: AbortSignal):

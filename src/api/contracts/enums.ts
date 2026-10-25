@@ -49,5 +49,8 @@ export type DocumentStatus = 'Pending' | 'Accepted' | 'Rejected'
 /** How the dish-name list is grouped in the seller's picker. */
 export type CatalogGroup = 'Ghana' | 'Nigeria' | 'WestAfrican' | 'Snacks' | 'Drinks'
 
-/** The legal texts (stored in the API's database, shown by the website and the app). */
-export type LegalDocumentType = 'Terms' | 'Privacy'
+/** The texts stored in the API's database and shown by the website and the app: Terms, Privacy Policy, Help. */
+export type LegalDocumentType = 'Terms' | 'Privacy' | 'Help'
+
+/** A line of the "what can be sent" list: never carried, or carried only as its detail says. */
+export type ParcelItemRuleKind = 'NotAllowed' | 'Restricted'

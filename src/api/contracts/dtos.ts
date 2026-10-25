@@ -4,7 +4,7 @@
  */
 import type {
   CatalogGroup, Country, Currency, DeliverySpeed, DeliveryWindow, DishCategory, DocumentStatus, OrderStatus, ShipmentItemCategory,
-  LegalDocumentType, ShipmentStatus, VendorDocumentType, VendorStatus,
+  LegalDocumentType, ParcelItemRuleKind, ShipmentStatus, VendorDocumentType, VendorStatus,
 } from './enums'
 
 /** Answer of login, register, two-factor, refresh and Google exchange. */
@@ -608,4 +608,15 @@ export interface LegalDocumentDto {
   /** Temporary wording: show a "Draft" note. */
   isDraft: boolean
   publishedAt: string
+}
+
+/** GET /api/parcel-rules: one line of the "what can be sent" list (the list comes in display order). */
+export interface ParcelItemRuleDto {
+  id: string
+  kind: ParcelItemRuleKind
+  /** e.g. "Fresh or frozen meat and fish". */
+  name: string
+  /** The condition (Restricted) or a short note; null when there's nothing to add. */
+  detail: string | null
+  sortOrder: number
 }
