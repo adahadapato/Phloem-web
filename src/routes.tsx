@@ -9,6 +9,7 @@ import type { ComponentType } from 'react'
 import { createBrowserRouter, type RouteObject } from 'react-router'
 import { PageShell } from './components/layout/PageShell'
 import { ProtectedRoute } from './components/layout/ProtectedRoute'
+import { SellerRoute } from './components/layout/SellerRoute'
 import { Roles } from './api/contracts/roles'
 
 /** Loads a page file only when its address is opened. */
@@ -43,8 +44,7 @@ export const router = createBrowserRouter([
       { path: 'track/:trackingNumber', ...page(() => import('./pages/shipping/TrackPage')) },
       { path: 'send-parcel', ...page(() => import('./pages/shipping/SendParcelPage')) },
 
-      // TEMPORARY: open to everyone
-      { path: 'sell', ...comingSoon('Sell food on Phloem') },
+      { path: 'sell', ...page(() => import('./pages/seller/BecomeSellerPage')) },
 
       // Signed-in only
       {
@@ -62,8 +62,18 @@ export const router = createBrowserRouter([
           { path: 'account/password', ...page(() => import('./pages/account/ChangePasswordPage')) },
           { path: 'account/two-factor', ...page(() => import('./pages/account/TwoFactorPage')) },
 
-          // TEMPORARY: the seller area (people with a shop; linked from My account and the account menu)
-          { path: 'seller', ...comingSoon('Seller dashboard') },
+          // The seller area: people with a shop (others are sent to /sell)
+          {
+            element: <SellerRoute />,
+            children: [
+              { path: 'seller', ...page(() => import('./pages/seller/SellerDashboardPage')) },
+              { path: 'seller/orders', ...page(() => import('./pages/seller/ShopOrdersPage')) },
+              // TEMPORARY until step B
+              { path: 'seller/dishes', ...comingSoon('My dishes') },
+              { path: 'seller/dishes/new', ...comingSoon('Add a dish') },
+              { path: 'seller/settings', ...comingSoon('Shop settings') },
+            ],
+          },
         ],
       },
 

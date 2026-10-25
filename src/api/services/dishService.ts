@@ -1,11 +1,11 @@
 /**
  * Dishes for buyers: GET /api/dishes. Same as the app's DishService (buyer part).
- * The seller's own dishes (/api/shops/mine/dishes) come with the seller pages (phase 3).
+ * The seller's own dishes: /api/shops/mine/dishes.
  */
 import type { ApiResult } from '../apiError'
 import { withQuery } from '../apiQuery'
-import { get } from '../client'
-import type { DishCardDto, DishDetailsDto, PagedResult } from '../contracts/dtos'
+import { get, put } from '../client'
+import type { DishCardDto, DishDetailsDto, MyDishesDto, PagedResult } from '../contracts/dtos'
 import type { Country, DishCategory, DishSort } from '../contracts/enums'
 
 /** What a dish list can be narrowed down by. Everything is optional. */
@@ -31,3 +31,13 @@ export const searchDishes = (search: DishSearch, signal?: AbortSignal): Promise<
 /** GET /api/dishes/{dishId}: one dish with its photos and shop (used by Buy again). */
 export const getDish = (dishId: string, signal?: AbortSignal): Promise<ApiResult<DishDetailsDto>> =>
   get<DishDetailsDto>(`api/dishes/${encodeURIComponent(dishId)}`, signal)
+
+// ───────────────────────────── My dishes (seller) ─────────────────────────────
+
+/** GET /api/shops/mine/dishes: my dishes (those needing a new price first) and how many need one. */
+export const getMyDishes = (signal?: AbortSignal): Promise<ApiResult<MyDishesDto>> =>
+  get<MyDishesDto>('api/shops/mine/dishes', signal)
+
+/** PUT /api/shops/mine/dishes/{id}/price: a new price, inside my country's range. */
+export const setMyDishPrice = (dishId: string, price: number) =>
+  put<void>(`api/shops/mine/dishes/${encodeURIComponent(dishId)}/price`, { price })

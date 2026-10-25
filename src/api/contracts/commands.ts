@@ -171,3 +171,12 @@ export interface BookShipmentCommand {
   confirmedNoProhibitedItems: boolean
   acceptedTerms: boolean
 }
+
+// ───────────────────────────── Seller ─────────────────────────────
+
+/** POST /api/shops: open my shop (waits for approval). Blank email / phone = my account's. */
+export interface OpenShopCommand {
+  shopName: string
+  businessEmail: string | null
+  businessPhone: string | null
+}

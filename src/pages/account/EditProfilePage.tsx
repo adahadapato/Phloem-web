@@ -23,11 +23,17 @@ type Message = { text: string; isError: boolean } | null
  * editable: it's the login), then "Personal details": date of birth and home address. Needed to open a shop or send a
  * parcel; all or nothing. One "Save changes".
  */
+/** Pages that send people here to add their date of birth and home address, and come back after. */
+const RETURN_PAGES = [
+  { path: '/send-parcel', label: 'Send a parcel' },
+  { path: '/sell', label: 'Become a seller' },
+]
+
 export default function EditProfilePage() {
   const { profile, refreshProfile } = useSession()
-  // Opened from Send a parcel (?returnTo=/send-parcel): the back link goes back there
+  // Opened from Send a parcel or Become a seller (?returnTo=…): the back link goes back there
   const [params] = useSearchParams()
-  const returnTo = params.get('returnTo') === '/send-parcel' ? safeReturnTo('/send-parcel') : null
+  const returnTo = RETURN_PAGES.find((r) => r.path === safeReturnTo(params.get('returnTo'))) ?? null
   const { countries } = useCountry()
   const fileInput = useRef<HTMLInputElement>(null)
 
@@ -152,7 +158,7 @@ export default function EditProfilePage() {
     <div className={`container ${styles.page}`}>
       <div className={styles.inner}>
         {returnTo
-          ? <Link to={returnTo} className={styles.back}>‹ Back to Send a parcel</Link>
+          ? <Link to={returnTo.path} className={styles.back}>‹ Back to {returnTo.label}</Link>
           : <Link to="/account" className={styles.back}>‹ My account</Link>}
         <div className={styles.heading}>
           <h1>Edit profile</h1>

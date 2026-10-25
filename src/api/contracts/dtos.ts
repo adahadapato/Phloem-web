@@ -3,7 +3,8 @@
  * Grows feature by feature; keep in step with the app's Services/Api/Contracts/Dtos.
  */
 import type {
-  Country, Currency, DeliverySpeed, DeliveryWindow, DishCategory, OrderStatus, ShipmentItemCategory, ShipmentStatus,
+  Country, Currency, DeliverySpeed, DeliveryWindow, DishCategory, DocumentStatus, OrderStatus, ShipmentItemCategory,
+  ShipmentStatus, VendorDocumentType, VendorStatus,
 } from './enums'
 
 /** Answer of login, register, two-factor, refresh and Google exchange. */
@@ -466,4 +467,110 @@ export interface ShipmentDetailsDto {
   canPay: boolean
   /** Paid, then cancelled. */
   needsRefund: boolean
+}
+
+// ───────────────────────────── Seller ─────────────────────────────
+
+/** One of my shop's documents (the file itself is private: admins only). */
+export interface MyShopDocumentDto {
+  id: string
+  type: VendorDocumentType
+  status: DocumentStatus
+  originalFileName: string
+  rejectionReason: string | null
+  expiresAt: string | null
+  isExpired: boolean
+  uploadedAt: string
+}
+
+/** GET /api/shops/mine: the signed-in seller's own shop (dashboard header, shop settings). */
+export interface MyShopDto {
+  id: string
+  name: string
+  businessEmail: string
+  businessPhone: string | null
+  country: Country
+  currency: Currency
+  status: VendorStatus
+  /** Why an admin rejected it (the seller can fix it). */
+  rejectionReason: string | null
+  /** Approved and visible to buyers. */
+  isLive: boolean
+  /** Has the ✓ badge. */
+  isVerified: boolean
+  logoUrl: string | null
+  coverPhotoUrl: string | null
+  /** Null = the country's minimum. */
+  deliveryFee: number | null
+  rating: number
+  ratingCount: number
+  /** Earnings from delivered orders, not yet withdrawn. */
+  balance: number
+  openedAt: string
+  documents: MyShopDocumentDto[]
+  /** Required documents not accepted yet (the to-do list for the ✓ badge). */
+  missingDocuments: VendorDocumentType[]
+  /** "HH:mm:ss", shop's local time: after it, only Tomorrow. */
+  orderCutoffTime: string
+}
+
+/** One row of Shop orders (sellers never see unpaid orders). */
+export interface ShopOrderSummaryDto {
+  orderNumber: string
+  customerName: string
+  status: OrderStatus
+  paidAt: string | null
+  itemCount: number
+  /** "Jollof Rice ×2, Kelewele ×1" */
+  itemsSummary: string
+  total: number
+  currency: Currency
+  deliveryWindow: DeliveryWindow
+  deliveryLabel: string
+  deliveryAddress: string
+}
+
+/** One bar of the weekly sales chart. */
+export interface DailySalesDto {
+  /** "yyyy-MM-dd" (UTC). */
+  date: string
+  orders: number
+}
+
+/** GET /api/shops/mine/orders/stats: dashboard tiles and the weekly chart. */
+export interface ShopOrderStatsDto {
+  newOrders: number
+  preparing: number
+  outForDelivery: number
+  delivered: number
+  totalOrders: number
+  /** The last 7 days, oldest first. */
+  weeklySales: DailySalesDto[]
+}
+
+/** One of my dishes, with the price range allowed in my country. */
+export interface MyDishDto {
+  id: string
+  dishCatalogId: string
+  catalogName: string
+  detail: string | null
+  name: string
+  category: DishCategory
+  price: number
+  currency: Currency
+  allowedMinPrice: number | null
+  allowedMaxPrice: number | null
+  /** The range changed and the price is now outside it: hidden from buyers until updated. */
+  needsPriceUpdate: boolean
+  description: string | null
+  isAvailable: boolean
+  rating: number
+  ratingCount: number
+  photos: DishPhotoDto[]
+}
+
+/** GET /api/shops/mine/dishes */
+export interface MyDishesDto {
+  dishes: MyDishDto[]
+  needsPriceUpdateCount: number
 }

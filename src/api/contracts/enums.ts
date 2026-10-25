@@ -36,3 +36,12 @@ export type DeliverySpeed = 'Standard' | 'Express' | 'Bulk'
 
 /** What kind of item is in a parcel (for customs). */
 export type ShipmentItemCategory = 'PackagedFood' | 'Clothing' | 'Documents' | 'Electronics' | 'Other'
+
+/** A shop's state: waiting for approval → approved (live); or rejected (with a reason, fixable) / blocked. */
+export type VendorStatus = 'PendingApproval' | 'Approved' | 'Blocked' | 'Rejected' | 'Closed'
+
+/** Documents a seller uploads for the ✓ badge. */
+export type VendorDocumentType = 'BusinessRegistration' | 'FoodHygieneCertificate' | 'OwnerId' | 'Other'
+
+/** Where a document's review is. */
+export type DocumentStatus = 'Pending' | 'Accepted' | 'Rejected'

@@ -1,6 +1,6 @@
 /** Names people see for the API's values. Kept in one place so every page says the same. */
 import type {
-  DeliveryWindow, DishCategory, DishSort, OrderStatus, ShipmentItemCategory, ShipmentStatus,
+  DeliveryWindow, DishCategory, DishSort, OrderStatus, ShipmentItemCategory, ShipmentStatus, VendorDocumentType,
 } from '../../api/contracts/enums'
 
 /** The category tabs, in the app's order. */
@@ -95,4 +95,12 @@ export function dayMonthText(isoDate: string): string {
 export function arrivalText(from: string | null, to: string | null): string | null {
   if (!from || !to) return null
   return from === to ? `Expected ${dayMonthText(from)}` : `Expected ${dayMonthText(from)} – ${dayMonthText(to)}`
+}
+
+/** What each shop document is called. */
+export const documentText: Record<VendorDocumentType, string> = {
+  BusinessRegistration: 'Business registration',
+  FoodHygieneCertificate: 'Food hygiene certificate',
+  OwnerId: 'Photo ID',
+  Other: 'Other document',
 }

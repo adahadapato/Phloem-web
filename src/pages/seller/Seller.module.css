@@ -1,0 +1,796 @@
+/* The seller area (Become a seller, dashboard, shop orders). App colours: green, orange, mint, cream, peach. */
+.page {
+  padding-block: 22px 40px;
+}
+
+/* A price inside other text: takes that text's colour and size */
+.plain {
+  color: inherit;
+  font-size: inherit;
+}
+
+.block {
+  display: block;
+}
+
+.strongLink {
+  font-weight: 700;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 18px 20px;
+  background: var(--white);
+  border: 1px solid var(--brand-border);
+  border-radius: 18px;
+  box-shadow: var(--shadow-card);
+}
+
+.cardHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 18px;
+}
+
+/* ── Header: logo, shop name, tabs ── */
+.shopHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.shopHead .eyebrow {
+  margin: 0;
+}
+
+.logo,
+.logoPreview,
+.logoEmpty {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 3px var(--white), 0 0 0 4px var(--brand-border);
+}
+
+.logoEmpty {
+  display: grid;
+  place-items: center;
+  background: var(--brand-mint-pale);
+  font-size: 28px;
+}
+
+.shopName {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.verified {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--brand-green);
+  color: var(--white);
+  font-size: 14px;
+}
+
+.viewShop {
+  margin-left: auto;
+  font-weight: 700;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--brand-border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tab {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-bottom: 3px solid transparent;
+  color: var(--brand-green);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.tab:hover {
+  text-decoration: none;
+}
+
+.tabOn {
+  border-bottom-color: var(--brand-orange);
+  color: var(--brand-text-dark);
+  font-weight: 800;
+}
+
+.count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: var(--brand-orange);
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* ── Status banners ── */
+.banner {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-size: 14px;
+}
+
+.bannerWait {
+  background: var(--brand-peach);
+  border-left: 4px solid var(--brand-gold);
+}
+
+.bannerStop {
+  background: #fdecea;
+  border-left: 4px solid var(--brand-danger);
+}
+
+.bannerInfo {
+  background: var(--brand-mint-pale);
+  border-left: 4px solid var(--brand-green);
+}
+
+/* ── Dashboard ── */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px 18px;
+  border: 1px solid var(--brand-border);
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+  color: var(--brand-text-dark);
+  text-decoration: none;
+}
+
+a.tile:hover {
+  text-decoration: none;
+  border-color: var(--brand-green);
+}
+
+.tile > span {
+  color: var(--brand-text-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tile strong {
+  font-size: 26px;
+  line-height: 1.2;
+}
+
+.tile small {
+  color: var(--brand-text-muted);
+  font-size: 12px;
+}
+
+/* The app's dark green balance card */
+.tileMoney {
+  border-color: transparent;
+  background: var(--brand-dark);
+  color: var(--white);
+}
+
+.tileMoney > span,
+.tileMoney small {
+  color: rgb(255 255 255 / 0.75);
+}
+
+.tileMoney strong {
+  color: var(--brand-gold);
+}
+
+.tileAlert {
+  border-color: var(--brand-orange);
+  background: var(--brand-peach);
+}
+
+.tileAlert strong {
+  color: var(--brand-orange);
+}
+
+.dashGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: 18px;
+  align-items: start;
+}
+
+.dashMain {
+  min-width: 0;
+}
+
+.waitList {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.waitList li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  font-size: 14px;
+}
+
+.waitList li + li {
+  border-top: 1px solid var(--brand-border);
+}
+
+.waitEnd {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex: none;
+}
+
+.openLink {
+  font-weight: 700;
+}
+
+/* Weekly bars */
+.chart {
+  margin: 0;
+}
+
+.bars {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 10px;
+  height: 180px;
+  align-items: end;
+}
+
+.barCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  height: 100%;
+}
+
+.bar {
+  width: 100%;
+  max-width: 44px;
+  border-radius: 8px 8px 3px 3px;
+  background: var(--brand-green);
+}
+
+.barValue {
+  font-size: 12px;
+  font-weight: 700;
+  min-height: 16px;
+}
+
+.barDay {
+  color: var(--brand-text-muted);
+  font-size: 12px;
+}
+
+.chart figcaption {
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+/* My dishes on the dashboard */
+.dashSide {
+  position: sticky;
+  top: 88px;
+}
+
+.warnBox {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--brand-peach);
+  font-size: 13px;
+}
+
+.warn {
+  color: var(--brand-orange);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.emptyDishes {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--brand-mint-pale);
+}
+
+.dishList {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dishRow {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.dishRow + .dishRow {
+  border-top: 1px solid var(--brand-border);
+}
+
+.dishThumb {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.dishText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 14px;
+}
+
+.dishText strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dishText .muted {
+  font-size: 12px;
+}
+
+/* "Allowed GH₵40.00 – GH₵90.00": wraps under the name rather than running under the price buttons */
+.range {
+  overflow-wrap: anywhere;
+}
+
+.range :global(.price) {
+  font-weight: 600;
+}
+
+.priceStepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--brand-mint-pale);
+  font-size: 14px;
+}
+
+.priceStepper button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--brand-green);
+  font: inherit;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.priceStepper button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Shop orders ── */
+.subTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.subTab {
+  padding: 7px 14px;
+  border: 1.5px solid var(--brand-border);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  color: var(--brand-green);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.subTab[aria-selected="true"] {
+  border-color: var(--brand-green);
+  background: var(--brand-green);
+  color: var(--white);
+}
+
+.orderCard {
+  margin-bottom: 16px;
+  overflow: hidden;
+  border: 1px solid var(--brand-border);
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+}
+
+.highlighted {
+  border-color: var(--brand-orange);
+  box-shadow: 0 0 0 3px rgb(226 57 2 / 0.18);
+}
+
+.strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px 24px;
+  padding: 12px 20px;
+  background: var(--brand-mint-pale);
+  border-bottom: 1px solid var(--brand-border);
+  font-size: 14px;
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 32px;
+  margin: 0;
+}
+
+.facts dt,
+.orderNo {
+  color: var(--brand-text-muted);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.facts dd {
+  margin: 0;
+  font-weight: 700;
+}
+
+.orderBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 20px;
+  padding: 16px 20px 18px;
+}
+
+.chip {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.chipNew {
+  background: var(--brand-peach);
+  color: var(--brand-orange);
+}
+
+.chipOn {
+  background: var(--brand-mint-pale);
+  color: var(--brand-green);
+  box-shadow: inset 0 0 0 1px rgb(4 99 52 / 0.25);
+}
+
+.chipOff {
+  background: #eceae5;
+  color: var(--brand-text-muted);
+}
+
+.customer {
+  margin: 6px 0 2px;
+  font-size: 19px;
+}
+
+.ordered,
+.deliverTo {
+  margin: 4px 0 0;
+  font-size: 14px;
+}
+
+.orderButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.orderButtons > button {
+  width: 100%;
+}
+
+.decline {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--brand-peach);
+  font-size: 13px;
+}
+
+.decline textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--brand-border);
+  border-radius: 10px;
+  font: inherit;
+  font-size: 14px;
+  resize: vertical;
+}
+
+/* ── Become a seller ── */
+.sellHero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 24px 28px;
+  border-radius: 24px;
+  background: var(--brand-mint-pale);
+}
+
+.sellHero h1 {
+  margin: 4px 0 8px;
+}
+
+.heroImage {
+  width: 100%;
+  height: auto;
+}
+
+.benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  font-weight: 600;
+}
+
+.benefits span {
+  margin-right: 8px;
+}
+
+.sellBox {
+  max-width: 760px;
+  margin-inline: auto;
+}
+
+.setupSteps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.setupSteps li {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--brand-border);
+  border-radius: 14px;
+  background: var(--white);
+  font-size: 14px;
+}
+
+.setupSteps li > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.setupSteps .muted {
+  font-size: 13px;
+}
+
+.stepMark {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--brand-border);
+  color: var(--brand-text-dark);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.stepNow {
+  border-color: var(--brand-orange) !important;
+}
+
+.stepNow .stepMark {
+  background: var(--brand-orange);
+  color: var(--white);
+}
+
+.stepDone .stepMark {
+  background: var(--brand-green);
+  color: var(--white);
+}
+
+.stepLink {
+  margin-top: 4px;
+  font-weight: 700;
+}
+
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.fieldset:disabled {
+  opacity: 0.55;
+}
+
+.logoRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.fileButton {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: var(--radius-field);
+  background: var(--brand-mint-pale);
+  color: var(--brand-green);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.fileButton input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.fileButton:focus-within {
+  box-shadow: 0 0 0 3px rgb(4 99 52 / 0.25);
+}
+
+/* ── Smaller screens ── */
+@media (max-width: 1000px) {
+  .dashGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dashSide {
+    position: static;
+  }
+
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .sellHero {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 20px;
+  }
+
+  .heroImage {
+    max-width: 240px;
+    justify-self: center;
+  }
+
+  .setupSteps,
+  .two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .orderBody {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .viewShop {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .tiles {
+    gap: 10px;
+  }
+
+  .tile {
+    padding: 12px 14px;
+  }
+
+  .tile strong {
+    font-size: 22px;
+  }
+
+  .card,
+  .strip,
+  .orderBody {
+    padding-inline: 16px;
+  }
+}
