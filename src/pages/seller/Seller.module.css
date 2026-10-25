@@ -794,3 +794,583 @@ a.tile:hover {
     padding-inline: 16px;
   }
 }
+
+
+/* ───────────── Step B: My dishes ───────────── */
+.dishGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dishCard {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--brand-border);
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+}
+
+.dishCardWarn {
+  border-color: var(--brand-orange);
+}
+
+.dishPhotoWrap {
+  position: relative;
+}
+
+.dishPhoto {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.hiddenTag,
+.mainTag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: rgb(7 15 25 / 0.75);
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dishBody {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px 16px;
+  font-size: 14px;
+}
+
+.dishCardName {
+  font-size: 17px;
+}
+
+.dishBody > .muted {
+  font-size: 13px;
+}
+
+.dishPriceLine {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+}
+
+.dishPriceLine .muted {
+  font-size: 12px;
+}
+
+.switchRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+/* The app's on/off switch */
+.switch {
+  appearance: none;
+  flex: none;
+  position: relative;
+  width: 44px;
+  height: 26px;
+  margin: 0;
+  border-radius: 13px;
+  background: var(--brand-border);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.switch::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--white);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
+  transition: transform 0.15s ease;
+}
+
+.switch:checked {
+  background: var(--brand-green);
+}
+
+.switch:checked::after {
+  transform: translateX(18px);
+}
+
+.switch:focus-visible {
+  outline: 3px solid rgb(4 99 52 / 0.3);
+}
+
+.confirmBox {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--brand-peach);
+  font-size: 13px;
+}
+
+/* ───────────── Dish editor ───────────── */
+.editorTitle {
+  margin: 8px 0 14px;
+  font-size: 24px;
+}
+
+.editorGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 20px;
+  align-items: start;
+}
+
+.editorMain {
+  min-width: 0;
+}
+
+.editorSide {
+  position: sticky;
+  top: 88px;
+}
+
+.label {
+  margin: 0 0 0 2px;
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.inline {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.select {
+  min-height: var(--control-height);
+  padding: 0 12px;
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-field);
+  background: var(--white);
+  font: inherit;
+  color: var(--brand-text-dark);
+}
+
+.textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-field);
+  font: inherit;
+  resize: vertical;
+}
+
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--brand-green);
+  box-shadow: 0 0 0 3px rgb(4 99 52 / 0.15);
+}
+
+.pickedName {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--brand-green);
+  border-radius: 14px;
+  background: var(--brand-mint-pale);
+}
+
+.pickedName > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.pickedName .muted {
+  font-size: 13px;
+}
+
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pickerSearch {
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-field);
+  font: inherit;
+}
+
+.pickerSearch:focus {
+  outline: none;
+  border-color: var(--brand-green);
+  box-shadow: 0 0 0 3px rgb(4 99 52 / 0.15);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip2 {
+  padding: 5px 12px;
+  border: 1.5px solid var(--brand-border);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  color: var(--brand-green);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.chip2[aria-pressed="true"] {
+  border-color: var(--brand-green);
+  background: var(--brand-green);
+  color: var(--white);
+}
+
+.pickerList {
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+  border: 1px solid var(--brand-border);
+  border-radius: 14px;
+}
+
+.groupTitle {
+  position: sticky;
+  top: 0;
+  margin: 0;
+  padding: 6px 12px;
+  background: var(--brand-cream);
+  color: var(--brand-text-muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.pickerItem {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 0;
+  border-top: 1px solid var(--brand-border);
+  background: var(--white);
+  color: var(--brand-text-dark);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pickerItem:hover:not(:disabled) {
+  background: var(--brand-mint-pale);
+}
+
+.pickerItem[aria-selected="true"] {
+  background: var(--brand-mint-pale);
+  font-weight: 700;
+}
+
+.pickerItem:disabled {
+  color: var(--brand-text-muted);
+  cursor: not-allowed;
+}
+
+.pickerItem .muted {
+  flex: none;
+  font-size: 13px;
+}
+
+.linkButton,
+.dangerLink {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--brand-green);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.dangerLink {
+  align-self: center;
+  color: var(--brand-danger);
+}
+
+.suggest {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--brand-peach);
+}
+
+.photoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.photoTile {
+  position: relative;
+}
+
+.photoImg {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.photoRemove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(7 15 25 / 0.7);
+  color: var(--white);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.photoTile .mainTag {
+  top: 6px;
+  left: 6px;
+}
+
+.photoAdd {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  aspect-ratio: 4 / 3;
+  border: 2px dashed var(--brand-border);
+  border-radius: 12px;
+  background: var(--brand-mint-pale);
+  color: var(--brand-green);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.photoAdd span {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.photoAdd input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.photoAdd:focus-within {
+  border-color: var(--brand-green);
+}
+
+.previewCard {
+  overflow: hidden;
+  border: 1px solid var(--brand-border);
+  border-radius: 16px;
+}
+
+.previewImg {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.previewBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px 12px;
+  font-size: 14px;
+}
+
+/* ───────────── Shop settings ───────────── */
+.settingsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 18px;
+  align-items: start;
+}
+
+.settingsGrid > section:last-child {
+  grid-column: 1 / -1;
+}
+
+/* Delivery fee and closing time: side by side across the page */
+.settingsPair {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 18px;
+  align-items: start;
+}
+
+.countryLine {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 14px;
+}
+
+.coverBox {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.coverImg,
+.coverEmpty {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 1;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+.coverEmpty {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--brand-dark), var(--brand-green));
+  color: rgb(255 255 255 / 0.8);
+  font-size: 14px;
+}
+
+.logoOnCover {
+  position: absolute;
+  left: 18px;
+  bottom: -28px;
+}
+
+.pictureRows {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.pictureRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.pictureRow .muted {
+  font-size: 13px;
+}
+
+.docList {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.docRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: end;
+  padding: 14px 0;
+}
+
+.docRow + .docRow {
+  border-top: 1px solid var(--brand-border);
+}
+
+.docText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.docActions {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.docActions .select {
+  min-height: 40px;
+}
+
+.chipBad {
+  background: #fdecea;
+  color: var(--brand-danger);
+}
+
+@media (max-width: 1000px) {
+  .editorGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .editorSide {
+    position: static;
+  }
+
+  .settingsGrid,
+  .settingsPair {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .pictureRows {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .docRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .docActions {
+    flex-wrap: wrap;
+  }
+}

@@ -3,7 +3,7 @@
  * Grows feature by feature; keep in step with the app's Services/Api/Contracts/Dtos.
  */
 import type {
-  Country, Currency, DeliverySpeed, DeliveryWindow, DishCategory, DocumentStatus, OrderStatus, ShipmentItemCategory,
+  CatalogGroup, Country, Currency, DeliverySpeed, DeliveryWindow, DishCategory, DocumentStatus, OrderStatus, ShipmentItemCategory,
   ShipmentStatus, VendorDocumentType, VendorStatus,
 } from './enums'
 
@@ -573,4 +573,27 @@ export interface MyDishDto {
 export interface MyDishesDto {
   dishes: MyDishDto[]
   needsPriceUpdateCount: number
+}
+
+/** GET /api/dish-catalog: one name in the seller's dish picker, with the price range in their country. */
+export interface DishCatalogItemDto {
+  id: string
+  name: string
+  category: DishCategory
+  group: CatalogGroup
+  /** False: no price range in this country yet, so it can't be sold yet. */
+  hasPriceRange: boolean
+  minPrice: number | null
+  maxPrice: number | null
+  currency: Currency | null
+}
+
+/** GET /api/shops/mine/delivery-fee: my fee and the range allowed in my country. */
+export interface MyDeliveryFeeDto {
+  currentFee: number
+  /** No fee set: the country minimum is used. */
+  usesCountryMinimum: boolean
+  minAllowed: number
+  maxAllowed: number
+  currency: Currency
 }

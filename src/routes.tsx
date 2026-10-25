@@ -68,10 +68,10 @@ export const router = createBrowserRouter([
             children: [
               { path: 'seller', ...page(() => import('./pages/seller/SellerDashboardPage')) },
               { path: 'seller/orders', ...page(() => import('./pages/seller/ShopOrdersPage')) },
-              // TEMPORARY until step B
-              { path: 'seller/dishes', ...comingSoon('My dishes') },
-              { path: 'seller/dishes/new', ...comingSoon('Add a dish') },
-              { path: 'seller/settings', ...comingSoon('Shop settings') },
+              { path: 'seller/dishes', ...page(() => import('./pages/seller/MyDishesPage')) },
+              { path: 'seller/dishes/new', ...page(() => import('./pages/seller/DishEditorPage')) },
+              { path: 'seller/dishes/:dishId', ...page(() => import('./pages/seller/DishEditorPage')) },
+              { path: 'seller/settings', ...page(() => import('./pages/seller/ShopSettingsPage')) },
             ],
           },
         ],

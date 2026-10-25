@@ -2,7 +2,9 @@
  * What the website sends to the API (request bodies). Same shapes as the API's commands (JSON, camelCase).
  * Grows feature by feature; keep in step with the app's Services/Api/Contracts/Commands.
  */
-import type { Country, DeliverySpeed, DeliveryWindow, ShipmentItemCategory } from './enums'
+import type {
+  CatalogGroup, Country, DeliverySpeed, DeliveryWindow, DishCategory, ShipmentItemCategory,
+} from './enums'
 
 /** POST /api/auth/login */
 export interface LoginCommand {
@@ -176,6 +178,30 @@ export interface BookShipmentCommand {
 
 /** POST /api/shops: open my shop (waits for approval). Blank email / phone = my account's. */
 export interface OpenShopCommand {
+  shopName: string
+  businessEmail: string | null
+  businessPhone: string | null
+}
+
+/** POST /api/shops/mine/dishes (and PUT …/{id} for changes). The name comes from the dish list. */
+export interface DishCommand {
+  dishCatalogId: string
+  /** Optional extra after the name, e.g. "& Chicken" (40 characters at most). */
+  detail: string | null
+  price: number
+  description: string | null
+  isAvailable: boolean
+}
+
+/** POST /api/dish-catalog/suggestions: "Can't find your dish?" (an admin approves it). */
+export interface SuggestDishNameCommand {
+  name: string
+  category: DishCategory
+  group: CatalogGroup
+}
+
+/** PUT /api/shops/mine: shop name, business email and phone (blank = my account's). */
+export interface UpdateShopDetailsCommand {
   shopName: string
   businessEmail: string | null
   businessPhone: string | null

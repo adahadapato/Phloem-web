@@ -4,8 +4,9 @@
  */
 import type { ApiResult } from '../apiError'
 import { withQuery } from '../apiQuery'
-import { get, put } from '../client'
-import type { DishCardDto, DishDetailsDto, MyDishesDto, PagedResult } from '../contracts/dtos'
+import { del, get, post, put, upload } from '../client'
+import type { DishCommand } from '../contracts/commands'
+import type { DishCardDto, DishDetailsDto, DishPhotoDto, MyDishesDto, PagedResult } from '../contracts/dtos'
 import type { Country, DishCategory, DishSort } from '../contracts/enums'
 
 /** What a dish list can be narrowed down by. Everything is optional. */
@@ -41,3 +42,23 @@ export const getMyDishes = (signal?: AbortSignal): Promise<ApiResult<MyDishesDto
 /** PUT /api/shops/mine/dishes/{id}/price: a new price, inside my country's range. */
 export const setMyDishPrice = (dishId: string, price: number) =>
   put<void>(`api/shops/mine/dishes/${encodeURIComponent(dishId)}/price`, { price })
+
+const myDish = (dishId: string) => `api/shops/mine/dishes/${encodeURIComponent(dishId)}`
+
+/** POST /api/shops/mine/dishes: add a dish; returns its Id (photos are added next). */
+export const createMyDish = (command: DishCommand): Promise<ApiResult<string>> =>
+  post<string>('api/shops/mine/dishes', command)
+
+/** PUT /api/shops/mine/dishes/{id}: change name, detail, price, description, available. */
+export const updateMyDish = (dishId: string, command: DishCommand) => put<void>(myDish(dishId), command)
+
+/** DELETE /api/shops/mine/dishes/{id}: past orders still show it. */
+export const deleteMyDish = (dishId: string) => del(myDish(dishId))
+
+/** POST /api/shops/mine/dishes/{id}/photos: JPEG, PNG, WebP or HEIC, up to 10 MB, at most 5 per dish. */
+export const addMyDishPhoto = (dishId: string, photo: File): Promise<ApiResult<DishPhotoDto>> =>
+  upload<DishPhotoDto>('POST', `${myDish(dishId)}/photos`, 'photo', photo)
+
+/** DELETE /api/shops/mine/dishes/{id}/photos/{photoId} */
+export const removeMyDishPhoto = (dishId: string, photoId: string) =>
+  del(`${myDish(dishId)}/photos/${encodeURIComponent(photoId)}`)

@@ -45,3 +45,6 @@ export type VendorDocumentType = 'BusinessRegistration' | 'FoodHygieneCertificat
 
 /** Where a document's review is. */
 export type DocumentStatus = 'Pending' | 'Accepted' | 'Rejected'
+
+/** How the dish-name list is grouped in the seller's picker. */
+export type CatalogGroup = 'Ghana' | 'Nigeria' | 'WestAfrican' | 'Snacks' | 'Drinks'
