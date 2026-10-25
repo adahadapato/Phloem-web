@@ -1,6 +1,6 @@
 /** Names people see for the API's values. Kept in one place so every page says the same. */
 import type {
-  DeliveryWindow, DishCategory, DishSort, DocumentStatus, OrderStatus, ShipmentItemCategory, ShipmentStatus,
+  CatalogGroup, DeliveryWindow, DishCategory, DishSort, DocumentStatus, OrderStatus, ShipmentItemCategory, ShipmentStatus,
   VendorDocumentType, VendorStatus,
 } from '../../api/contracts/enums'
 
@@ -120,5 +120,14 @@ export const documentStatusText: Record<DocumentStatus, string> = {
   Pending: 'To check',
   Accepted: 'Accepted',
   Rejected: 'Rejected',
+}
+
+/** The dish picker's groups. */
+export const catalogGroupText: Record<CatalogGroup, string> = {
+  Ghana: 'Ghanaian',
+  Nigeria: 'Nigerian',
+  WestAfrican: 'West African',
+  Snacks: 'Snacks',
+  Drinks: 'Drinks',
 }
 

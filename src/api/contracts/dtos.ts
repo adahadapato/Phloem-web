@@ -686,3 +686,60 @@ export interface AdminShopDetailsDto {
   missingDocuments: VendorDocumentType[]
 }
 
+/** One person on Admin → Users: who they are, their roles and shop, and any suspension. */
+export interface AdminUserDto {
+  id: string
+  fullName: string
+  email: string
+  phoneNumber: string | null
+  country: Country
+  roles: string[]
+  memberSince: string
+  shopName: string | null
+  isSuspended: boolean
+  /** When the suspension ends; null = until further notice (or not suspended). */
+  suspendedUntil: string | null
+  suspensionReason: string | null
+  /** False for admins and for yourself: no Suspend button. */
+  canBeSuspended: boolean
+  photoUrl: string | null
+  /** The admin looking at the list (their own Admin role can't be taken away). Missing on an older API. */
+  isYou?: boolean
+}
+
+/** What suspending someone did. */
+export interface UserSuspendedDto {
+  shopSuspended: boolean
+  cancelledShopOrders: number
+  ordersToRefund: number
+}
+
+/** One allowed price range (inclusive) for a dish name in one country. */
+export interface DishPriceRangeDto {
+  id: string
+  dishCatalogId: string
+  country: Country
+  currency: Currency
+  minPrice: number
+  maxPrice: number
+}
+
+/** Admin → Dish names: each name with its price range in every country that has one. */
+export interface AdminDishCatalogDto {
+  id: string
+  name: string
+  category: DishCategory
+  group: CatalogGroup
+  priceRanges: DishPriceRangeDto[]
+}
+
+/** A dish name a seller suggested, waiting for a decision. */
+export interface AdminDishSuggestionDto {
+  id: string
+  name: string
+  category: DishCategory
+  group: CatalogGroup
+  suggestedBy: string
+  shopName: string | null
+  suggestedAt: string
+}

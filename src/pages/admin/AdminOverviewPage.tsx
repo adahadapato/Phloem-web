@@ -18,8 +18,8 @@ function ago(iso: string): string {
 
 /**
  * Admin → Overview: the numbers that matter (shops waiting, live shops, people, dish names suggested, parcels to
- * receive), then "Needs your attention": the shops waiting for approval, oldest first, each opening its review
- * page. Each number loads on its own, so one slow count doesn't hold the page.
+ * receive), then "Needs your attention": dish names suggested by sellers, and the shops waiting for approval,
+ * oldest first, each opening its review page. Each number loads on its own, so one slow count doesn't hold the page.
  */
 export default function AdminOverviewPage() {
   const { profile } = useSession()
@@ -44,9 +44,8 @@ export default function AdminOverviewPage() {
                   to="/admin/shops?status=pending" />
         <StatTile label="Live shops" value={stats.data?.approved} to="/admin/shops?status=live"
                   note={stats.data ? `${stats.data.blocked} blocked · ${stats.data.rejected} rejected` : undefined} />
-        <StatTile label="People signed up" value={users.data?.totalCount} note="Users page in the next step" />
-        <StatTile label="Dish names suggested" value={suggestions.data?.length} tone="orange"
-                  note="Review them in the app for now" />
+        <StatTile label="People signed up" value={users.data?.totalCount} to="/admin/users" />
+        <StatTile label="Dish names suggested" value={suggestions.data?.length} tone="orange" to="/admin/dishes" />
         <StatTile label="Parcels to receive at the hub" value={toReceive.data?.totalCount}
                   note="Booked, not weighed yet" />
       </div>
@@ -58,8 +57,18 @@ export default function AdminOverviewPage() {
         </div>
         {pending.isPending && <p className="muted" aria-busy="true">Loading…</p>}
         {pending.isError && <p className="muted">We couldn't load the shops waiting for approval.</p>}
-        {pending.isSuccess && waiting.length === 0 && (
-          <p className={styles.allClear}>✓ No shops waiting for approval. All caught up.</p>
+        {pending.isSuccess && waiting.length === 0 && (suggestions.data?.length ?? 0) === 0 && (
+          <p className={styles.allClear}>✓ No shops or dish names waiting. All caught up.</p>
+        )}
+        {(suggestions.data?.length ?? 0) > 0 && (
+          <Link to="/admin/dishes" className={`${styles.attentionRow} ${styles.attentionDishes}`}>
+            <span className={styles.initial} aria-hidden="true">🍲</span>
+            <span className={styles.rowText}>
+              <strong>{suggestions.data!.length} dish {suggestions.data!.length === 1 ? 'name' : 'names'} suggested by sellers</strong>
+              <span className="muted">{suggestions.data!.slice(0, 3).map((s) => s.name).join(', ')}{suggestions.data!.length > 3 ? '…' : ''}</span>
+            </span>
+            <span className={styles.rowGo}>Review ›</span>
+          </Link>
         )}
         <ul className={styles.attention}>
           {waiting.slice(0, 6).map((s) => (

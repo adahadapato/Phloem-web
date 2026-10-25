@@ -677,3 +677,218 @@ h2 .navCount {
     margin-bottom: 8px;
   }
 }
+
+/* ── Users ── */
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--brand-green);
+}
+
+.initial {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--brand-mint);
+  color: var(--brand-dark);
+  font-weight: 800;
+}
+
+.you {
+  color: var(--brand-orange);
+  font-weight: 700;
+}
+
+.roleChips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.rowButtons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.rowOpen,
+.rowOpen:hover {
+  background: var(--brand-mint-pale) !important;
+}
+
+.panelRow td {
+  padding: 0 16px 16px !important;
+  border-top: 0 !important;
+  background: var(--brand-mint-pale);
+  white-space: normal !important;
+}
+
+.inlinePanel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 640px;
+  padding: 14px 16px;
+  border: 1px solid var(--brand-border);
+  border-radius: 14px;
+  background: var(--white);
+  font-size: 14px;
+}
+
+.roleList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.roleList label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.roleList input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--brand-green);
+}
+
+.locked {
+  cursor: not-allowed !important;
+}
+
+.lockNote {
+  display: block;
+  color: var(--brand-orange);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.lengths {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.lengthChoice {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+
+.lengthChoice:has(input:checked) {
+  border-color: var(--brand-green);
+  background: var(--brand-mint-pale);
+  font-weight: 700;
+}
+
+.lengthChoice input {
+  accent-color: var(--brand-green);
+}
+
+.reasonLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.reasonLabel textarea {
+  min-height: 70px;
+  padding: 10px 12px;
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-field);
+  font: inherit;
+  font-weight: 400;
+  resize: vertical;
+}
+
+/* ── Dish names ── */
+.sectionTitle {
+  margin: 8px 0 12px;
+  font-size: 19px;
+}
+
+.suggestion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  padding: 10px 0;
+}
+
+.rangeCell {
+  min-width: 170px;
+}
+
+.rangeButton {
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: none;
+  color: var(--brand-text-dark);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rangeButton:hover {
+  border-color: var(--brand-green);
+  background: var(--brand-mint-pale);
+}
+
+.rangeMissing {
+  border: 1px dashed var(--brand-orange);
+  color: var(--brand-orange);
+  font-weight: 700;
+}
+
+.rangeForm {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 0;
+}
+
+.rangeInputs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rangeInputs input {
+  width: 80px;
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid var(--brand-border);
+  border-radius: 8px;
+  font: inherit;
+}
+
+.attentionDishes {
+  border-bottom: 1px solid var(--brand-border);
+}
