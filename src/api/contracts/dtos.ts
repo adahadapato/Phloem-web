@@ -632,3 +632,57 @@ export interface ParcelItemRuleDto {
   detail: string | null
   sortOrder: number
 }
+
+// ───────────────────────────── Admin ─────────────────────────────
+
+/** GET /api/admin/shops/stats: shops per status (closed shops aren't counted). */
+export interface AdminShopStatsDto {
+  pendingApproval: number
+  approved: number
+  rejected: number
+  blocked: number
+  total: number
+}
+
+/** One shop on Admin → Shops. */
+export interface AdminShopDto {
+  id: string
+  name: string
+  ownerName: string
+  businessEmail: string
+  businessPhone: string | null
+  country: Country
+  status: VendorStatus
+  rejectionReason: string | null
+  isVerified: boolean
+  rating: number
+  ratingCount: number
+  openedAt: string
+  logoUrl: string | null
+  isOwnerSuspended: boolean
+}
+
+/** One document a shop uploaded (the file itself is private: ask for a 10-minute link to open it). */
+export interface AdminShopDocumentDto {
+  id: string
+  type: VendorDocumentType
+  status: DocumentStatus
+  originalFileName: string
+  contentType: string
+  fileSizeBytes: number
+  rejectionReason: string | null
+  expiresAt: string | null
+  isExpired: boolean
+  uploadedAt: string
+  reviewedAt: string | null
+}
+
+/** GET /api/admin/shops/{id}: one shop with its pictures, documents and what's missing for the ✓ badge. */
+export interface AdminShopDetailsDto {
+  shop: AdminShopDto
+  logoUrl: string | null
+  coverPhotoUrl: string | null
+  documents: AdminShopDocumentDto[]
+  missingDocuments: VendorDocumentType[]
+}
+

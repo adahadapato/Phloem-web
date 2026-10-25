@@ -17,12 +17,6 @@ const page = (load: () => Promise<{ default: ComponentType }>): Pick<RouteObject
   lazy: async () => ({ Component: (await load()).default }),
 })
 
-/** TEMPORARY: "Coming soon" with the page's title, until the real page is built. */
-const comingSoon = (title: string): Partial<RouteObject> => ({
-  handle: { title },
-  ...page(() => import('./pages/about/ComingSoonPage')),
-})
-
 export const router = createBrowserRouter([
   {
     element: <PageShell />,
@@ -84,8 +78,15 @@ export const router = createBrowserRouter([
       {
         element: <ProtectedRoute role={Roles.Admin} />,
         children: [
-          // TEMPORARY
-          { path: 'admin', ...comingSoon('Admin dashboard') },
+          {
+            path: 'admin',
+            ...page(() => import('./pages/admin/AdminLayout')),
+            children: [
+              { index: true, ...page(() => import('./pages/admin/AdminOverviewPage')) },
+              { path: 'shops', ...page(() => import('./pages/admin/shops/AdminShopsPage')) },
+              { path: 'shops/:shopId', ...page(() => import('./pages/admin/shops/AdminShopPage')) },
+            ],
+          },
         ],
       },
 

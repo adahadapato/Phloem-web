@@ -1,6 +1,7 @@
 /** Names people see for the API's values. Kept in one place so every page says the same. */
 import type {
-  DeliveryWindow, DishCategory, DishSort, OrderStatus, ShipmentItemCategory, ShipmentStatus, VendorDocumentType,
+  DeliveryWindow, DishCategory, DishSort, DocumentStatus, OrderStatus, ShipmentItemCategory, ShipmentStatus,
+  VendorDocumentType, VendorStatus,
 } from '../../api/contracts/enums'
 
 /** The category tabs, in the app's order. */
@@ -104,3 +105,20 @@ export const documentText: Record<VendorDocumentType, string> = {
   OwnerId: 'Photo ID',
   Other: 'Other document',
 }
+
+/** A shop's status, as admins read it. */
+export const vendorStatusText: Record<VendorStatus, string> = {
+  PendingApproval: 'Waiting for approval',
+  Approved: 'Live',
+  Rejected: 'Rejected',
+  Blocked: 'Blocked',
+  Closed: 'Closed',
+}
+
+/** A document's review state. */
+export const documentStatusText: Record<DocumentStatus, string> = {
+  Pending: 'To check',
+  Accepted: 'Accepted',
+  Rejected: 'Rejected',
+}
+
