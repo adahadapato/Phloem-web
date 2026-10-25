@@ -38,6 +38,7 @@
 
   /* ── Type (the app uses each phone's system font; so does the site) ── */
   --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "DM Serif Display", Georgia, "Times New Roman", serif;   /* warm headlines (Home) */
   --text-xs: 12px;     /* SubtleLabel */
   --text-sm: 13px;     /* LinkLabel, Eyebrow */
   --text-md: 15px;     /* fields */
