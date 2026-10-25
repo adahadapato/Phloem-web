@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { Fragment, useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import { useSearchParams } from 'react-router'
 import { unwrap, type ApiResult } from '../../../api/apiError'
 import type { AdminUserDto } from '../../../api/contracts/dtos'
@@ -43,8 +43,9 @@ function RoleChips({ roles }: { roles: string[] }) {
 }
 
 /**
- * Admin → Users: everyone who has signed up, newest first, in a table (photo, name, email and phone, country, roles,
- * shop, joined, suspended or not). Search by name, or show only suspended people. Each row opens, underneath it:
+ * Admin → Users: everyone who has signed up, newest first, as cards (two per row on a big screen): photo, name,
+ * email and phone, Active / Suspended; then country, joined, shop and roles; then, under a line, the buttons.
+ * Search by name, or show only suspended people. Each card opens, under its buttons:
  * <b>Roles</b>: tick or untick Admin and the staff roles (your own Admin can't be removed; Seller follows the shop),
  * or <b>Suspend</b>: how long and why (they see the reason; their shop is hidden with them). Lift ends a suspension.
  */
@@ -148,120 +149,116 @@ export default function AdminUsersPage() {
             {search && <> matching "{search}" <button type="button" className={styles.clear} onClick={() => { setTyped(''); change({ q: null }) }}>Clear</button></>}
           </p>
           {list.items.length > 0 && (
-            <div className={styles.tableWrap}>
-              <table className={styles.table}>
-                <thead>
-                  <tr><th>Person</th><th>Country</th><th>Roles</th><th>Joined</th><th>Status</th><th aria-label="Actions" /></tr>
-                </thead>
-                <tbody>
-                  {list.items.map((u) => {
-                    const c = countries.find((x) => x.country === u.country)
-                    const isOpen = panel?.id === u.id
-                    return (
-                      <Fragment key={u.id}>
-                        <tr className={isOpen ? styles.rowOpen : undefined}>
-                          <td>
-                            <div className={styles.shopCell}>
-                              {u.photoUrl
-                                ? <ApiImage src={u.photoUrl} alt="" className={styles.rowLogo} />
-                                : <span className={styles.initial} aria-hidden="true">{u.fullName.charAt(0).toUpperCase()}</span>}
-                              <span className={styles.rowText}>
-                                <strong>{u.fullName}{u.isYou && <span className={styles.you}> (you)</span>}</strong>
-                                <span className="muted">{u.email}{u.phoneNumber && ` · ${u.phoneNumber}`}</span>
-                                {u.shopName && <span className="muted">Shop: {u.shopName}</span>}
-                              </span>
-                            </div>
-                          </td>
-                          <td>{c ? <span className={styles.place}><CountryFlag country={c} /> {c.name}</span> : u.country}</td>
-                          <td><RoleChips roles={u.roles} /></td>
-                          <td>{day(u.memberSince)}</td>
-                          <td>
-                            {u.isSuspended
-                              ? <span className={`${styles.chip} ${styles.chipStop}`} title={u.suspensionReason ?? undefined}>
-                                  Suspended {u.suspendedUntil ? `to ${day(u.suspendedUntil)}` : '(no end date)'}
-                                </span>
-                              : <span className={`${styles.chip} ${styles.chipGo}`}>Active</span>}
-                          </td>
-                          <td>
-                            <div className={styles.rowButtons}>
-                              <Button small variant="secondary" aria-expanded={isOpen && panel?.kind === 'roles'}
-                                      onClick={() => open(u, 'roles')}>Roles</Button>
-                              {u.isSuspended ? (
-                                <Button small variant="outline" disabled={busy}
-                                        onClick={() => run(() => reinstateUser(u.id), `${u.fullName} can sign in again.`)}>
-                                  Lift suspension
-                                </Button>
-                              ) : u.canBeSuspended && (
-                                <Button small variant="outline" className={styles.danger} aria-expanded={isOpen && panel?.kind === 'suspend'}
-                                        onClick={() => open(u, 'suspend')}>Suspend</Button>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                        {isOpen && (
-                          <tr className={styles.panelRow}>
-                            <td colSpan={6}>
-                              {panel.kind === 'roles' ? (
-                                <div className={styles.inlinePanel} role="group" aria-label={`Roles for ${u.fullName}`}>
-                                  <strong>Roles for {u.fullName}</strong>
-                                  <ul className={styles.roleList}>
-                                    {assignableRoles.map((r) => {
-                                      const has = u.roles.includes(r.role)
-                                      const locked = !!u.isYou && r.role === Roles.Admin && has
-                                      return (
-                                        <li key={r.role}>
-                                          <label className={locked ? styles.locked : undefined}>
-                                            <input type="checkbox" checked={has} disabled={busy || locked}
-                                                   onChange={() => toggleRole(u, r.role, has)} />
-                                            <span><strong>{r.name}</strong> <span className="muted">{r.about}</span>
-                                              {locked && <span className={styles.lockNote}>You can't remove your own Admin role. Another admin has to.</span>}
-                                            </span>
-                                          </label>
-                                        </li>
-                                      )
-                                    })}
-                                  </ul>
-                                  <p className="muted" style={{ margin: 0, fontSize: 13 }}>
-                                    Seller follows their shop (approving gives it, blocking takes it away). Everyone is a Customer.
-                                    Taking a role away signs them out so it applies straight away.
-                                  </p>
-                                </div>
-                              ) : (
-                                <form className={styles.inlinePanel} onSubmit={(e) => { e.preventDefault(); void onSuspend(u) }}>
-                                  <strong>Suspend {u.fullName}</strong>
-                                  <span className="muted">
-                                    They're signed out and can't sign in.{u.shopName && ' Their shop is hidden and its unfinished orders are cancelled (paid ones refunded).'} They're emailed the reason.
+            <ul className={styles.people}>
+              {list.items.map((u) => {
+                const c = countries.find((x) => x.country === u.country)
+                const isOpen = panel?.id === u.id
+                return (
+                  <li key={u.id} className={`${styles.person} ${u.isSuspended ? styles.personSuspended : ''}`}>
+                    {/* Who */}
+                    <div className={styles.personTop}>
+                      {u.photoUrl
+                        ? <ApiImage src={u.photoUrl} alt="" className={styles.personPhoto} />
+                        : <span className={styles.personInitial} aria-hidden="true">{u.fullName.charAt(0).toUpperCase()}</span>}
+                      <div className={styles.personWho}>
+                        <h2 className={styles.personName}>
+                          {u.fullName}{u.isYou && <span className={styles.you}> (you)</span>}
+                        </h2>
+                        <a href={`mailto:${u.email}`} className={styles.personContact}>{u.email}</a>
+                        {u.phoneNumber && <a href={`tel:${u.phoneNumber}`} className={styles.personContact}>{u.phoneNumber}</a>}
+                      </div>
+                      {u.isSuspended
+                        ? <span className={`${styles.chip} ${styles.chipStop}`}>Suspended</span>
+                        : <span className={`${styles.chip} ${styles.chipGo}`}>Active</span>}
+                    </div>
+
+                    {/* Facts */}
+                    <div className={styles.personFacts}>
+                      {c && <span className={styles.fact}><CountryFlag country={c} /> {c.name}</span>}
+                      <span className={styles.fact}>Joined {day(u.memberSince)}</span>
+                      {u.shopName && <span className={styles.fact}>🏪 {u.shopName}</span>}
+                      <RoleChips roles={u.roles} />
+                    </div>
+                    {u.isSuspended && (
+                      <p className={styles.personNote}>
+                        Suspended {u.suspendedUntil ? `until ${day(u.suspendedUntil)}` : 'until further notice'}
+                        {u.suspensionReason && <>: "{u.suspensionReason}"</>}
+                      </p>
+                    )}
+
+                    {/* Actions, under a line */}
+                    <div className={styles.personActions}>
+                      <Button small variant={isOpen && panel?.kind === 'roles' ? 'primary' : 'secondary'}
+                              aria-expanded={isOpen && panel?.kind === 'roles'} onClick={() => open(u, 'roles')}>
+                        Roles
+                      </Button>
+                      {u.isSuspended ? (
+                        <Button small variant="outline" disabled={busy}
+                                onClick={() => run(() => reinstateUser(u.id), `${u.fullName} can sign in again.`)}>
+                          Lift suspension
+                        </Button>
+                      ) : u.canBeSuspended && (
+                        <Button small variant="outline" className={styles.danger}
+                                aria-expanded={isOpen && panel?.kind === 'suspend'} onClick={() => open(u, 'suspend')}>
+                          Suspend
+                        </Button>
+                      )}
+                    </div>
+
+                    {isOpen && (panel.kind === 'roles' ? (
+                      <div className={styles.inlinePanel} role="group" aria-label={`Roles for ${u.fullName}`}>
+                        <ul className={styles.roleList}>
+                          {assignableRoles.map((r) => {
+                            const has = u.roles.includes(r.role)
+                            const locked = !!u.isYou && r.role === Roles.Admin && has
+                            return (
+                              <li key={r.role}>
+                                <label className={locked ? styles.locked : undefined}>
+                                  <input type="checkbox" checked={has} disabled={busy || locked}
+                                         onChange={() => toggleRole(u, r.role, has)} />
+                                  <span><strong>{r.name}</strong><span className={styles.roleAbout}>{r.about}</span>
+                                    {locked && <span className={styles.lockNote}>You can't remove your own Admin role. Another admin has to.</span>}
                                   </span>
-                                  <div className={styles.lengths} role="radiogroup" aria-label="How long">
-                                    {LENGTHS.map((l) => (
-                                      <label key={l.key} className={styles.lengthChoice}>
-                                        <input type="radio" name="length" checked={length === l.key} onChange={() => setLength(l.key)} />
-                                        {l.label}
-                                      </label>
-                                    ))}
-                                  </div>
-                                  <label className={styles.reasonLabel}>
-                                    <span>Why? They'll see this.</span>
-                                    <textarea value={reason} maxLength={REASON_MAX} onChange={(e) => setReason(e.target.value)}
-                                              placeholder="e.g. Repeated fake orders" />
-                                  </label>
-                                  <div className={styles.row}>
-                                    <Button type="submit" small variant="cta" busy={busy} busyText="Suspending…" disabled={!reason.trim()}>
-                                      Suspend
-                                    </Button>
-                                    <Button small variant="outline" onClick={() => setPanel(null)}>Cancel</Button>
-                                  </div>
-                                </form>
-                              )}
-                            </td>
-                          </tr>
-                        )}
-                      </Fragment>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
+                                </label>
+                              </li>
+                            )
+                          })}
+                        </ul>
+                        <p className={styles.panelHint}>
+                          Seller follows their shop, and everyone is a Customer. Taking a role away signs them out so it
+                          applies straight away.
+                        </p>
+                      </div>
+                    ) : (
+                      <form className={styles.inlinePanel} onSubmit={(e) => { e.preventDefault(); void onSuspend(u) }}>
+                        <span className={styles.panelHint}>
+                          They're signed out and can't sign in.{u.shopName && ' Their shop is hidden and its unfinished orders are cancelled (paid ones refunded).'} They're emailed the reason.
+                        </span>
+                        <div className={styles.lengths} role="radiogroup" aria-label="How long">
+                          {LENGTHS.map((l) => (
+                            <label key={l.key} className={styles.lengthChoice}>
+                              <input type="radio" name={`length-${u.id}`} checked={length === l.key} onChange={() => setLength(l.key)} />
+                              {l.label}
+                            </label>
+                          ))}
+                        </div>
+                        <label className={styles.reasonLabel}>
+                          <span>Why? They'll see this.</span>
+                          <textarea value={reason} maxLength={REASON_MAX} onChange={(e) => setReason(e.target.value)}
+                                    placeholder="e.g. Repeated fake orders" />
+                        </label>
+                        <div className={styles.row}>
+                          <Button type="submit" small variant="cta" busy={busy} busyText="Suspending…" disabled={!reason.trim()}>
+                            Suspend {u.fullName.split(' ')[0]}
+                          </Button>
+                          <Button small variant="outline" onClick={() => setPanel(null)}>Cancel</Button>
+                        </div>
+                      </form>
+                    ))}
+                  </li>
+                )
+              })}
+            </ul>
           )}
           <Pager page={list.page} totalPages={list.totalPages} onChange={(p) => change({ page: String(p) })} />
         </>
