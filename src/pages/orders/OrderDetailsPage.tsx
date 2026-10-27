@@ -12,6 +12,7 @@ import { StatusBanner } from '../../components/ui/StatusBanner'
 import { ActionBanner, OrderButtons, StatusChip } from './OrderParts'
 import styles from './Orders.module.css'
 import { useOrderActions } from './useOrderActions'
+import { NeedHelp } from '../../components/ui/NeedHelp'
 
 /** The journey of an order, like the app's tracker (with Paid added: the website can pay unpaid orders). */
 const STEPS = [
@@ -197,6 +198,7 @@ export default function OrderDetailsPage() {
                   'until the shop starts cooking.'}
             </p>
           )}
+          <NeedHelp text="Something wrong with this order?" section="orders" />
         </div>
       </div>
     </div>

@@ -87,6 +87,11 @@ export function AccountMenu() {
             </li>
           )}
           <li role="none">
+            <Link role="menuitem" className={styles.option} to="/help" onClick={() => setOpen(false)}>
+              Help &amp; support
+            </Link>
+          </li>
+          <li role="none">
             <button type="button" role="menuitem" className={styles.option} onClick={onLogout}>Log out</button>
           </li>
         </ul>

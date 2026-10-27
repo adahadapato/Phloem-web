@@ -6,13 +6,14 @@ import { AccountMenu } from './AccountMenu'
 import { CountryPicker } from './CountryPicker'
 import styles from './Header.module.css'
 
-/** The main links. Same places as the app's tabs (Home, Explore, Orders, Account), plus parcel tracking. */
+/** The main links. Same places as the app's tabs (Home, Explore, Orders, Account), plus parcel tracking and Help. */
 const links = [
   { to: '/', label: 'Home', end: true },
   { to: '/explore', label: 'Explore' },
   { to: '/shops', label: 'Shops' },
   { to: '/track', label: 'Track a parcel' },
   { to: '/orders', label: 'My orders' },
+  { to: '/help', label: 'Help' },
 ]
 
 /**

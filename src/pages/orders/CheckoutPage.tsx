@@ -17,6 +17,7 @@ import { useCart, type CartLine } from '../../state/CartContext'
 import { useCountry } from '../../state/CountryContext'
 import { useSession } from '../../state/SessionContext'
 import styles from './Orders.module.css'
+import { NeedHelp } from '../../components/ui/NeedHelp'
 
 /** Same as the API: a paid order can be cancelled within 30 minutes. */
 const CANCEL_MINUTES = 30
@@ -413,6 +414,7 @@ export default function CheckoutPage() {
             <p className="muted" style={{ fontSize: 12 }}>
               By placing your order you agree to the <a href="/terms#buyers" target="_blank" rel="noopener">Terms</a>.
             </p>
+            <NeedHelp text="Questions about delivery or refunds?" section="orders" />
           </div>
         </aside>
       </div>

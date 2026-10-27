@@ -16,6 +16,7 @@ import { useSession } from '../../state/SessionContext'
 import { ParcelRules } from './ParcelRules'
 import { RouteText } from './ShipmentParts'
 import styles from './Shipping.module.css'
+import { NeedHelp } from '../../components/ui/NeedHelp'
 
 /** Same limits as the API (Shipment / ShipmentItem). */
 const MIN_KG = 0.1
@@ -349,6 +350,7 @@ export default function SendParcelPage() {
                 <input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} />
                 <span>I accept the <a href="/terms#parcels" target="_blank" rel="noopener">shipping terms</a>.</span>
               </label>
+              <NeedHelp text="Questions about prices, weighing or customs?" section="parcels" />
             </section>
           </div>
 

@@ -16,6 +16,7 @@ import { BuyItAgainPanel } from './BuyItAgainPanel'
 import styles from './MyOrders.module.css'
 import { ActionBanner, OrderButtons } from './OrderParts'
 import { useOrderActions } from './useOrderActions'
+import { NeedHelp } from '../../components/ui/NeedHelp'
 
 const PAGE_SIZE = 5
 /** Dishes shown per order in the list; the rest are counted ("+2 more") and shown on the order's page. */
@@ -297,6 +298,7 @@ export default function OrdersPage() {
 
           <Pager page={page} totalPages={totalPages}
                  onChange={(p) => { update({ page: p }); globalThis.scrollTo?.({ top: 0 }) }} />
+          <NeedHelp text="A problem with an order, a refund or a cancellation?" section="orders" />
         </div>
 
         <BuyItAgainPanel />

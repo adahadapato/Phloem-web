@@ -9,6 +9,7 @@ import { StatusBanner } from '../../components/ui/StatusBanner'
 import { RouteText, ShipmentChip, ShipmentTimeline } from './ShipmentParts'
 import styles from './Shipping.module.css'
 import { useShipmentActions } from './useShipmentActions'
+import { NeedHelp } from '../../components/ui/NeedHelp'
 
 const categoryText = (c: string) => shipmentCategories.find((x) => x.value === c)?.label ?? c
 
@@ -108,6 +109,7 @@ export default function ShipmentDetailsPage() {
               )}
             </div>
           )}
+          <NeedHelp text="Questions about your parcel?" section="parcels" />
         </div>
 
         <div className={styles.detailGrid}>
