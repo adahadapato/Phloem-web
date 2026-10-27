@@ -54,3 +54,9 @@ export type LegalDocumentType = 'Terms' | 'Privacy' | 'Help'
 
 /** A line of the "what can be sent" list: never carried, or carried only as its detail says. */
 export type ParcelItemRuleKind = 'NotAllowed' | 'Restricted'
+
+/** What a Contact us message is about. */
+export type ContactTopic = 'Order' | 'Parcel' | 'Selling' | 'Account' | 'Other'
+
+/** Where a Contact us message is in the team's inbox. */
+export type ContactMessageStatus = 'New' | 'Replied' | 'Closed'

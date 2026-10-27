@@ -14,7 +14,7 @@ import styles from './LegalPage.module.css'
 const OTHERS: Record<LegalDocumentType, { to: string; label: string }[]> = {
   Terms: [{ to: '/privacy', label: 'Privacy Policy' }, { to: '/help', label: 'Help & support' }],
   Privacy: [{ to: '/terms', label: 'Terms & Conditions' }, { to: '/help', label: 'Help & support' }],
-  Help: [{ to: '/terms', label: 'Terms & Conditions' }, { to: '/privacy', label: 'Privacy Policy' }],
+  Help: [{ to: '/contact', label: 'Contact us' }, { to: '/terms', label: 'Terms & Conditions' }, { to: '/privacy', label: 'Privacy Policy' }],
 }
 
 /**
@@ -75,6 +75,15 @@ export default function LegalPage() {
               </p>
             )}
             <Markdown text={doc.content.replace(/^>.*\n?/m, doc.isDraft ? '' : '$&')} className={styles.text} />
+            {type === 'Help' && (
+              <aside className={styles.stillStuck} aria-label="Still need help?">
+                <div>
+                  <strong>Still need help?</strong>
+                  <span className="muted">Send us a message and a person from the team will reply.</span>
+                </div>
+                <Link to="/contact" className={styles.stillStuckLink}>Contact us ›</Link>
+              </aside>
+            )}
           </article>
         </div>
       )}

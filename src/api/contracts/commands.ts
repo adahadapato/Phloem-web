@@ -3,7 +3,7 @@
  * Grows feature by feature; keep in step with the app's Services/Api/Contracts/Commands.
  */
 import type {
-  CatalogGroup, Country, DeliverySpeed, DeliveryWindow, DishCategory, ShipmentItemCategory,
+  CatalogGroup, ContactTopic, Country, DeliverySpeed, DeliveryWindow, DishCategory, ShipmentItemCategory,
 } from './enums'
 
 /** POST /api/auth/login */
@@ -211,4 +211,16 @@ export interface UpdateShopDetailsCommand {
   shopName: string
   businessEmail: string | null
   businessPhone: string | null
+}
+
+/** POST /api/contact/messages: the Contact us form (signed in or not). */
+export interface SendContactMessageCommand {
+  name: string
+  email: string
+  topic: ContactTopic
+  /** Order or tracking number, if any. */
+  reference: string | null
+  message: string
+  /** Spam trap: a hidden field people never fill in. */
+  website: string | null
 }

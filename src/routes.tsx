@@ -26,6 +26,7 @@ export const router = createBrowserRouter([
       { path: 'terms', handle: { legal: 'Terms' }, ...page(() => import('./pages/about/LegalPage')) },
       { path: 'privacy', handle: { legal: 'Privacy' }, ...page(() => import('./pages/about/LegalPage')) },
       { path: 'help', handle: { legal: 'Help' }, ...page(() => import('./pages/about/LegalPage')) },
+      { path: 'contact', ...page(() => import('./pages/about/ContactPage')) },
       { path: 'explore', ...page(() => import('./pages/explore/FoodListingPage')) },
       { path: 'shops', ...page(() => import('./pages/explore/ShopsPage')) },
       { path: 'shops/:shopId', ...page(() => import('./pages/explore/ShopPage')) },
@@ -74,9 +75,9 @@ export const router = createBrowserRouter([
         ],
       },
 
-      // Admins only (others are sent Home)
+      // Admins (everything) and support agents (Contact messages only); others are sent Home
       {
-        element: <ProtectedRoute role={Roles.Admin} />,
+        element: <ProtectedRoute role={[Roles.Admin, Roles.SupportAgent]} />,
         children: [
           {
             path: 'admin',
@@ -93,6 +94,7 @@ export const router = createBrowserRouter([
               { path: 'shipping/parcels/:trackingNumber', ...page(() => import('./pages/admin/shipping/AdminParcelPage')) },
               { path: 'shipping/rules', ...page(() => import('./pages/admin/shipping/AdminParcelRulesPage')) },
               { path: 'texts', ...page(() => import('./pages/admin/texts/AdminTextsPage')) },
+              { path: 'messages', ...page(() => import('./pages/admin/messages/AdminMessagesPage')) },
             ],
           },
         ],

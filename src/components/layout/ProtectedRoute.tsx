@@ -3,9 +3,9 @@ import { useSession } from '../../state/SessionContext'
 
 /**
  * Pages that need a signed-in person (My orders, Checkout, Account…). Signed out → Log in, then straight back to
- * the page they wanted (?returnTo=…). Optionally limited to a role (e.g. Admin).
+ * the page they wanted (?returnTo=…). Optionally limited to a role (e.g. Admin), or to any of several roles.
  */
-export function ProtectedRoute({ role }: { role?: string }) {
+export function ProtectedRoute({ role }: { role?: string | string[] }) {
   const { status, isInRole } = useSession()
   const location = useLocation()
 
@@ -19,7 +19,8 @@ export function ProtectedRoute({ role }: { role?: string }) {
     return <Navigate to={`/login?returnTo=${returnTo}`} replace />
   }
 
-  if (role && !isInRole(role)) return <Navigate to="/" replace />
+  const allowed = role === undefined ? [] : Array.isArray(role) ? role : [role]
+  if (allowed.length > 0 && !allowed.some(isInRole)) return <Navigate to="/" replace />
 
   return <Outlet />
 }

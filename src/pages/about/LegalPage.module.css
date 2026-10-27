@@ -129,3 +129,35 @@
     padding: 22px 18px 28px;
   }
 }
+
+/* Help only: "Still need help? Contact us" at the end */
+.stillStuck {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  margin-top: 32px;
+  padding: 18px 20px;
+  border-radius: var(--radius-card);
+  background: var(--brand-mint-pale);
+}
+
+.stillStuck > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stillStuckLink {
+  padding: 10px 18px;
+  border-radius: var(--radius-pill);
+  background: var(--brand-green);
+  color: var(--white);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.stillStuckLink:hover {
+  background: var(--brand-dark);
+}

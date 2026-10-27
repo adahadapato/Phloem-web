@@ -3,8 +3,9 @@
  * Grows feature by feature; keep in step with the app's Services/Api/Contracts/Dtos.
  */
 import type {
-  CatalogGroup, Country, Currency, DeliverySpeed, DeliveryWindow, DishCategory, DocumentStatus, OrderStatus, ShipmentItemCategory,
-  LegalDocumentType, ParcelItemRuleKind, ShipmentStatus, VendorDocumentType, VendorStatus,
+  CatalogGroup, ContactMessageStatus, ContactTopic, Country, Currency, DeliverySpeed, DeliveryWindow,
+  DishCategory, DocumentStatus, LegalDocumentType, OrderStatus, ParcelItemRuleKind, ShipmentItemCategory,
+  ShipmentStatus, VendorDocumentType, VendorStatus,
 } from './enums'
 
 /** Answer of login, register, two-factor, refresh and Google exchange. */
@@ -821,3 +822,38 @@ export interface StaffShipmentSummaryDto {
   bookedAt: string
 }
 
+/** GET /api/contact: what the Contact us page shows. Null values are left off the page. */
+export interface ContactDetailsDto {
+  email: string
+  phone: string | null
+  /** International format, e.g. "+44 7700 900000". */
+  whatsApp: string | null
+  address: string | null
+  openingHours: string | null
+  /** e.g. "within 24 hours". */
+  replyTime: string | null
+}
+
+/** One message in Admin → Contact messages. */
+export interface ContactMessageDto {
+  id: string
+  name: string
+  email: string
+  topic: ContactTopic
+  reference: string | null
+  /** Plain text: show as text, never as HTML. */
+  message: string
+  status: ContactMessageStatus
+  staffNote: string | null
+  fromSignedInUser: boolean
+  sentAt: string
+  handledAt: string | null
+}
+
+/** GET /api/admin/contact-messages: one page of the inbox and how many there are of each status. */
+export interface ContactInboxDto {
+  messages: PagedResult<ContactMessageDto>
+  newCount: number
+  repliedCount: number
+  closedCount: number
+}

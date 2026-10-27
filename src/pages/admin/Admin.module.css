@@ -1739,3 +1739,75 @@ h2 .navCount {
     display: none;
   }
 }
+
+/* ── Contact messages ── */
+.messageTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.messageMeta {
+  margin: -4px 0 0;
+  color: var(--brand-text-muted);
+  font-size: 13px;
+}
+
+.messageRef {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--brand-text-dark);
+}
+
+.messageText {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--brand-cream);
+  font-size: 15px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.messageNote {
+  margin: 0;
+  padding: 8px 12px;
+  border-left: 3px solid var(--brand-gold);
+  background: var(--brand-peach);
+  font-size: 13px;
+}
+
+.messageNoteInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-field);
+  font: inherit;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.messageActions {
+  align-items: center;
+}
+
+.messageActions button {
+  white-space: nowrap;
+}
+
+.messageReply {
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  background: var(--brand-green);
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.messageReply:hover {
+  background: var(--brand-dark);
+  color: var(--white);
+}

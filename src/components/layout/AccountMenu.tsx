@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
+import { Roles } from '../../api/contracts/roles'
 import { ApiImage } from '../ui/ApiImage'
 import { useSession } from '../../state/SessionContext'
 import styles from './HeaderMenu.module.css'
@@ -9,7 +10,8 @@ import styles from './HeaderMenu.module.css'
  * My orders, My shipments, Seller dashboard (people with a shop), Admin dashboard (admins) and Log out. Closes on a pick, on Escape, or on a click outside.
  */
 export function AccountMenu() {
-  const { profile, logout, isAdmin } = useSession()
+  const { profile, logout, isAdmin, isInRole } = useSession()
+  const isSupport = !isAdmin && isInRole(Roles.SupportAgent)
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const box = useRef<HTMLDivElement>(null)
@@ -83,6 +85,13 @@ export function AccountMenu() {
             <li role="none">
               <Link role="menuitem" className={styles.option} to="/admin" onClick={() => setOpen(false)}>
                 Admin dashboard
+              </Link>
+            </li>
+          )}
+          {isSupport && (
+            <li role="none">
+              <Link role="menuitem" className={styles.option} to="/admin/messages" onClick={() => setOpen(false)}>
+                Contact messages
               </Link>
             </li>
           )}

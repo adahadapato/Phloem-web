@@ -8,11 +8,11 @@ import { withQuery } from '../apiQuery'
 import { del, get, post, put } from '../client'
 import type {
   AdminDishCatalogDto, AdminDishSuggestionDto, AdminShopDetailsDto, AdminShopDto, AdminShopStatsDto, AdminUserDto,
-  AdminShipmentRouteDto, CommissionDto, DeliveryPricingDto, PagedResult, ParcelItemRuleDto, ShipmentDetailsDto,
+  AdminShipmentRouteDto, CommissionDto, ContactInboxDto, DeliveryPricingDto, PagedResult, ParcelItemRuleDto, ShipmentDetailsDto,
   StaffShipmentSummaryDto, UserSuspendedDto,
 } from '../contracts/dtos'
 import type {
-  Country, DeliverySpeed, DeliveryWindow, ParcelItemRuleKind, ShipmentStatus, VendorStatus,
+  ContactMessageStatus, Country, DeliverySpeed, DeliveryWindow, ParcelItemRuleKind, ShipmentStatus, VendorStatus,
 } from '../contracts/enums'
 
 const shops = 'api/admin/shops'
@@ -211,3 +211,16 @@ export const deleteParcelRule = (id: string) => del(`${rules}/${encodeURICompone
 
 /** Put the list in a new order (every line's id, first to last). */
 export const reorderParcelRules = (ids: string[]) => put(`${rules}/order`, { ids })
+
+// ───────────────────────────── Contact messages (admins and support agents) ─────────────────────────────
+
+const inbox = 'api/admin/contact-messages'
+
+/** The Contact us inbox, newest first; optionally one status; with counts per status. */
+export const getContactMessages = (filter: { status?: ContactMessageStatus; page?: number; pageSize?: number },
+                                   signal?: AbortSignal): Promise<ApiResult<ContactInboxDto>> =>
+  get<ContactInboxDto>(withQuery(inbox, { ...filter }), signal)
+
+/** Mark a message Replied, Closed or back to New, with an optional note for colleagues. */
+export const setContactMessageStatus = (id: string, status: ContactMessageStatus, note: string | null) =>
+  put(`${inbox}/${encodeURIComponent(id)}/status`, { status, note })

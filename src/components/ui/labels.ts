@@ -1,6 +1,6 @@
 /** Names people see for the API's values. Kept in one place so every page says the same. */
 import type {
-  CatalogGroup, DeliveryWindow, DishCategory, DishSort, DocumentStatus, OrderStatus, ShipmentItemCategory, ShipmentStatus,
+  CatalogGroup, ContactMessageStatus, ContactTopic, DeliveryWindow, DishCategory, DishSort, DocumentStatus, OrderStatus, ShipmentItemCategory, ShipmentStatus,
   VendorDocumentType, VendorStatus,
 } from '../../api/contracts/enums'
 
@@ -131,3 +131,22 @@ export const catalogGroupText: Record<CatalogGroup, string> = {
   Drinks: 'Drinks',
 }
 
+/** The Contact us topics, with a hint, and whether an order or tracking number helps. */
+export const contactTopics: { value: ContactTopic; label: string; hint: string; reference?: string }[] = [
+  { value: 'Order', label: 'An order', hint: 'Delivery, a refund, a cancellation', reference: 'Order number' },
+  { value: 'Parcel', label: 'A parcel', hint: 'Prices, weighing, customs, tracking', reference: 'Tracking number' },
+  { value: 'Selling', label: 'Selling on Phloem', hint: 'Opening a shop, approval, payouts' },
+  { value: 'Account', label: 'My account', hint: 'Signing in, password, my details' },
+  { value: 'Other', label: 'Something else', hint: 'Questions, ideas, feedback' },
+]
+
+/** A Contact us topic as the inbox shows it. */
+export const contactTopicText = (topic: ContactTopic): string =>
+  contactTopics.find((t) => t.value === topic)?.label ?? topic
+
+/** Inbox statuses as people read them. */
+export const contactStatusText: Record<ContactMessageStatus, string> = {
+  New: 'New',
+  Replied: 'Replied',
+  Closed: 'Closed',
+}
