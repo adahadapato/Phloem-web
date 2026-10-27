@@ -10,7 +10,7 @@ const MENU: { to: string; label: string; icon: string; end?: boolean; soon?: boo
   { to: '/admin/shops', label: 'Shops', icon: '🏪' },
   { to: '/admin/users', label: 'Users', icon: '👥' },
   { to: '/admin/dishes', label: 'Dish names', icon: '🍲' },
-  { to: '/admin/shipping', label: 'Shipping', icon: '📦', soon: true },
+  { to: '/admin/shipping', label: 'Shipping', icon: '📦' },
   { to: '/admin/pricing', label: 'Pricing', icon: '💷' },
   { to: '/admin/texts', label: 'Terms & Help', icon: '📄', soon: true },
 ]

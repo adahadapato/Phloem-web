@@ -766,3 +766,42 @@ export interface DeliveryPricingDto {
   windows: DeliveryWindowChargeDto[]
 }
 
+/** One speed's price on a route (admin). */
+export interface ShipmentRateDto {
+  speed: DeliverySpeed
+  baseCharge: number
+  pricePerKg: number
+  minTransitDays: number
+  maxTransitDays: number
+}
+
+/** GET /api/admin/shipment-routes: a route, on or off, with its drop-off hub and a rate per speed. */
+export interface AdminShipmentRouteDto {
+  fromCountry: Country
+  toCountry: Country
+  /** The origin's currency (every price on the route). */
+  currency: Currency
+  dropOffAddress: string
+  dropOffHours: string
+  isActive: boolean
+  rates: ShipmentRateDto[]
+}
+
+/** GET /api/staff/shipments: one parcel in the hub's list. */
+export interface StaffShipmentSummaryDto {
+  trackingNumber: string
+  fromCountry: Country
+  toCountry: Country
+  senderName: string
+  recipientName: string
+  status: ShipmentStatus
+  speed: DeliverySpeed
+  itemCount: number
+  estimatedWeightKg: number
+  weighedWeightKg: number | null
+  /** The final price once weighed, else the estimate. */
+  price: number
+  currency: Currency
+  bookedAt: string
+}
+

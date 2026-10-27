@@ -47,7 +47,7 @@ export default function AdminOverviewPage() {
         <StatTile label="People signed up" value={users.data?.totalCount} to="/admin/users" />
         <StatTile label="Dish names suggested" value={suggestions.data?.length} tone="orange" to="/admin/dishes" />
         <StatTile label="Parcels to receive at the hub" value={toReceive.data?.totalCount}
-                  note="Booked, not weighed yet" />
+                  note="Booked, not weighed yet" to="/admin/shipping/parcels?status=Booked" />
       </div>
 
       <section className={styles.panel} aria-labelledby="attention-title">

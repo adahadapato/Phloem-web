@@ -8,9 +8,12 @@ import { withQuery } from '../apiQuery'
 import { del, get, post, put } from '../client'
 import type {
   AdminDishCatalogDto, AdminDishSuggestionDto, AdminShopDetailsDto, AdminShopDto, AdminShopStatsDto, AdminUserDto,
-  CommissionDto, DeliveryPricingDto, PagedResult, UserSuspendedDto,
+  AdminShipmentRouteDto, CommissionDto, DeliveryPricingDto, PagedResult, ParcelItemRuleDto, ShipmentDetailsDto,
+  StaffShipmentSummaryDto, UserSuspendedDto,
 } from '../contracts/dtos'
-import type { Country, DeliveryWindow, ShipmentStatus, VendorStatus } from '../contracts/enums'
+import type {
+  Country, DeliverySpeed, DeliveryWindow, ParcelItemRuleKind, ShipmentStatus, VendorStatus,
+} from '../contracts/enums'
 
 const shops = 'api/admin/shops'
 const shop = (id: string) => `${shops}/${encodeURIComponent(id)}`
@@ -136,3 +139,75 @@ export const setWindowCharge = (country: Country, window: DeliveryWindow, extraC
 export const removeWindow = (country: Country, window: DeliveryWindow) =>
   del(`api/admin/delivery-pricing/${country}/windows/${window}`)
 
+// ───────────────────────────── Shipping: routes ─────────────────────────────
+
+const routes = 'api/admin/shipment-routes'
+const route = (from: Country, to: Country) => `${routes}/${from}/${to}`
+
+/** Every route, on or off, with its rates. */
+export const getRoutes = (signal?: AbortSignal): Promise<ApiResult<AdminShipmentRouteDto[]>> =>
+  get<AdminShipmentRouteDto[]>(routes, signal)
+
+/** A new route (it starts switched off: add rates, then switch it on). */
+export const createRoute = (fromCountry: Country, toCountry: Country, dropOffAddress: string, dropOffHours: string) =>
+  post(routes, { fromCountry, toCountry, dropOffAddress, dropOffHours })
+
+/** Where and when parcels are dropped off for a route. */
+export const setDropOff = (from: Country, to: Country, dropOffAddress: string, dropOffHours: string) =>
+  put(`${route(from, to)}/drop-off`, { dropOffAddress, dropOffHours })
+
+/** Switch a route on (needs at least one rate) or off. */
+export const setRouteActive = (from: Country, to: Country, isActive: boolean) =>
+  put(`${route(from, to)}/active`, { isActive })
+
+/** One speed's price and transit time (applies to parcels weighed from now on). */
+export const setRate = (from: Country, to: Country, speed: DeliverySpeed,
+                        rate: { baseCharge: number; pricePerKg: number; minTransitDays: number; maxTransitDays: number }) =>
+  put(`${route(from, to)}/rates/${speed}`, rate)
+
+/** Stop offering a speed on a route. */
+export const removeRate = (from: Country, to: Country, speed: DeliverySpeed) => del(`${route(from, to)}/rates/${speed}`)
+
+// ───────────────────────────── Shipping: parcels at the hub ─────────────────────────────
+
+const staff = 'api/staff/shipments'
+const parcel = (n: string) => `${staff}/${encodeURIComponent(n)}`
+
+/** Every parcel, newest first, by status and / or route; one page. */
+export const getParcels = (filter: { status?: ShipmentStatus; fromCountry?: Country; toCountry?: Country; page: number; pageSize: number },
+                           signal?: AbortSignal): Promise<ApiResult<PagedResult<StaffShipmentSummaryDto>>> =>
+  get<PagedResult<StaffShipmentSummaryDto>>(withQuery(staff, filter), signal)
+
+/** One parcel with its full timeline (and staff notes). */
+export const getParcel = (trackingNumber: string, signal?: AbortSignal): Promise<ApiResult<ShipmentDetailsDto>> =>
+  get<ShipmentDetailsDto>(parcel(trackingNumber), signal)
+
+/** Dropped off and weighed at the hub: sets the final price (returned); the sender is emailed to pay. */
+export const receiveParcel = (trackingNumber: string, weighedWeightKg: number): Promise<ApiResult<number>> =>
+  post<number>(`${parcel(trackingNumber)}/receive`, { weighedWeightKg })
+
+/** The next step: InTransit, ArrivedInDestination, OutForDelivery or Delivered (optional note for the timeline). */
+export const moveParcel = (trackingNumber: string, newStatus: ShipmentStatus, note: string | null) =>
+  post(`${parcel(trackingNumber)}/progress`, { newStatus, note })
+
+// ───────────────────────────── Shipping: what can be sent ─────────────────────────────
+
+const rules = 'api/admin/parcel-rules'
+
+/** The list, in display order. */
+export const getParcelRules = (signal?: AbortSignal): Promise<ApiResult<ParcelItemRuleDto[]>> =>
+  get<ParcelItemRuleDto[]>('api/parcel-rules', signal)
+
+/** Add a line at the end. */
+export const addParcelRule = (kind: ParcelItemRuleKind, name: string, detail: string | null): Promise<ApiResult<string>> =>
+  post<string>(rules, { kind, name, detail })
+
+/** Change a line. */
+export const updateParcelRule = (id: string, kind: ParcelItemRuleKind, name: string, detail: string | null) =>
+  put(`${rules}/${encodeURIComponent(id)}`, { kind, name, detail })
+
+/** Remove a line. */
+export const deleteParcelRule = (id: string) => del(`${rules}/${encodeURIComponent(id)}`)
+
+/** Put the list in a new order (every line's id, first to last). */
+export const reorderParcelRules = (ids: string[]) => put(`${rules}/order`, { ids })

@@ -1419,3 +1419,201 @@ h2 .navCount {
 .windowOff {
   color: var(--brand-text-muted);
 }
+
+/* ── Shipping ── */
+.subTabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 18px;
+  padding: 4px;
+  overflow-x: auto;
+  border-radius: var(--radius-pill);
+  background: var(--brand-mint-pale);
+  width: fit-content;
+  max-width: 100%;
+}
+
+.subTab {
+  flex: none;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  color: var(--brand-green);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.subTab:hover {
+  text-decoration: none;
+  background: var(--white);
+}
+
+.subTabOn,
+.subTabOn:hover {
+  background: var(--brand-dark);
+  color: var(--white);
+}
+
+.routeOff {
+  background: #fbfaf7;
+}
+
+.linkDanger {
+  color: var(--brand-danger);
+}
+
+.stackForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.stackForm label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.stackForm textarea,
+.stackForm label > input {
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--brand-border);
+  border-radius: 10px;
+  background: var(--white);
+  font: inherit;
+  font-weight: 400;
+}
+
+.stackForm textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+
+.twoCols {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.colTitle {
+  margin: 0 0 4px;
+  color: var(--brand-text-muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.colText {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.itemList {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.itemList li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--brand-border);
+}
+
+/* What can be sent */
+.ruleList {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--brand-border);
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+  list-style: none;
+}
+
+.ruleRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  padding: 12px 18px;
+}
+
+.ruleRow + .ruleRow {
+  border-top: 1px solid var(--brand-border);
+}
+
+.ruleRow > .rowText {
+  flex: 1 1 260px;
+}
+
+.ruleRow > .rowButtons {
+  margin-left: auto;
+}
+
+.ruleMark {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: var(--white);
+  font-weight: 800;
+}
+
+.ruleNo { background: var(--brand-danger); }
+.ruleMaybe { background: var(--brand-orange); }
+
+.ruleKind {
+  color: var(--brand-danger);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ruleKindMaybe {
+  color: var(--brand-orange);
+}
+
+.ruleForm {
+  flex: 1 1 100%;
+}
+
+.moveButton {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1.5px solid var(--brand-border);
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--brand-dark);
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.moveButton:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+@media (max-width: 760px) {
+  .twoCols {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
