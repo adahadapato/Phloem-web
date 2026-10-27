@@ -12,7 +12,7 @@ const MENU: { to: string; label: string; icon: string; end?: boolean; soon?: boo
   { to: '/admin/dishes', label: 'Dish names', icon: '🍲' },
   { to: '/admin/shipping', label: 'Shipping', icon: '📦' },
   { to: '/admin/pricing', label: 'Pricing', icon: '💷' },
-  { to: '/admin/texts', label: 'Terms & Help', icon: '📄', soon: true },
+  { to: '/admin/texts', label: 'Terms & Help', icon: '📄' },
 ]
 
 /**

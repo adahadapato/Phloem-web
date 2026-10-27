@@ -1617,3 +1617,125 @@ h2 .navCount {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* ── Terms & Help ── */
+.textBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 14px;
+  font-size: 15px;
+}
+
+.textBar .chip {
+  margin-left: 8px;
+}
+
+.textBar a {
+  font-weight: 700;
+}
+
+.textTitle {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.textTitle input {
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--brand-border);
+  border-radius: 10px;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.writeTabs {
+  display: none;
+  gap: 6px;
+}
+
+.writeTabs button {
+  padding: 6px 14px;
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  color: var(--brand-green);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.writeTabs button[aria-selected="true"] {
+  border-color: var(--brand-dark);
+  background: var(--brand-dark);
+  color: var(--white);
+}
+
+.editor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.editorWrite textarea {
+  width: 100%;
+  height: 560px;
+  padding: 14px;
+  border: 1px solid var(--brand-border);
+  border-radius: 12px;
+  background: var(--brand-cream);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13.5px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.editorPreview {
+  height: 560px;
+  padding: 6px 20px 20px;
+  overflow-y: auto;
+  border: 1px solid var(--brand-border);
+  border-radius: 12px;
+  background: var(--white);
+}
+
+.previewTitle {
+  margin: 14px 0 8px;
+  font-size: 26px;
+}
+
+.cheat {
+  margin: 0;
+  color: var(--brand-text-muted);
+  font-size: 13px;
+}
+
+.cheat code,
+.setupNote code {
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--brand-mint-pale);
+  color: var(--brand-dark);
+  font-size: 12.5px;
+}
+
+@media (max-width: 900px) {
+  .writeTabs {
+    display: flex;
+  }
+
+  .editor {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .showWrite .editorPreview,
+  .showPreview .editorWrite {
+    display: none;
+  }
+}

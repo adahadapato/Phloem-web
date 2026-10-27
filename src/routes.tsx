@@ -92,6 +92,7 @@ export const router = createBrowserRouter([
               { path: 'shipping/parcels', ...page(() => import('./pages/admin/shipping/AdminParcelsPage')) },
               { path: 'shipping/parcels/:trackingNumber', ...page(() => import('./pages/admin/shipping/AdminParcelPage')) },
               { path: 'shipping/rules', ...page(() => import('./pages/admin/shipping/AdminParcelRulesPage')) },
+              { path: 'texts', ...page(() => import('./pages/admin/texts/AdminTextsPage')) },
             ],
           },
         ],
