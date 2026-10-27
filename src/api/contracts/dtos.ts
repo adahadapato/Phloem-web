@@ -117,6 +117,22 @@ export interface DishCardDto {
   isVerifiedShop: boolean
 }
 
+/** A suggested dish: the usual card, plus the short reason shown on it ("Often ordered with Jollof Rice"). */
+export interface SuggestedDishDto {
+  dish: DishCardDto
+  reason: string
+}
+
+/** GET /api/me/suggestions: Home's "Order again" and "For you" rows for a signed-in customer. */
+export interface SuggestionsDto {
+  /** Dishes they've bought that can be ordered now in this country, most recent first. */
+  orderAgain: DishCardDto[]
+  /** New dishes picked from what they buy, each with its reason. */
+  forYou: SuggestedDishDto[]
+  /** False when they have no orders yet: forYou is then just "Popular in …". */
+  isPersonal: boolean
+}
+
 /** A shop in a list (GET /api/shops, /api/shops/top). */
 export interface ShopListItemDto {
   id: string

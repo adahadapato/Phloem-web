@@ -11,8 +11,9 @@ import { QuantityStepper } from './QuantityStepper'
  * then name, shop, price and the round green "+" (then "− 2 +") to put it in the basket.
  * In lists the whole card opens the dish's shop (an invisible link over the card, with the basket buttons above
  * it); on the shop's own page (`onShopPage`) only the basket buttons do something.
+ * A suggested dish also shows why it was picked (`reason`, e.g. "Often ordered with Jollof Rice").
  */
-export function DishCard({ dish, onShopPage = false }: { dish: DishCardDto; onShopPage?: boolean }) {
+export function DishCard({ dish, onShopPage = false, reason }: { dish: DishCardDto; onShopPage?: boolean; reason?: string }) {
   const cart = useCart()
 
   return (
@@ -43,6 +44,7 @@ export function DishCard({ dish, onShopPage = false }: { dish: DishCardDto; onSh
             {dish.isVerifiedShop && <span className={styles.verified} title="Verified shop">✓</span>}
           </span>
         )}
+        {reason && <span className={styles.reason}>{reason}</span>}
         <div className={styles.footer}>
           <Price amount={dish.price} currency={dish.currency} />
           <span className={styles.aboveLink}>

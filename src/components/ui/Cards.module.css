@@ -120,6 +120,17 @@
 }
 
 /* Long shop names end in "…" instead of being cut */
+.reason {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--brand-green);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 .shopName {
   min-width: 0;
   overflow: hidden;
