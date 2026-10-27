@@ -87,6 +87,7 @@ export const router = createBrowserRouter([
               { path: 'shops/:shopId', ...page(() => import('./pages/admin/shops/AdminShopPage')) },
               { path: 'users', ...page(() => import('./pages/admin/users/AdminUsersPage')) },
               { path: 'dishes', ...page(() => import('./pages/admin/dishes/AdminDishesPage')) },
+              { path: 'pricing', ...page(() => import('./pages/admin/pricing/AdminPricingPage')) },
             ],
           },
         ],

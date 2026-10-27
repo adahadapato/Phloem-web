@@ -1249,3 +1249,173 @@ h2 .navCount {
     justify-self: start;
   }
 }
+
+/* ── Pricing: one card per country ── */
+.priceCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+  align-items: start;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.priceCard {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--brand-border);
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+}
+
+.priceCardHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--brand-border);
+  font-size: 17px;
+}
+
+.priceCardHead > :last-child {
+  margin-left: auto;
+}
+
+.priceBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.priceBlock + .priceBlock {
+  padding-top: 12px;
+  border-top: 1px dashed var(--brand-border);
+}
+
+.priceLine {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.priceHint {
+  display: block;
+  color: var(--brand-text-muted);
+  font-size: 13px;
+}
+
+.priceValue {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.notSet {
+  color: var(--brand-orange-dark);
+}
+
+.free {
+  color: var(--brand-green);
+}
+
+.linkButton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--brand-green);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.setupNote {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--brand-peach);
+  color: var(--brand-orange-dark);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.inlineForm {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.unitInput {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 10px;
+  border: 1px solid var(--brand-border);
+  border-radius: 10px;
+  background: var(--white);
+  color: var(--brand-text-muted);
+  font-weight: 700;
+}
+
+.unitInput input {
+  width: 80px;
+  height: 36px;
+  border: 0;
+  outline: none;
+  font: inherit;
+  font-weight: 400;
+  color: var(--brand-text-dark);
+}
+
+.windowList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.windowList li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: var(--brand-cream);
+}
+
+.windowList li > form {
+  flex-basis: 100%;
+}
+
+.windowToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.windowToggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--brand-green);
+}
+
+.windowOff {
+  color: var(--brand-text-muted);
+}

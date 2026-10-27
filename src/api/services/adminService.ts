@@ -8,9 +8,9 @@ import { withQuery } from '../apiQuery'
 import { del, get, post, put } from '../client'
 import type {
   AdminDishCatalogDto, AdminDishSuggestionDto, AdminShopDetailsDto, AdminShopDto, AdminShopStatsDto, AdminUserDto,
-  PagedResult, UserSuspendedDto,
+  CommissionDto, DeliveryPricingDto, PagedResult, UserSuspendedDto,
 } from '../contracts/dtos'
-import type { Country, ShipmentStatus, VendorStatus } from '../contracts/enums'
+import type { Country, DeliveryWindow, ShipmentStatus, VendorStatus } from '../contracts/enums'
 
 const shops = 'api/admin/shops'
 const shop = (id: string) => `${shops}/${encodeURIComponent(id)}`
@@ -109,4 +109,30 @@ export const rejectDishName = (id: string) => post(`${dishNames}/${encodeURIComp
 /** Set a name's price range in one country; returns how many dishes now need a new price (their sellers are emailed). */
 export const setPriceRange = (id: string, country: Country, minPrice: number, maxPrice: number): Promise<ApiResult<number>> =>
   put<number>(`${dishNames}/${encodeURIComponent(id)}/price-ranges/${country}`, { minPrice, maxPrice })
+
+// ───────────────────────────── Pricing ─────────────────────────────
+
+/** Phloem's commission in every country. */
+export const getCommissions = (signal?: AbortSignal): Promise<ApiResult<CommissionDto[]>> =>
+  get<CommissionDto[]>('api/admin/commissions', signal)
+
+/** Set a country's commission (0–50 %); only orders delivered from now on use it. */
+export const setCommission = (country: Country, ratePercent: number) =>
+  put(`api/admin/commissions/${country}`, { ratePercent })
+
+/** Every country's shop delivery-fee range and delivery times (countries not set up yet aren't listed). */
+export const getDeliveryPricing = (signal?: AbortSignal): Promise<ApiResult<DeliveryPricingDto[]>> =>
+  get<DeliveryPricingDto[]>('api/admin/delivery-pricing', signal)
+
+/** Set a country's shop fee range; returns how many shops had their fee moved into it (they're emailed). */
+export const setShopFeeRange = (country: Country, minShopFee: number, maxShopFee: number): Promise<ApiResult<number>> =>
+  put<number>(`api/admin/delivery-pricing/${country}`, { minShopFee, maxShopFee })
+
+/** Offer a delivery time in a country, or change what it adds (0 = free). */
+export const setWindowCharge = (country: Country, window: DeliveryWindow, extraCharge: number) =>
+  put(`api/admin/delivery-pricing/${country}/windows/${window}`, { extraCharge })
+
+/** Stop offering a delivery time in a country. */
+export const removeWindow = (country: Country, window: DeliveryWindow) =>
+  del(`api/admin/delivery-pricing/${country}/windows/${window}`)
 

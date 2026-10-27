@@ -743,3 +743,26 @@ export interface AdminDishSuggestionDto {
   shopName: string | null
   suggestedAt: string
 }
+
+/** GET /api/admin/commissions: Phloem's cut of the dishes in one country (isSet = false: not set yet, 0% applies). */
+export interface CommissionDto {
+  country: Country
+  ratePercent: number
+  isSet: boolean
+}
+
+/** One delivery time a country offers, and what it adds to an order (0 = free). */
+export interface DeliveryWindowChargeDto {
+  window: DeliveryWindow
+  extraCharge: number
+}
+
+/** GET /api/admin/delivery-pricing: a country's shop delivery-fee range and its delivery times. */
+export interface DeliveryPricingDto {
+  country: Country
+  currency: Currency
+  minShopFee: number
+  maxShopFee: number
+  windows: DeliveryWindowChargeDto[]
+}
+
