@@ -857,3 +857,13 @@ export interface ContactInboxDto {
   repliedCount: number
   closedCount: number
 }
+
+/** GET /api/dishes/suggest: one search prediction: a dish name (search for it) or a shop (open it). */
+export interface SearchSuggestionDto {
+  text: string
+  kind: 'Dish' | 'Shop'
+  /** Dish: how many dishes have this name. Shop: 0. */
+  dishCount: number
+  /** Shop only. */
+  shopId: string | null
+}

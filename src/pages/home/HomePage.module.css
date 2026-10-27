@@ -104,11 +104,12 @@
 /* ── Hero ── */
 .hero {
   position: relative;
+  z-index: 2;            /* the search predictions may hang below the hero, over the next section */
   isolation: isolate;
   display: flex;
   align-items: center;
   min-height: min(680px, 88vh);
-  overflow: hidden;
+  overflow-x: clip;      /* sideways only: the photo stays inside, the predictions can show below */
   background: var(--brand-hero-green);
   color: var(--white);
 }
@@ -174,6 +175,7 @@
 }
 
 .heroSearch {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;

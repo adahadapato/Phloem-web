@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router'
+import { SearchSuggest } from '../../components/ui/SearchSuggest'
 import { useCountry } from '../../state/CountryContext'
 import { useSession } from '../../state/SessionContext'
 import styles from './HomePage.module.css'
@@ -7,7 +8,7 @@ import { WaxPattern } from './WaxPattern'
 
 /**
  * The top of Home: the branded food photo across the whole width under a dark green fade, a warm serif headline,
- * a search box with the orange "Find food" button, a link for cooks, and three short, true reassurances.
+ * a search box (with predictions as you type) and the orange "Find food" button, a link for cooks, and three short, true reassurances.
  */
 export function HomeHero() {
   const { profile } = useSession()
@@ -15,10 +16,10 @@ export function HomeHero() {
   const navigate = useNavigate()
   const [search, setSearch] = useState('')
 
+  const go = (text: string) => navigate(text.trim() ? `/explore?search=${encodeURIComponent(text.trim())}` : '/explore')
   const onSearch = (event: FormEvent) => {
     event.preventDefault()
-    const text = search.trim()
-    navigate(text ? `/explore?search=${encodeURIComponent(text)}` : '/explore')
+    go(search)
   }
 
   return (
@@ -43,9 +44,8 @@ export function HomeHero() {
             <circle cx="10.5" cy="10.5" r="7" />
             <path d="M16 16l5.5 5.5" />
           </svg>
-          <label htmlFor="home-search" className="visually-hidden">What would you like to eat?</label>
-          <input id="home-search" type="search" placeholder="Jollof, suya, egusi…" value={search}
-                 onChange={(e) => setSearch(e.target.value)} />
+          <SearchSuggest id="home-search" label="What would you like to eat?" placeholder="Jollof, suya, egusi…"
+                         value={search} onChange={setSearch} onSearch={go} country={selected?.country} />
           <button type="submit" className={styles.heroButton}>Find food</button>
         </form>
         <p className={styles.heroCook}>

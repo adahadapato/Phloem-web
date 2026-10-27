@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router'
 import { unwrap } from '../../api/apiError'
 import type { DishCategory, DishSort } from '../../api/contracts/enums'
 import { searchDishes } from '../../api/services/dishService'
+import { SearchSuggest } from '../../components/ui/SearchSuggest'
 import { Button } from '../../components/ui/Button'
 import styles from '../../components/ui/Cards.module.css'
 import { DishCard } from '../../components/ui/DishCard'
@@ -55,6 +56,7 @@ export default function FoodListingPage() {
     event.preventDefault()
     update({ search: searchText.trim() || undefined })
   }
+  const searchFor = (text: string) => update({ search: text.trim() || undefined })
 
   const result = query.data
   const dishes = result?.items ?? []
@@ -70,9 +72,8 @@ export default function FoodListingPage() {
 
       <div className={page.toolbar}>
         <form className={page.search} role="search" onSubmit={onSearch}>
-          <label htmlFor="explore-search" className="visually-hidden">Search dishes</label>
-          <input id="explore-search" type="search" placeholder="Search dishes, e.g. jollof" value={searchText}
-                 onChange={(e) => setSearchText(e.target.value)} />
+          <SearchSuggest id="explore-search" label="Search dishes" placeholder="Search dishes, e.g. jollof"
+                         value={searchText} onChange={setSearchText} onSearch={searchFor} country={selected?.country} />
           <Button type="submit" small>Search</Button>
         </form>
         <label>

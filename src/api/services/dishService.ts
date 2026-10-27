@@ -6,7 +6,9 @@ import type { ApiResult } from '../apiError'
 import { withQuery } from '../apiQuery'
 import { del, get, post, put, upload } from '../client'
 import type { DishCommand } from '../contracts/commands'
-import type { DishCardDto, DishDetailsDto, DishPhotoDto, MyDishesDto, PagedResult } from '../contracts/dtos'
+import type {
+  DishCardDto, DishDetailsDto, DishPhotoDto, MyDishesDto, PagedResult, SearchSuggestionDto,
+} from '../contracts/dtos'
 import type { Country, DishCategory, DishSort } from '../contracts/enums'
 
 /** What a dish list can be narrowed down by. Everything is optional. */
@@ -28,6 +30,10 @@ export interface DishSearch {
 /** GET /api/dishes: one page of dishes. */
 export const searchDishes = (search: DishSearch, signal?: AbortSignal): Promise<ApiResult<PagedResult<DishCardDto>>> =>
   get<PagedResult<DishCardDto>>(withQuery('api/dishes', { ...search }), signal)
+
+/** GET /api/dishes/suggest: predictions while typing (dish names containing the text, best first, then shops). */
+export const getSearchSuggestions = (q: string, country?: Country, signal?: AbortSignal): Promise<ApiResult<SearchSuggestionDto[]>> =>
+  get<SearchSuggestionDto[]>(withQuery('api/dishes/suggest', { q, country }), signal)
 
 /** GET /api/dishes/{dishId}: one dish with its photos and shop (used by Buy again). */
 export const getDish = (dishId: string, signal?: AbortSignal): Promise<ApiResult<DishDetailsDto>> =>

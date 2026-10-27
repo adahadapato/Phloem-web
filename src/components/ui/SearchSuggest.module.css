@@ -1,0 +1,73 @@
+/* The predictions under a search box (the parent form is position: relative). */
+.list {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 8px);
+  right: 0;
+  left: 0;
+  max-height: min(420px, 60vh);
+  margin: 0;
+  padding: 6px;
+  overflow-y: auto;
+  border: 1px solid var(--brand-border);
+  border-radius: 16px;
+  background: var(--white);
+  box-shadow: var(--shadow-raised);
+  list-style: none;
+  text-align: left;
+}
+
+.list[hidden] {
+  display: none;
+}
+
+.option {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  color: var(--brand-text-dark);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.active {
+  background: var(--brand-mint-pale);
+}
+
+.groupStart {
+  margin-top: 6px;
+  border-top: 1px solid var(--brand-border);
+  border-radius: 0 0 10px 10px;
+  padding-top: 10px;
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--brand-cream);
+  font-size: 14px;
+}
+
+.text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text strong {
+  color: var(--brand-green);
+  font-weight: 800;
+}
+
+.meta {
+  color: var(--brand-text-muted);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
