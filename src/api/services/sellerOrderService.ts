@@ -1,12 +1,13 @@
 /**
  * My shop's orders (/api/shops/mine/orders): the list, the dashboard numbers, and moving an order along:
- * Paid → Accept → Preparing → Send out → Out for delivery → Delivered (or Decline a new one, with a reason).
+ * Paid → Accept → Preparing → Send out (with a courier) → Out for delivery → Delivered by the courier, with a photo
+ * (or Decline a new one, with a reason).
  * Same as the app's SellerService (orders part). Sellers never see unpaid orders.
  */
 import type { ApiResult } from '../apiError'
 import { withQuery } from '../apiQuery'
-import { get, post } from '../client'
-import type { PagedResult, ShopOrderStatsDto, ShopOrderSummaryDto } from '../contracts/dtos'
+import { get, post, put } from '../client'
+import type { CourierOptionDto, PagedResult, ShopOrderStatsDto, ShopOrderSummaryDto } from '../contracts/dtos'
 import type { OrderStatus } from '../contracts/enums'
 
 const order = (orderNumber: string) => `api/shops/mine/orders/${encodeURIComponent(orderNumber)}`
@@ -27,8 +28,17 @@ export const acceptShopOrder = (orderNumber: string) => post<void>(`${order(orde
 export const declineShopOrder = (orderNumber: string, reason: string) =>
   post<void>(`${order(orderNumber)}/decline`, { reason })
 
-/** POST …/send-out: it has left the kitchen. */
-export const sendOutShopOrder = (orderNumber: string) => post<void>(`${order(orderNumber)}/send-out`)
+/**
+ * POST …/send-out: it has left the kitchen with a courier (`null` = I'll deliver it myself). The courier marks it
+ * delivered with a photo (deliveryService), and then the earnings go to my balance.
+ */
+export const sendOutShopOrder = (orderNumber: string, courierId: string | null) =>
+  post<void>(`${order(orderNumber)}/send-out`, { courierId })
 
-/** POST …/delivered: delivered; commission taken, earnings added to my balance. */
-export const markShopOrderDelivered = (orderNumber: string) => post<void>(`${order(orderNumber)}/delivered`)
+/** PUT …/courier: give an order that's out for delivery to another courier (`null` = I'll deliver it myself). */
+export const changeShopOrderCourier = (orderNumber: string, courierId: string | null) =>
+  put<void>(`${order(orderNumber)}/courier`, { courierId })
+
+/** GET /api/shops/mine/couriers: me first ("I'll deliver it myself"), then the couriers in my country. */
+export const getShopCouriers = (signal?: AbortSignal): Promise<ApiResult<CourierOptionDto[]>> =>
+  get<CourierOptionDto[]>('api/shops/mine/couriers', signal)

@@ -1,12 +1,15 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import type { CourierOptionDto } from '../../api/contracts/dtos'
 import { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { unwrap, type ApiResult } from '../../api/apiError'
 import type { ShopOrderSummaryDto } from '../../api/contracts/dtos'
 import type { OrderStatus } from '../../api/contracts/enums'
 import {
-  acceptShopOrder, declineShopOrder, getShopOrders, markShopOrderDelivered, sendOutShopOrder,
+  acceptShopOrder, changeShopOrderCourier, declineShopOrder, getShopCouriers, getShopOrders, sendOutShopOrder,
 } from '../../api/services/sellerOrderService'
+import { CourierPicker } from '../../components/deliveries/CourierPicker'
+import { DeliveredForm } from '../../components/deliveries/DeliveredForm'
 import { Button } from '../../components/ui/Button'
 import { EmptyState } from '../../components/ui/EmptyState'
 import { dateTimeText, deliveryWindows } from '../../components/ui/labels'
@@ -41,16 +44,46 @@ const STATUS_TEXT: Partial<Record<OrderStatus, string>> = {
 
 type Message = { text: string; isError: boolean } | null
 
+/** What a seller can do to an order from its card. */
+type Action = 'accept' | 'send-out' | 'change-courier' | 'decline'
+
+/** "Me first, then the couriers in my country", loaded when the seller opens a picker. */
+function useShopCouriers(enabled: boolean) {
+  return useQuery({
+    queryKey: ['seller', 'couriers'],
+    queryFn: async ({ signal }) => unwrap(await getShopCouriers(signal)),
+    enabled,
+    staleTime: 60_000,
+  })
+}
+
+/** "🛵 Kwame Asante is delivering it", "🛵 You're delivering it yourself", "🛵 Delivered by …". */
+function courierLine(o: ShopOrderSummaryDto): string | null {
+  if (!o.courierName) return null
+  if (o.status === 'Delivered') return o.deliveringMyself ? '🛵 You delivered it' : `🛵 Delivered by ${o.courierName}`
+  return o.deliveringMyself ? "🛵 You're delivering it yourself" : `🛵 ${o.courierName} is delivering it`
+}
+
 /** One order, with the buttons for its next step (and the decline form, which asks for a reason). */
 function ShopOrderCard({ o, highlighted, busy, onAction }: {
   o: ShopOrderSummaryDto
   highlighted: boolean
   busy: string | null
-  onAction: (o: ShopOrderSummaryDto, action: 'accept' | 'send-out' | 'delivered' | 'decline', reason?: string) => void
+  onAction: (o: ShopOrderSummaryDto, action: Action, value?: string | null) => Promise<boolean>
 }) {
   const ref = useRef<HTMLElement>(null)
+  const queryClient = useQueryClient()
   const [declining, setDeclining] = useState(false)
   const [reason, setReason] = useState('')
+  const [picking, setPicking] = useState(false)
+  const [delivering, setDelivering] = useState(false)
+  const couriers = useShopCouriers(picking)
+  const courier = courierLine(o)
+
+  const onPick = async (c: CourierOptionDto) => {
+    const ok = await onAction(o, o.status === 'Preparing' ? 'send-out' : 'change-courier', c.isMe ? null : c.id)
+    if (ok) setPicking(false)
+  }
   const when = deliveryWindows.find((w) => w.value === o.deliveryWindow)?.label
   const isBusy = busy?.endsWith(`:${o.orderNumber}`) ?? false
 
@@ -94,12 +127,12 @@ function ShopOrderCard({ o, highlighted, busy, onAction }: {
           {o.status === 'Paid' && !declining && (
             <>
               <Button variant="cta" busy={busy === `accept:${o.orderNumber}`} busyText="Accepting…" disabled={isBusy}
-                      onClick={() => onAction(o, 'accept')}>✓ Accept order</Button>
+                      onClick={() => void onAction(o, 'accept')}>✓ Accept order</Button>
               <Button variant="outline" disabled={isBusy} onClick={() => setDeclining(true)}>Decline</Button>
             </>
           )}
           {o.status === 'Paid' && declining && (
-            <form className={styles.decline} onSubmit={(e) => { e.preventDefault(); onAction(o, 'decline', reason.trim()) }}>
+            <form className={styles.decline} onSubmit={(e) => { e.preventDefault(); void onAction(o, 'decline', reason.trim()) }}>
               <label htmlFor={`reason-${o.orderNumber}`}><strong>Why can't you make it?</strong></label>
               <textarea id={`reason-${o.orderNumber}`} value={reason} maxLength={DECLINE_MAX} rows={3}
                         placeholder="e.g. We've run out of tilapia today." onChange={(e) => setReason(e.target.value)} />
@@ -109,26 +142,46 @@ function ShopOrderCard({ o, highlighted, busy, onAction }: {
               <Button variant="outline" onClick={() => { setDeclining(false); setReason('') }}>Keep it</Button>
             </form>
           )}
-          {o.status === 'Preparing' && (
-            <Button variant="cta" busy={busy === `send-out:${o.orderNumber}`} busyText="Updating…" disabled={isBusy}
-                    onClick={() => onAction(o, 'send-out')}>🛵 Send out for delivery</Button>
+          {courier && <p className="muted" style={{ margin: 0 }}><strong>{courier}</strong></p>}
+
+          {/* Being prepared → send out with a courier (or myself); out for delivery → change courier */}
+          {(o.status === 'Preparing' || o.status === 'OutForDelivery') && !picking && !delivering && (
+            <Button variant={o.status === 'Preparing' ? 'cta' : 'outline'} disabled={isBusy}
+                    onClick={() => setPicking(true)}>
+              {o.status === 'Preparing' ? '🛵 Send out for delivery' : 'Change courier'}
+            </Button>
           )}
-          {o.status === 'OutForDelivery' && (
-            <Button variant="cta" busy={busy === `delivered:${o.orderNumber}`} busyText="Updating…" disabled={isBusy}
-                    onClick={() => onAction(o, 'delivered')}>✓ Mark delivered</Button>
+          {picking && (
+            <CourierPicker couriers={couriers.data} loading={couriers.isPending} busy={isBusy}
+                           label={o.status === 'Preparing' ? 'Send out' : 'Change'}
+                           onPick={onPick} onCancel={() => setPicking(false)} />
           )}
+
+          {/* Delivering it myself: Delivered needs a photo */}
+          {o.status === 'OutForDelivery' && o.deliveringMyself && !picking && !delivering && (
+            <Button variant="cta" disabled={isBusy} onClick={() => setDelivering(true)}>📷 Delivered · take a photo</Button>
+          )}
+
           {o.status === 'Delivered' && <p className="muted">Delivered. Your earnings were added to your balance.</p>}
           {o.status === 'Cancelled' && <p className="muted">Cancelled and refunded to the customer.</p>}
         </div>
       </div>
+      {delivering && (
+        <div className={styles.deliveredRow}>
+          <DeliveredForm kind="Order" reference={o.orderNumber} recipient={o.deliveryRecipientName ?? o.customerName}
+                         onCancel={() => setDelivering(false)}
+                         onDone={() => { setDelivering(false); void queryClient.invalidateQueries({ queryKey: ['seller'] }) }} />
+        </div>
+      )}
     </article>
   )
 }
 
 /**
  * Shop orders (/seller/orders), like the app's: tabs New / Preparing / Out for delivery / Delivered / Cancelled /
- * All; each order shows who ordered, what, when and where; its button moves it on (Accept → Send out for delivery →
- * Mark delivered), and Decline asks for the reason the customer will read. Tab, page and the opened order are in
+ * All; each order shows who ordered, what, when and where; its button moves it on (Accept → Send out with a courier,
+ * or "I'll deliver it myself" → the courier marks it delivered with a photo; sellers delivering it themselves do the
+ * same here), and Decline asks for the reason the customer will read. Tab, page and the opened order are in
  * the address (?status=…&open=…), so the dashboard can link straight to an order.
  */
 export default function ShopOrdersPage() {
@@ -154,25 +207,29 @@ export default function ShopOrdersPage() {
   })
   const orders = query.data?.items ?? []
 
-  const onAction = async (o: ShopOrderSummaryDto, action: 'accept' | 'send-out' | 'delivered' | 'decline', reason?: string) => {
+  const onAction = async (o: ShopOrderSummaryDto, action: Action, value?: string | null): Promise<boolean> => {
     setBusy(`${action}:${o.orderNumber}`)
     setMessage(null)
-    const calls: Record<typeof action, () => Promise<ApiResult<void>>> = {
+    const courierId = value ?? null
+    const calls: Record<Action, () => Promise<ApiResult<void>>> = {
       accept: () => acceptShopOrder(o.orderNumber),
-      'send-out': () => sendOutShopOrder(o.orderNumber),
-      delivered: () => markShopOrderDelivered(o.orderNumber),
-      decline: () => declineShopOrder(o.orderNumber, reason ?? ''),
+      'send-out': () => sendOutShopOrder(o.orderNumber, courierId),
+      'change-courier': () => changeShopOrderCourier(o.orderNumber, courierId),
+      decline: () => declineShopOrder(o.orderNumber, value ?? ''),
     }
-    const done: Record<typeof action, string> = {
+    const done: Record<Action, string> = {
       accept: `${o.orderNumber} accepted. Start cooking! It's now under Preparing.`,
-      'send-out': `${o.orderNumber} is out for delivery.`,
-      delivered: `${o.orderNumber} delivered. Your earnings were added to your balance.`,
+      'send-out': courierId
+        ? `${o.orderNumber} is on its way. The courier will take a photo when they deliver it.`
+        : `${o.orderNumber} is on its way. When you hand it over, choose "Delivered" and take a photo.`,
+      'change-courier': `${o.orderNumber} has a new courier.`,
       decline: `${o.orderNumber} declined. ${o.customerName} gets a full refund and your reason by email.`,
     }
     const result = await calls[action]()
     await queryClient.invalidateQueries({ queryKey: ['seller'] })
     setBusy(null)
     setMessage(result.ok ? { text: done[action], isError: false } : { text: result.error.displayMessage, isError: true })
+    return result.ok
   }
 
   const show = (key: string) => setParams(key === 'new' ? {} : { status: key })

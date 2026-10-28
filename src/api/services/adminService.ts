@@ -8,7 +8,8 @@ import { withQuery } from '../apiQuery'
 import { del, get, post, put } from '../client'
 import type {
   AdminDishCatalogDto, AdminDishSuggestionDto, AdminShopDetailsDto, AdminShopDto, AdminShopStatsDto, AdminUserDto,
-  AdminShipmentRouteDto, CommissionDto, ContactInboxDto, DeliveryPricingDto, PagedResult, ParcelItemRuleDto,
+  AdminShipmentRouteDto, CommissionDto, ContactInboxDto, CourierOptionDto, DeliveryPricingDto, PagedResult,
+  ParcelItemRuleDto,
   ShipmentDetailsDto, StaffShipmentSummaryDto, TermsAcceptanceStatsDto, UserSuspendedDto,
 } from '../contracts/dtos'
 import type {
@@ -186,9 +187,21 @@ export const getParcel = (trackingNumber: string, signal?: AbortSignal): Promise
 export const receiveParcel = (trackingNumber: string, weighedWeightKg: number): Promise<ApiResult<number>> =>
   post<number>(`${parcel(trackingNumber)}/receive`, { weighedWeightKg })
 
-/** The next step: InTransit, ArrivedInDestination, OutForDelivery or Delivered (optional note for the timeline). */
+/** The next step: InTransit or ArrivedInDestination (optional note for the timeline). */
 export const moveParcel = (trackingNumber: string, newStatus: ShipmentStatus, note: string | null) =>
   post(`${parcel(trackingNumber)}/progress`, { newStatus, note })
+
+/** Out for delivery: give an arrived parcel to a courier in the destination country (they're emailed). */
+export const sendOutParcel = (trackingNumber: string, courierId: string, note: string | null) =>
+  post(`${parcel(trackingNumber)}/out-for-delivery`, { courierId, note })
+
+/** Give a parcel that's out for delivery to another courier. */
+export const changeParcelCourier = (trackingNumber: string, courierId: string) =>
+  put(`${parcel(trackingNumber)}/courier`, { courierId })
+
+/** The couriers who deliver in a country, by name. */
+export const getCouriers = (country: Country, signal?: AbortSignal): Promise<ApiResult<CourierOptionDto[]>> =>
+  get<CourierOptionDto[]>(withQuery('api/staff/couriers', { country }), signal)
 
 // ───────────────────────────── Shipping: what can be sent ─────────────────────────────
 

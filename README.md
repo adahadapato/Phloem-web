@@ -61,8 +61,12 @@ prices, orders and texts.
   parcels and selling wait until they accept. A one-time notice when the Privacy Policy changes.
 
 **Sellers** — become a seller (with "I agree to the Seller terms"), seller dashboard, incoming orders
-(accept / decline / send out / delivered), dishes with photos and allowed price ranges, shop settings
-(logo, cover, delivery fee, order cut-off, documents).
+(accept / decline / send out with a courier or "I'll deliver it myself" / change courier), dishes with photos and
+allowed price ranges, shop settings (logo, cover, delivery fee, order cut-off, documents).
+
+**Couriers** — **My deliveries** (`/deliveries`, also for sellers): what to collect where, who to call, the address
+(opens Google Maps), and **Delivered** with a photo (on a phone the button opens the camera), how it was handed over
+and an optional note. Customers see the photo as **Proof of delivery** on their order and parcel pages.
 
 **Admins** — **Admin dashboard**: overview, shops (review, approve, documents), users (roles, suspend), dish names
 (organised by country), pricing (commission, delivery fees, delivery times), shipping (routes, parcels at the hub,
@@ -216,6 +220,7 @@ Phloem-web/
 | `/checkout`, `/orders`, `/orders/:orderNumber` | buying | 🔒 signed in |
 | `/shipments`, `/shipments/:trackingNumber` | my parcels | 🔒 |
 | `/account`, `/account/edit`, `/account/addresses`, `/account/notifications`, `/account/password`, `/account/two-factor` | my account | 🔒 |
+| `/deliveries` | My deliveries (couriers and sellers) | 🔒 |
 | `/seller`, `/seller/orders`, `/seller/dishes`, `/seller/dishes/new`, `/seller/dishes/:dishId`, `/seller/settings` | seller area | 🔒 + a shop (otherwise → `/sell`) |
 | `/admin` (+ `shops`, `shops/:id`, `users`, `dishes`, `pricing`, `shipping`, `shipping/parcels`, `shipping/parcels/:n`, `shipping/rules`, `texts`, `messages`) | admin | 🛡 Admin; Support agents → `messages` only |
 | `*` | not found | everyone |

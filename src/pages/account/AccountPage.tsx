@@ -162,7 +162,7 @@ export default function AccountPage() {
       </div>
       {/* Same as the app: the API can't delete accounts yet */}
       <StatusBanner message={deleteNote
-        ? "Deleting your account here is coming soon. To delete it now, email support@phloem.app from your " +
+        ? "Deleting your account here is coming soon. To delete it now, email support@phloemmarket.com from your " +
           "account's email address and we'll do it for you."
         : null} />
     </div>

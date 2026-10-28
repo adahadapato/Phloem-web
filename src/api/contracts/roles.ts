@@ -6,6 +6,7 @@ export const Roles = {
   CatalogManager: 'CatalogManager',
   ShipmentManager: 'ShipmentManager',
   SupportAgent: 'SupportAgent',
+  Courier: 'Courier',
 } as const
 
 /** One of the role names. */
@@ -20,6 +21,7 @@ export const assignableRoles: { role: Role; name: string; about: string }[] = [
   { role: Roles.CatalogManager, name: 'Catalog manager', about: 'Reviews dish-name suggestions and edits the dish list.' },
   { role: Roles.ShipmentManager, name: 'Shipment manager', about: 'Receives parcels at the hub and moves them along.' },
   { role: Roles.SupportAgent, name: 'Support agent', about: 'Looks up orders and users, and cancels orders for customers.' },
+  { role: Roles.Courier, name: 'Courier', about: 'Delivers food orders and parcels, with a photo as proof.' },
 ]
 
 /** A role as people read it: "CatalogManager" → "Catalog manager". */

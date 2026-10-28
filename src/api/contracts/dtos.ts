@@ -4,8 +4,8 @@
  */
 import type {
   CatalogGroup, ContactMessageStatus, ContactTopic, Country, Currency, DeliverySpeed, DeliveryWindow,
-  DishCategory, DocumentStatus, LegalDocumentType, OrderStatus, ParcelItemRuleKind, ShipmentItemCategory,
-  ShipmentStatus, VendorDocumentType, VendorStatus,
+  DeliveryKind, DishCategory, DocumentStatus, HandoverMethod, LegalDocumentType, OrderStatus, ParcelItemRuleKind,
+  ShipmentItemCategory, ShipmentStatus, VendorDocumentType, VendorStatus,
 } from './enums'
 
 /** Answer of login, register, two-factor, refresh and Google exchange. */
@@ -332,6 +332,12 @@ export interface OrderDetailsDto {
   deliveryRecipientName?: string
   /** Who the seller calls (the address's phone, else the customer's); null if neither. */
   deliveryPhone?: string | null
+  /** Who is delivering it (or delivered it); null until it's sent out. */
+  courierName?: string | null
+  /** The courier's photo and handover details; null until delivered. */
+  deliveryProof?: DeliveryProofDto | null
+  /** The viewer is this order's courier and it's out for delivery (a seller delivering it themselves). */
+  canMarkDelivered?: boolean
 }
 
 /** GET /api/orders/{n}/buy-again: what can go back in the basket (today's dishes only). */
@@ -494,6 +500,10 @@ export interface ShipmentDetailsDto {
   canPay: boolean
   /** Paid, then cancelled. */
   needsRefund: boolean
+  /** Who is delivering it (or delivered it); null until it's out for delivery. */
+  courierName?: string | null
+  /** The courier's photo and handover details; null until delivered. */
+  deliveryProof?: DeliveryProofDto | null
 }
 
 // ───────────────────────────── Seller ─────────────────────────────
@@ -559,6 +569,10 @@ export interface ShopOrderSummaryDto {
   deliveryRecipientName?: string
   /** Who to call (the address's phone, else the customer's); null if neither. */
   deliveryPhone?: string | null
+  /** Who is delivering it; null until it's sent out. */
+  courierName?: string | null
+  /** The seller is delivering it themselves (they mark it delivered, with a photo). */
+  deliveringMyself?: boolean
 }
 
 /** One bar of the weekly sales chart. */
@@ -826,6 +840,8 @@ export interface StaffShipmentSummaryDto {
   price: number
   currency: Currency
   bookedAt: string
+  /** Who is delivering it (or delivered it); null until it's out for delivery. */
+  courierName?: string | null
 }
 
 /** GET /api/contact: what the Contact us page shows. Null values are left off the page. */
@@ -893,4 +909,45 @@ export interface TermsAcceptanceStatsDto {
   currentTermsVersion: number
   acceptedCount: number
   peopleCount: number
+}
+
+// ───────────────────────────── Deliveries (couriers, proof of delivery) ─────────────────────────────
+
+/** The courier's photo and handover details on an order or parcel page. The photo link works for about 15 minutes. */
+export interface DeliveryProofDto {
+  photoUrl: string
+  handover: HandoverMethod
+  /** Ready to show: "Left at the front door", "Handed to Ama". */
+  summary: string
+  receivedBy: string | null
+  note: string | null
+  courierName: string | null
+  deliveredAt: string
+}
+
+/** One entry in "Choose a courier"; `isMe` = the seller's "I'll deliver it myself". */
+export interface CourierOptionDto {
+  id: string
+  name: string
+  isMe: boolean
+}
+
+/** One card in "My deliveries" (GET /api/deliveries). */
+export interface DeliveryJobDto {
+  kind: DeliveryKind
+  /** The order or tracking number. */
+  reference: string
+  /** The shop's name, or "Phloem hub" for parcels. */
+  collectFrom: string
+  collectPhone: string | null
+  recipientName: string
+  recipientPhone: string | null
+  address: string
+  country: Country
+  itemsSummary: string
+  deliveryWindow: DeliveryWindow | null
+  assignedAt: string | null
+  deliveredAt: string | null
+  /** Delivered ones: "Left at the front door". */
+  handoverSummary: string | null
 }

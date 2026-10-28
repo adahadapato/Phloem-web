@@ -1393,3 +1393,11 @@ a.tile:hover {
   margin-top: 2px;
   accent-color: var(--brand-green);
 }
+
+/* "Delivered" form for an order the seller delivers themselves: full card width, under the order */
+.deliveredRow {
+  padding: 0 20px 20px;
+  border-top: 1px solid var(--brand-border);
+  padding-top: 16px;
+  max-width: 640px;
+}

@@ -68,7 +68,7 @@ export function ShopStatusBanner({ shop }: { shop: MyShopDto }) {
       return (
         <div className={`${styles.banner} ${styles.bannerStop}`}>
           <strong>Your shop is blocked.</strong>
-          <span>Buyers can't see it. Please contact sellers@phloem.app.</span>
+          <span>Buyers can't see it. Please contact sellers@phloemmarket.com.</span>
         </div>
       )
     default:

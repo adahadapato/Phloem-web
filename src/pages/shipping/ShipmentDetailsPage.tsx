@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router'
 import { unwrap } from '../../api/apiError'
 import { getMyShipment } from '../../api/services/shipmentService'
+import { DeliveryProofCard } from '../../components/deliveries/DeliveryProofCard'
 import { Button } from '../../components/ui/Button'
 import { arrivalText, dateTimeText, shipmentCategories } from '../../components/ui/labels'
 import { Price } from '../../components/ui/Price'
@@ -116,8 +117,11 @@ export default function ShipmentDetailsPage() {
           <section className={styles.card} aria-labelledby="timeline-title">
             <h2 id="timeline-title" className={styles.sectionTitle}>Timeline</h2>
             {s.status !== 'Cancelled' && <p className={styles.arrival}>{arrival ?? 'The expected date is set once it leaves.'}</p>}
+            {s.status === 'OutForDelivery' && s.courierName && <p className="muted">🛵 {s.courierName} is delivering it.</p>}
             <ShipmentTimeline status={s.status} timeline={s.timeline} />
           </section>
+
+          <DeliveryProofCard proof={s.deliveryProof} />
 
           <section className={styles.card} aria-label="Parcel">
             <dl className={styles.factsList}>

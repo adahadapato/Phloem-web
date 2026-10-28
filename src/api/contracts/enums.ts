@@ -60,3 +60,9 @@ export type ContactTopic = 'Order' | 'Parcel' | 'Selling' | 'Account' | 'Other'
 
 /** Where a Contact us message is in the team's inbox. */
 export type ContactMessageStatus = 'New' | 'Replied' | 'Closed'
+
+/** How a delivery was handed over (the courier picks one on "Delivered"). */
+export type HandoverMethod = 'InPerson' | 'FrontDoor' | 'Neighbour' | 'SafePlace' | 'Reception'
+
+/** What a courier is delivering: a food order or a parcel. */
+export type DeliveryKind = 'Order' | 'Parcel'

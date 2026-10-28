@@ -5,6 +5,7 @@ import { unwrap } from '../../api/apiError'
 import type { OrderDetailsDto } from '../../api/contracts/dtos'
 import { getOrder } from '../../api/services/orderService'
 import { ApiImage } from '../../components/ui/ApiImage'
+import { DeliveryProofCard } from '../../components/deliveries/DeliveryProofCard'
 import { Button } from '../../components/ui/Button'
 import { dateTimeText, deliveryWindows } from '../../components/ui/labels'
 import { Price } from '../../components/ui/Price'
@@ -19,8 +20,18 @@ const STEPS = [
   { title: 'Order placed', sub: (o: OrderDetailsDto) => dateTimeText(o.placedAt) },
   { title: 'Paid', sub: (o: OrderDetailsDto) => (o.paidAt ? dateTimeText(o.paidAt) : 'Waiting for payment') },
   { title: 'Being prepared', sub: () => 'The shop is cooking your order' },
-  { title: 'On its way', sub: () => "We'll let you know when it's on the move" },
-  { title: 'Delivered', sub: (o: OrderDetailsDto) => (o.deliveredAt ? dateTimeText(o.deliveredAt) : 'Enjoy your meal!') },
+  {
+    title: 'On its way',
+    sub: (o: OrderDetailsDto) => (!o.courierName ? "We'll let you know when it's on the move"
+      : o.status === 'Delivered' ? `Brought by ${o.courierName}`
+      : o.status === 'OutForDelivery' ? `${o.courierName} is bringing it` : "We'll let you know when it's on the move"),
+  },
+  {
+    title: 'Delivered',
+    sub: (o: OrderDetailsDto) => (o.deliveredAt
+      ? `${o.deliveryProof ? `${o.deliveryProof.summary} · ` : ''}${dateTimeText(o.deliveredAt)}`
+      : 'Enjoy your meal!'),
+  },
 ]
 const STEP_REACHED = { AwaitingPayment: 0, Paid: 1, Preparing: 2, OutForDelivery: 3, Delivered: 4, Cancelled: -1 }
 
@@ -125,6 +136,8 @@ export default function OrderDetailsPage() {
             </ol>
           </section>
         )}
+
+        <DeliveryProofCard proof={order.deliveryProof} />
 
         {/* ── Dishes ── */}
         <section className={styles.card} aria-labelledby="items-title">

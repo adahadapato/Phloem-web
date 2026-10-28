@@ -59,6 +59,7 @@ export const router = createBrowserRouter([
           { path: 'account/notifications', ...page(() => import('./pages/account/NotificationsPage')) },
           { path: 'account/password', ...page(() => import('./pages/account/ChangePasswordPage')) },
           { path: 'account/two-factor', ...page(() => import('./pages/account/TwoFactorPage')) },
+          { path: 'deliveries', ...page(() => import('./pages/deliveries/MyDeliveriesPage')) },
 
           // The seller area: people with a shop (others are sent to /sell)
           {
