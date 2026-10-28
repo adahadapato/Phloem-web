@@ -15,6 +15,7 @@ import { dishCategories } from '../../components/ui/labels'
 import { Price } from '../../components/ui/Price'
 import { StatusBanner } from '../../components/ui/StatusBanner'
 import { SellerHeader } from './SellerParts'
+import { useTermsPrompt } from '../../state/TermsContext'
 import styles from './Seller.module.css'
 import { useMyShop } from './useMyShop'
 
@@ -113,6 +114,7 @@ function SuggestName({ country }: { country: Country }) {
 function Editor({ dish, catalog, country }: { dish: MyDishDto | null; catalog: DishCatalogItemDto[]; country: Country }) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const { askToAccept } = useTermsPrompt()
   const shop = useMyShop().data
 
   const [catalogId, setCatalogId] = useState<string | null>(dish?.dishCatalogId ?? null)
@@ -229,7 +231,10 @@ function Editor({ dish, catalog, country }: { dish: MyDishDto | null; catalog: D
       return
     }
 
-    const created = await createMyDish(command)
+    let created = await createMyDish(command)
+    if (!created.ok && created.error.code === 'Terms.NotAccepted' && await askToAccept()) {
+      created = await createMyDish(command)   // new Terms accepted: try again
+    }
     if (!created.ok) {
       setBusy(null)
       return setError(created.error)

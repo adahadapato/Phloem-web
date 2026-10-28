@@ -30,6 +30,7 @@ export default function BecomeSellerPage() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
+  const [agreed, setAgreed] = useState(false)
   const [logo, setLogo] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -57,10 +58,12 @@ export default function BecomeSellerPage() {
     setError(null)
     setLocalError(null)
     if (!name.trim()) return setLocalError('Please give your shop a name.')
+    if (!agreed) return setLocalError('Please read and agree to the Seller terms to open your shop.')
 
     setBusy(true)
     const opened = await openShop({
       shopName: name.trim(), businessEmail: email.trim() || null, businessPhone: phone.trim() || null,
+      agreedToSellerTerms: agreed,
     })
     if (!opened.ok) {
       setBusy(false)
@@ -176,6 +179,13 @@ export default function BecomeSellerPage() {
                   Leave email and phone blank to use your account details.
                   {country && ` Your shop will sell in ${country.name}, your account's country.`}
                 </p>
+                <label className={styles.agree}>
+                  <input type="checkbox" checked={agreed} onChange={(e) => { setAgreed(e.target.checked); setLocalError(null) }} />
+                  <span>
+                    I agree to the <a href="/terms#sellers" target="_blank" rel="noopener">Seller terms</a>, including
+                    food safety, pricing within the allowed range and Phloem's commission.
+                  </span>
+                </label>
               </fieldset>
               <StatusBanner isError message={localError ?? (error && !error.fieldError('ShopName') ? error.displayMessage : null)} />
               <div>
@@ -184,10 +194,7 @@ export default function BecomeSellerPage() {
                   Submit seller profile
                 </Button>
               </div>
-              <p className="muted" style={{ fontSize: 13 }}>
-                Your store goes live after approval. By opening a shop you agree to the{' '}
-                <a href="/terms#sellers" target="_blank" rel="noopener">Seller terms</a>.
-              </p>
+              <p className="muted" style={{ fontSize: 13 }}>Your store goes live after approval.</p>
             </form>
           </>
         )}

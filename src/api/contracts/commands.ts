@@ -187,6 +187,8 @@ export interface OpenShopCommand {
   shopName: string
   businessEmail: string | null
   businessPhone: string | null
+  /** "I agree to the Seller terms" (required; recorded as proof). */
+  agreedToSellerTerms: boolean
 }
 
 /** POST /api/shops/mine/dishes (and PUT …/{id} for changes). The name comes from the dish list. */

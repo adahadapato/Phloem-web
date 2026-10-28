@@ -1,0 +1,84 @@
+/* "We've updated our Terms" (a modal dialog) and the one-time Privacy notice (under the header). */
+.dialog {
+  width: min(480px, calc(100vw - 32px));
+  padding: 28px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--white);
+  color: var(--brand-text-dark);
+  box-shadow: var(--shadow-raised);
+}
+
+.dialog::backdrop {
+  background: rgb(1 36 17 / 0.55);
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 14px;
+  border-radius: 50%;
+  background: var(--brand-mint-pale);
+  font-size: 24px;
+}
+
+.title {
+  font-size: 22px;
+  line-height: 1.25;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.text p {
+  margin: 0;
+}
+
+.read {
+  display: inline-block;
+  margin: 14px 0 6px;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.notice {
+  position: fixed;
+  z-index: 60;
+  top: calc(var(--header-height) + 12px);   /* under the header: the basket bar uses the bottom */
+  right: 16px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 12px 14px 12px 18px;
+  border: 1px solid var(--brand-border);
+  border-radius: 16px;
+  background: var(--white);
+  box-shadow: var(--shadow-raised);
+  font-size: 14px;
+}
+
+.notice p {
+  flex: 1;
+  margin: 0;
+}
+
+.notice a {
+  font-weight: 700;
+}

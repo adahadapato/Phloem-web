@@ -82,6 +82,8 @@ export interface ProfileDto {
   notifyNewDishes: boolean
   notifyShopOrders: boolean
   addresses: AddressDto[]
+  /** Where I stand with the Terms and the Privacy Policy (GET /api/me). */
+  terms?: TermsStatusDto | null
 }
 
 /** GET /api/auth/external/providers: which "Continue with …" buttons to show. */
@@ -722,6 +724,10 @@ export interface AdminUserDto {
   photoUrl: string | null
   /** The admin looking at the list (their own Admin role can't be taken away). Missing on an older API. */
   isYou?: boolean
+  /** The highest Terms version they accepted; null = none recorded. */
+  acceptedTermsVersion?: number | null
+  /** When they first accepted that version. */
+  acceptedTermsAt?: string | null
 }
 
 /** What suspending someone did. */
@@ -866,4 +872,25 @@ export interface SearchSuggestionDto {
   dishCount: number
   /** Shop only. */
   shopId: string | null
+}
+
+/** On GET /api/me: where I stand with the Terms and the Privacy Policy. */
+export interface TermsStatusDto {
+  /** The latest published Terms (0 = none yet). */
+  currentTermsVersion: number
+  /** The highest version I accepted, or null. */
+  acceptedTermsVersion: number | null
+  /** True: ordering, sending parcels and selling wait until I accept the latest Terms. */
+  needsToAcceptTerms: boolean
+  /** The latest published Privacy Policy (0 = none yet). */
+  currentPrivacyVersion: number
+  /** True: show the "updated Privacy Policy" notice once. */
+  needsToSeePrivacy: boolean
+}
+
+/** GET /api/admin/legal/acceptance: "84 of 120 people have accepted version 3". */
+export interface TermsAcceptanceStatsDto {
+  currentTermsVersion: number
+  acceptedCount: number
+  peopleCount: number
 }

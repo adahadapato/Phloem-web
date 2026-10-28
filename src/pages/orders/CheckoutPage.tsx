@@ -15,6 +15,7 @@ import { QuantityStepper } from '../../components/ui/QuantityStepper'
 import { StatusBanner } from '../../components/ui/StatusBanner'
 import { useCart, type CartLine } from '../../state/CartContext'
 import { useCountry } from '../../state/CountryContext'
+import { useTermsPrompt } from '../../state/TermsContext'
 import { useSession } from '../../state/SessionContext'
 import styles from './Orders.module.css'
 import { NeedHelp } from '../../components/ui/NeedHelp'
@@ -60,6 +61,7 @@ export default function CheckoutPage() {
   const { profile } = useSession()
   const { countries, selected } = useCountry()
   const queryClient = useQueryClient()
+  const { askToAccept } = useTermsPrompt()
 
   const [pickedCountry, setPickedCountry] = useState<Country | null>(null)
   const [pickedWindow, setPickedWindow] = useState<DeliveryWindow>('Asap')
@@ -168,8 +170,11 @@ export default function CheckoutPage() {
     setPlacing(true)
     setError(null)
 
-    // 1. One unpaid order per shop
-    const result = await placeOrder({ items, deliveryAddressId: address.id, deliveryWindow })
+    // 1. One unpaid order per shop (new Terms not accepted yet → ask, then try once more)
+    let result = await placeOrder({ items, deliveryAddressId: address.id, deliveryWindow })
+    if (!result.ok && result.error.code === 'Terms.NotAccepted' && await askToAccept()) {
+      result = await placeOrder({ items, deliveryAddressId: address.id, deliveryWindow })
+    }
     if (!result.ok) {
       setPlacing(false)
       setError(result.error.displayMessage)

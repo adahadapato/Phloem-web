@@ -177,6 +177,11 @@ export default function AdminUsersPage() {
                       {c && <span className={styles.fact}><CountryFlag country={c} /> {c.name}</span>}
                       <span className={styles.fact}>Joined {day(u.memberSince)}</span>
                       {u.shopName && <span className={styles.fact}>🏪 {u.shopName}</span>}
+                      <span className={styles.fact} title="The latest Terms & Conditions version they accepted">
+                        📄 {u.acceptedTermsVersion
+                          ? `Terms v${u.acceptedTermsVersion}${u.acceptedTermsAt ? ` · ${day(u.acceptedTermsAt)}` : ''}`
+                          : 'Terms not accepted yet'}
+                      </span>
                       <RoleChips roles={u.roles} />
                     </div>
                     {u.isSuspended && (

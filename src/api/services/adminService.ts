@@ -8,8 +8,8 @@ import { withQuery } from '../apiQuery'
 import { del, get, post, put } from '../client'
 import type {
   AdminDishCatalogDto, AdminDishSuggestionDto, AdminShopDetailsDto, AdminShopDto, AdminShopStatsDto, AdminUserDto,
-  AdminShipmentRouteDto, CommissionDto, ContactInboxDto, DeliveryPricingDto, PagedResult, ParcelItemRuleDto, ShipmentDetailsDto,
-  StaffShipmentSummaryDto, UserSuspendedDto,
+  AdminShipmentRouteDto, CommissionDto, ContactInboxDto, DeliveryPricingDto, PagedResult, ParcelItemRuleDto,
+  ShipmentDetailsDto, StaffShipmentSummaryDto, TermsAcceptanceStatsDto, UserSuspendedDto,
 } from '../contracts/dtos'
 import type {
   ContactMessageStatus, Country, DeliverySpeed, DeliveryWindow, ParcelItemRuleKind, ShipmentStatus, VendorStatus,
@@ -224,3 +224,9 @@ export const getContactMessages = (filter: { status?: ContactMessageStatus; page
 /** Mark a message Replied, Closed or back to New, with an optional note for colleagues. */
 export const setContactMessageStatus = (id: string, status: ContactMessageStatus, note: string | null) =>
   put(`${inbox}/${encodeURIComponent(id)}/status`, { status, note })
+
+// ───────────────────────────── Terms acceptance ─────────────────────────────
+
+/** How many people have accepted the current Terms version, out of everyone. */
+export const getTermsAcceptanceStats = (signal?: AbortSignal): Promise<ApiResult<TermsAcceptanceStatsDto>> =>
+  get<TermsAcceptanceStatsDto>('api/admin/legal/acceptance', signal)

@@ -1374,3 +1374,22 @@ a.tile:hover {
     flex-wrap: wrap;
   }
 }
+
+/* "I agree to the Seller terms" */
+.agree {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--brand-text-dark);
+  cursor: pointer;
+}
+
+.agree input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--brand-green);
+}

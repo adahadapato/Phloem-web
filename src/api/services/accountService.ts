@@ -77,3 +77,9 @@ export const disableTwoFactor = (password: string) => post<void>('api/me/two-fac
 /** POST /api/me/two-factor/recovery-codes: new codes (needs the password; the old ones stop working). */
 export const regenerateRecoveryCodes = (password: string): Promise<ApiResult<string[]>> =>
   post<string[]>('api/me/two-factor/recovery-codes', { password })
+
+/** POST /api/me/terms/accept: accept the Terms version shown (409 Terms.Outdated if a newer one was published). */
+export const acceptTerms = (version: number) => post('api/me/terms/accept', { version })
+
+/** POST /api/me/privacy/seen: "Got it" on the updated Privacy Policy notice. */
+export const acknowledgePrivacy = (version: number) => post('api/me/privacy/seen', { version })

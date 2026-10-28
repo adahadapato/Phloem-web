@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import { unwrap } from '../../../api/apiError'
 import type { LegalDocumentDto } from '../../../api/contracts/dtos'
 import type { LegalDocumentType } from '../../../api/contracts/enums'
+import { getTermsAcceptanceStats } from '../../../api/services/adminService'
 import { getLegalDocument, publishLegalDocument } from '../../../api/services/legalService'
 import { Button } from '../../../components/ui/Button'
 import { Markdown } from '../../../components/ui/Markdown'
@@ -58,6 +59,7 @@ function TextEditor({ text, current, onDone }: {
     const result = await publishLegalDocument(text.type, draft.title.trim(), draft.content.trim(), draft.isDraft)
     setBusy(false); setConfirm(false)
     if (!result.ok) { setError(result.error.displayMessage); return }
+    void queryClient.invalidateQueries({ queryKey: ['admin', 'terms-acceptance'] })
     await queryClient.invalidateQueries({ queryKey: ['legal', text.type] })
     await queryClient.invalidateQueries({ queryKey: ['admin', 'text', text.type] })
     onDone({ text: `Version ${result.value} of the ${text.label} is live on the website and in the app.`, isError: false })
@@ -119,6 +121,8 @@ function TextEditor({ text, current, onDone }: {
             <span className={styles.panelHint}>
               It replaces the current {text.label} for everyone, on the website and in the app, straight away. Older
               versions are kept unchanged.
+              {text.type === 'Terms' && ` Everyone will be asked to accept version ${nextVersion}; until they do, they can browse but not order, send parcels or sell.`}
+              {text.type === 'Privacy' && ' Everyone will see a short notice that it has changed.'}
             </span>
             <div className={styles.row}>
               <Button small variant="cta" busy={busy} busyText="Publishing…" onClick={onPublish}>Yes, publish</Button>
@@ -136,6 +140,32 @@ function TextEditor({ text, current, onDone }: {
         )}
       </div>
     </>
+  )
+}
+
+/**
+ * Terms tab: "84 of 120 people have accepted version 3", with a bar. People who haven't are asked when they next
+ * sign in, and can't order, send parcels or sell until they accept.
+ */
+function AcceptanceLine() {
+  const stats = useQuery({
+    queryKey: ['admin', 'terms-acceptance'],
+    queryFn: async ({ signal }) => unwrap(await getTermsAcceptanceStats(signal)),
+  })
+  const s = stats.data
+  if (!s || s.currentTermsVersion === 0) return null
+  const share = s.peopleCount === 0 ? 0 : Math.round((s.acceptedCount / s.peopleCount) * 100)
+  return (
+    <div className={styles.acceptance} role="status">
+      <p>
+        <strong>{s.acceptedCount} of {s.peopleCount}</strong> {s.peopleCount === 1 ? 'person has' : 'people have'} accepted
+        version {s.currentTermsVersion}. The others are asked when they next sign in, and can browse but not order,
+        send parcels or sell until they accept.
+      </p>
+      <div className={styles.acceptanceBar} role="img" aria-label={`${share}% have accepted`}>
+        <span style={{ width: `${share}%` }} />
+      </div>
+    </div>
   )
 }
 
@@ -174,6 +204,7 @@ export default function AdminTextsPage() {
           <Button small variant="outline" onClick={() => query.refetch()}>Try again</Button>
         </div>
       )}
+      {type === 'Terms' && <AcceptanceLine />}
       {query.isSuccess && <TextEditor key={`${type}-${query.data?.version ?? 0}`} text={text} current={query.data} onDone={setMessage} />}
     </>
   )

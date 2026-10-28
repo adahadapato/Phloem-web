@@ -1811,3 +1811,33 @@ h2 .navCount {
   background: var(--brand-dark);
   color: var(--white);
 }
+
+/* ── Terms acceptance (Terms & Help → Terms tab) ── */
+.acceptance {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--brand-mint-pale);
+  font-size: 14px;
+}
+
+.acceptance p {
+  margin: 0;
+}
+
+.acceptanceBar {
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--white);
+}
+
+.acceptanceBar span {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--brand-green);
+}
