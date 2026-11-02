@@ -7,13 +7,14 @@ import type { ApiResult } from '../apiError'
 import { withQuery } from '../apiQuery'
 import { del, get, post, put } from '../client'
 import type {
-  AdminDishCatalogDto, AdminDishSuggestionDto, AdminShopDetailsDto, AdminShopDto, AdminShopStatsDto, AdminUserDto,
+  AdminDishCatalogDto, AdminDishSuggestionDto, AdminOrderDetailsDto, AdminOrderSummaryDto, AdminShopDetailsDto, AdminShopDto, AdminShopStatsDto, AdminUserDto,
   AdminShipmentRouteDto, CommissionDto, ContactInboxDto, CourierOptionDto, DeliveryPricingDto, PagedResult,
   ParcelItemRuleDto,
   ShipmentDetailsDto, StaffShipmentSummaryDto, TermsAcceptanceStatsDto, UserSuspendedDto,
 } from '../contracts/dtos'
 import type {
-  ContactMessageStatus, Country, DeliverySpeed, DeliveryWindow, ParcelItemRuleKind, ShipmentStatus, VendorStatus,
+  ContactMessageStatus, Country, DeliverySpeed, DeliveryWindow, OrderStatus, ParcelItemRuleKind, ShipmentStatus,
+  VendorStatus,
 } from '../contracts/enums'
 
 const shops = 'api/admin/shops'
@@ -202,6 +203,34 @@ export const changeParcelCourier = (trackingNumber: string, courierId: string) =
 /** The couriers who deliver in a country, by name. */
 export const getCouriers = (country: Country, signal?: AbortSignal): Promise<ApiResult<CourierOptionDto[]>> =>
   get<CourierOptionDto[]>(withQuery('api/staff/couriers', { country }), signal)
+
+// ───────────────────────────── Orders (read-only) ─────────────────────────────
+
+const adminOrders = 'api/admin/orders'
+
+/** What Admin → Orders can be narrowed down by. Everything is optional. */
+export interface AdminOrderSearch {
+  country?: Country
+  shopId?: string
+  status?: OrderStatus
+  /** Placed on or after this day ("yyyy-MM-dd", UTC). */
+  from?: string
+  /** Placed on or before this day ("yyyy-MM-dd", UTC; the whole day counts). */
+  to?: string
+  /** Order number, shop name or customer name. */
+  search?: string
+  page: number
+  pageSize: number
+}
+
+/** Orders in the person's countries, newest first; one page. */
+export const getAdminOrders = (filter: AdminOrderSearch, signal?: AbortSignal):
+  Promise<ApiResult<PagedResult<AdminOrderSummaryDto>>> =>
+  get<PagedResult<AdminOrderSummaryDto>>(withQuery(adminOrders, { ...filter }), signal)
+
+/** One order with its timeline (full names). Every open is written to the audit log. */
+export const getAdminOrder = (orderNumber: string, signal?: AbortSignal): Promise<ApiResult<AdminOrderDetailsDto>> =>
+  get<AdminOrderDetailsDto>(`${adminOrders}/${encodeURIComponent(orderNumber)}`, signal)
 
 // ───────────────────────────── Shipping: what can be sent ─────────────────────────────
 

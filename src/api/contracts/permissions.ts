@@ -51,7 +51,7 @@ export const permissionGroups: { title: string; items: { permission: string; nam
       { permission: Permissions.ShopsManage, name: 'Shops', about: 'Approve, verify and block shops; check their documents.' },
       { permission: Permissions.CatalogManage, name: 'Dish list', about: 'Dish names, suggestions and price ranges.' },
       { permission: Permissions.PricingManage, name: 'Delivery pricing', about: 'Delivery fee ranges and delivery times.' },
-      { permission: Permissions.OrdersView, name: 'Orders', about: 'See any order (coming soon).' },
+      { permission: Permissions.OrdersView, name: 'Orders', about: 'See orders in their countries, with who did each step.' },
     ],
   },
   {

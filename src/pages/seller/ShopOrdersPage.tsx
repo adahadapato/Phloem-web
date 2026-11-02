@@ -8,6 +8,8 @@ import type { OrderStatus } from '../../api/contracts/enums'
 import {
   acceptShopOrder, changeShopOrderCourier, declineShopOrder, getShopCouriers, getShopOrders, sendOutShopOrder,
 } from '../../api/services/sellerOrderService'
+import { getOrder } from '../../api/services/orderService'
+import { OrderTimeline } from '../../components/orders/OrderTimeline'
 import { CourierPicker } from '../../components/deliveries/CourierPicker'
 import { DeliveredForm } from '../../components/deliveries/DeliveredForm'
 import { Button } from '../../components/ui/Button'
@@ -166,6 +168,7 @@ function ShopOrderCard({ o, highlighted, busy, onAction }: {
           {o.status === 'Cancelled' && <p className="muted">Cancelled and refunded to the customer.</p>}
         </div>
       </div>
+      <OrderHistory orderNumber={o.orderNumber} />
       {delivering && (
         <div className={styles.deliveredRow}>
           <DeliveredForm kind="Order" reference={o.orderNumber} recipient={o.deliveryRecipientName ?? o.customerName}
@@ -174,6 +177,30 @@ function ShopOrderCard({ o, highlighted, busy, onAction }: {
         </div>
       )}
     </article>
+  )
+}
+
+/**
+ * "Show history" under an order: every step and who did it (e.g. which of your staff sent it out, which courier
+ * delivered it). Loaded only when opened.
+ */
+function OrderHistory({ orderNumber }: { orderNumber: string }) {
+  const [open, setOpen] = useState(false)
+  const details = useQuery({
+    queryKey: ['seller', 'order', orderNumber],
+    queryFn: async ({ signal }) => unwrap(await getOrder(orderNumber, signal)),
+    enabled: open,
+  })
+
+  return (
+    <div className={styles.historyRow}>
+      <button type="button" className={styles.historyToggle} aria-expanded={open} onClick={() => setOpen(!open)}>
+        {open ? 'Hide history' : 'Show history'}
+      </button>
+      {open && details.isPending && <p className="muted" aria-busy="true">Loading…</p>}
+      {open && details.isError && <p className="muted">We couldn't load the history.</p>}
+      {open && details.data && <OrderTimeline timeline={details.data.timeline ?? []} />}
+    </div>
   )
 }
 

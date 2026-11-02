@@ -6,6 +6,7 @@ import type { OrderDetailsDto } from '../../api/contracts/dtos'
 import { getOrder } from '../../api/services/orderService'
 import { ApiImage } from '../../components/ui/ApiImage'
 import { DeliveryProofCard } from '../../components/deliveries/DeliveryProofCard'
+import { OrderTimeline } from '../../components/orders/OrderTimeline'
 import { Button } from '../../components/ui/Button'
 import { dateTimeText, deliveryWindows } from '../../components/ui/labels'
 import { Price } from '../../components/ui/Price'
@@ -138,6 +139,14 @@ export default function OrderDetailsPage() {
         )}
 
         <DeliveryProofCard proof={order.deliveryProof} />
+
+        {/* ── History: every step and who did it ── */}
+        {order.timeline && order.timeline.length > 0 && (
+          <section className={styles.card} aria-labelledby="history-title">
+            <h2 id="history-title" className={styles.sectionTitle} style={{ margin: 0 }}>History</h2>
+            <OrderTimeline timeline={order.timeline} />
+          </section>
+        )}
 
         {/* ── Dishes ── */}
         <section className={styles.card} aria-labelledby="items-title">

@@ -25,6 +25,7 @@ export const APPROVALS = [Permissions.LegalPublish, Permissions.ShopsManage] as 
 export const ADMIN_MENU: AdminMenuItem[] = [
   { to: '/admin', label: 'Overview', icon: '◎', end: true, permission: OVERVIEW },
   { to: '/admin/shops', label: 'Shops', icon: '🏪', permission: [Permissions.ShopsManage] },
+  { to: '/admin/orders', label: 'Orders', icon: '🧺', permission: [Permissions.OrdersView] },
   { to: '/admin/users', label: 'Users', icon: '👥', permission: [Permissions.UsersManage] },
   { to: '/admin/staff', label: 'Staff', icon: '🪪', permission: [Permissions.StaffManage] },
   { to: '/admin/dishes', label: 'Dish names', icon: '🍲', permission: [Permissions.CatalogManage] },

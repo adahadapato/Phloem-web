@@ -339,7 +339,8 @@ h2 .navCount {
 }
 
 .search input,
-.select select {
+.select select,
+.select input {
   height: 40px;
   padding: 0 14px;
   border: 1px solid var(--brand-border);

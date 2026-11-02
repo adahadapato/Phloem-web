@@ -4,7 +4,7 @@
  */
 import type {
   CatalogGroup, ContactMessageStatus, ContactTopic, Country, Currency, DeliverySpeed, DeliveryWindow,
-  DeliveryKind, DishCategory, DocumentStatus, HandoverMethod, LegalDocumentType, OrderStatus, ParcelItemRuleKind,
+  DeliveryKind, DishCategory, DocumentStatus, HandoverMethod, LegalDocumentType, OrderActorKind, OrderEventKind, OrderStatus, ParcelItemRuleKind,
   PendingChangeKind, PendingChangeStatus, ShipmentItemCategory, ShipmentStatus, StaffAction, VendorDocumentType,
   VendorStatus,
 } from './enums'
@@ -346,6 +346,78 @@ export interface OrderDetailsDto {
   deliveryProof?: DeliveryProofDto | null
   /** The viewer is this order's courier and it's out for delivery (a seller delivering it themselves). */
   canMarkDelivered?: boolean
+  /** Every step so far, oldest first, with who did it ("Kofi (courier)"). Missing on an older API. */
+  timeline?: OrderEventDto[]
+}
+
+/** One step of an order's timeline. */
+export interface OrderEventDto {
+  kind: OrderEventKind
+  statusAfter: OrderStatus
+  at: string
+  actorKind: OrderActorKind
+  /** Staff see full names; customers and sellers see first name and role, e.g. "Ama (Phloem)". */
+  actorName: string
+  /** "Customer", "Shop", "Courier", "Phloem staff" or "Phloem". */
+  actorRole: string
+  /** Staff only: the account that did it. */
+  actorId: string | null
+  note: string | null
+  /** Rebuilt from an older order's saved dates (times may be approximate, names may be missing). */
+  isRebuilt: boolean
+}
+
+/** GET /api/admin/orders: one row. */
+export interface AdminOrderSummaryDto {
+  orderNumber: string
+  shopId: string
+  shopName: string
+  customerName: string
+  country: Country
+  status: OrderStatus
+  total: number
+  currency: Currency
+  itemCount: number
+  placedAt: string
+  courierName: string | null
+  needsRefund: boolean
+}
+
+/** GET /api/admin/orders/{n}: everything about one order (read-only; the view is in the audit log). */
+export interface AdminOrderDetailsDto {
+  orderNumber: string
+  status: OrderStatus
+  country: Country
+  shopId: string
+  shopName: string
+  customerId: string
+  customerName: string
+  customerEmail: string | null
+  customerPhone: string | null
+  lines: OrderLineDto[]
+  subtotal: number
+  deliveryFee: number
+  total: number
+  currency: Currency
+  commissionAmount: number | null
+  sellerEarnings: number | null
+  deliveryWindow: DeliveryWindow
+  deliveryLabel: string
+  deliveryAddress: string
+  deliveryRecipientName: string
+  deliveryPhone: string | null
+  placedAt: string
+  paidAt: string | null
+  paymentReference: string | null
+  deliveredAt: string | null
+  cancelledAt: string | null
+  needsRefund: boolean
+  declinedByShop: boolean
+  declineReason: string | null
+  courierId: string | null
+  courierName: string | null
+  deliveryProof: DeliveryProofDto | null
+  timeline: OrderEventDto[]
 }
 
 /** GET /api/orders/{n}/buy-again: what can go back in the basket (today's dishes only). */

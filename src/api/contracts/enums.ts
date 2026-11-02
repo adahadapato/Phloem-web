@@ -22,6 +22,14 @@ export type DeliveryWindow = 'Asap' | 'TodayEvening' | 'Tomorrow'
 /** Where an order is: AwaitingPayment → Paid → Preparing → OutForDelivery → Delivered (or Cancelled). */
 export type OrderStatus = 'AwaitingPayment' | 'Paid' | 'Preparing' | 'OutForDelivery' | 'Delivered' | 'Cancelled'
 
+/** One step on an order's timeline (same as the API's `OrderEventKind`). */
+export type OrderEventKind =
+  | 'Placed' | 'ItemsRemoved' | 'Paid' | 'Accepted' | 'Declined' | 'Cancelled' | 'CancelledShopSuspended'
+  | 'SentOut' | 'CourierChanged' | 'Delivered'
+
+/** Who did a step on an order's timeline (same as the API's `OrderActorKind`). */
+export type OrderActorKind = 'Customer' | 'Seller' | 'Courier' | 'Staff' | 'System'
+
 /** The tabs on My orders (GET /api/orders?show=…): orders grouped the way buyers think about them. */
 export type OrderStatusGroup = 'All' | 'WaitingForPayment' | 'InProgress' | 'Completed' | 'Cancelled'
 
@@ -72,7 +80,7 @@ export type StaffAction =
   | 'RoleGiven' | 'RoleRemoved' | 'CountriesChanged' | 'UserSuspended' | 'UserReinstated'
   | 'ContactMessagesViewed' | 'ContactMessageUpdated' | 'ParcelViewed' | 'RolePermissionsChanged'
   | 'ShopDocumentOpened' | 'ChangeProposed' | 'ChangeApproved' | 'ChangeRejected' | 'ChangeWithdrawn'
-  | 'ShopBlocked' | 'ShopUnblocked'
+  | 'ShopBlocked' | 'ShopUnblocked' | 'OrderViewed'
 
 /** A change that needs a second person (same as the API's `PendingChangeKind`). */
 export type PendingChangeKind = 'PublishLegalDocument' | 'ConfirmShopBlock'

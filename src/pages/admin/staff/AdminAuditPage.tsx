@@ -26,6 +26,7 @@ const ACTIONS: { value: StaffAction; label: string }[] = [
   { value: 'ShopDocumentOpened', label: "Opened a shop's document" },
   { value: 'ShopBlocked', label: 'Blocked a shop' },
   { value: 'ShopUnblocked', label: 'Unblocked a shop' },
+  { value: 'OrderViewed', label: "Opened an order's details" },
   { value: 'ChangeProposed', label: 'Asked for a second person' },
   { value: 'ChangeApproved', label: 'Approved a change' },
   { value: 'ChangeRejected', label: 'Rejected a change' },
