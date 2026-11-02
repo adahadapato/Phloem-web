@@ -71,4 +71,11 @@ export type DeliveryKind = 'Order' | 'Parcel'
 export type StaffAction =
   | 'RoleGiven' | 'RoleRemoved' | 'CountriesChanged' | 'UserSuspended' | 'UserReinstated'
   | 'ContactMessagesViewed' | 'ContactMessageUpdated' | 'ParcelViewed' | 'RolePermissionsChanged'
-  | 'ShopDocumentOpened'
+  | 'ShopDocumentOpened' | 'ChangeProposed' | 'ChangeApproved' | 'ChangeRejected' | 'ChangeWithdrawn'
+  | 'ShopBlocked' | 'ShopUnblocked'
+
+/** A change that needs a second person (same as the API's `PendingChangeKind`). */
+export type PendingChangeKind = 'PublishLegalDocument' | 'ConfirmShopBlock'
+
+/** Where a change waiting for a second person stands (same as the API's `PendingChangeStatus`). */
+export type PendingChangeStatus = 'Waiting' | 'Approved' | 'Rejected' | 'Withdrawn' | 'Expired' | 'Failed'

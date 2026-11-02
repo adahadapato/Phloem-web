@@ -254,9 +254,9 @@ export default function AdminShopPage() {
               </Button>
             ) : confirmBlock ? (
               <>
-                <span className={styles.confirmText}>Block {shop.name}?</span>
+                <span className={styles.confirmText}>Block {shop.name}? It's hidden at once; a second person must confirm within 24 hours.</span>
                 <Button small variant="cta" full disabled={busy}
-                        onClick={async () => { await run(() => setShopBlocked(shop.id, true), `${shop.name} is blocked.`); setConfirmBlock(false) }}>
+                        onClick={async () => { await run(() => setShopBlocked(shop.id, true), `${shop.name} is blocked now. A second person must confirm it on Approvals within 24 hours, or it's unblocked automatically.`); setConfirmBlock(false) }}>
                   Yes, block it
                 </Button>
                 <Button small variant="outline" full onClick={() => setConfirmBlock(false)}>Cancel</Button>

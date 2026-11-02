@@ -24,6 +24,12 @@ const ACTIONS: { value: StaffAction; label: string }[] = [
   { value: 'ContactMessageUpdated', label: 'Updated a Contact message' },
   { value: 'ParcelViewed', label: "Opened a parcel's details" },
   { value: 'ShopDocumentOpened', label: "Opened a shop's document" },
+  { value: 'ShopBlocked', label: 'Blocked a shop' },
+  { value: 'ShopUnblocked', label: 'Unblocked a shop' },
+  { value: 'ChangeProposed', label: 'Asked for a second person' },
+  { value: 'ChangeApproved', label: 'Approved a change' },
+  { value: 'ChangeRejected', label: 'Rejected a change' },
+  { value: 'ChangeWithdrawn', label: 'Took back a proposal' },
 ]
 
 const actionLabel = (a: StaffAction) => ACTIONS.find((x) => x.value === a)?.label ?? a

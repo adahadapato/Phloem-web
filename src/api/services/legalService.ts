@@ -4,14 +4,17 @@
  */
 import type { ApiResult } from '../apiError'
 import { get, post } from '../client'
-import type { LegalDocumentDto } from '../contracts/dtos'
+import type { LegalDocumentDto, LegalPublishResultDto } from '../contracts/dtos'
 import type { LegalDocumentType } from '../contracts/enums'
 
 /** GET /api/legal/{type}: the current version. */
 export const getLegalDocument = (type: LegalDocumentType, signal?: AbortSignal): Promise<ApiResult<LegalDocumentDto>> =>
   get<LegalDocumentDto>(`api/legal/${type}`, signal)
 
-/** POST /api/admin/legal/{type} (admins): publish a new version, effective now; returns its version number. */
+/**
+ * POST /api/admin/legal/{type}: publish a new version. Help goes live now (`version` set); Terms and Privacy wait for
+ * another owner to approve them on Approvals (`waitingForApproval`).
+ */
 export const publishLegalDocument = (type: LegalDocumentType, title: string, content: string, isDraft: boolean):
-  Promise<ApiResult<number>> =>
-  post<number>(`api/admin/legal/${type}`, { title, content, isDraft })
+  Promise<ApiResult<LegalPublishResultDto>> =>
+  post<LegalPublishResultDto>(`api/admin/legal/${type}`, { title, content, isDraft })

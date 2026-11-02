@@ -5,7 +5,8 @@
 import type {
   CatalogGroup, ContactMessageStatus, ContactTopic, Country, Currency, DeliverySpeed, DeliveryWindow,
   DeliveryKind, DishCategory, DocumentStatus, HandoverMethod, LegalDocumentType, OrderStatus, ParcelItemRuleKind,
-  ShipmentItemCategory, ShipmentStatus, StaffAction, VendorDocumentType, VendorStatus,
+  PendingChangeKind, PendingChangeStatus, ShipmentItemCategory, ShipmentStatus, StaffAction, VendorDocumentType,
+  VendorStatus,
 } from './enums'
 
 /** Answer of login, register, two-factor, refresh and Google exchange. */
@@ -1013,5 +1014,57 @@ export interface StaffAuditEntryDto {
   target: string
   country: Country | null
   detail: string | null
+}
+
+// ───────────────────────────── Two-person approval (Admin → Approvals) ─────────────────────────────
+
+/** What happened when Publish was pressed on Terms & Help. */
+export interface LegalPublishResultDto {
+  /** The new version when it went live now (Help); null while waiting for approval. */
+  version: number | null
+  /** Terms / Privacy: another owner must approve it first. */
+  waitingForApproval: boolean
+  approvalId: string | null
+  /** What to tell the person. */
+  message: string
+}
+
+/** The Terms / Privacy wording waiting to be published: exactly what the approver approves. */
+export interface LegalDocumentProposalDto {
+  type: LegalDocumentType
+  title: string
+  content: string
+  isDraft: boolean
+}
+
+/** One change on Admin → Approvals. */
+export interface PendingChangeDto {
+  id: string
+  kind: PendingChangeKind
+  status: PendingChangeStatus
+  /** e.g. "Publish the Terms & Conditions", "Block Mama's Kitchen". */
+  summary: string
+  country: Country | null
+  /** The record it concerns (e.g. the blocked shop). */
+  targetId: string | null
+  proposedByName: string
+  /** ISO, UTC. */
+  proposedAt: string
+  /** ISO, UTC: when it stops waiting. */
+  expiresAt: string
+  decidedByName: string | null
+  decidedAt: string | null
+  /** Why it was rejected or withdrawn. */
+  decisionNote: string | null
+  /** What happened, e.g. "Published as version 6." */
+  outcome: string | null
+  /** The viewer may approve or reject it now. */
+  canDecide: boolean
+  /** The viewer may take it back now. */
+  canWithdraw: boolean
+  /** The viewer proposed it. */
+  isYours: boolean
+  /** Terms / Privacy: the wording to approve. */
+  legal: LegalDocumentProposalDto | null
 }
 

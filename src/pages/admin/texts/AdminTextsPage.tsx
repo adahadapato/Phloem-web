@@ -53,16 +53,24 @@ function TextEditor({ text, current, onDone }: {
   const missingAnchors = text.anchors.filter((a) => !ids.has(a))
   const nextVersion = (current?.version ?? 0) + 1
   const canPublish = !!draft.title.trim() && !!draft.content.trim()
+  // Terms and Privacy need another owner's approval before they go live (Help doesn't)
+  const needsApproval = text.type === 'Terms' || text.type === 'Privacy'
 
   const onPublish = async () => {
     setBusy(true); setError(null); onDone(null)
     const result = await publishLegalDocument(text.type, draft.title.trim(), draft.content.trim(), draft.isDraft)
     setBusy(false); setConfirm(false)
     if (!result.ok) { setError(result.error.displayMessage); return }
+    if (result.value.waitingForApproval) {
+      // Terms / Privacy: nothing changes until another owner approves it
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'approvals'] })
+      onDone({ text: result.value.message, isError: false })
+      return
+    }
     void queryClient.invalidateQueries({ queryKey: ['admin', 'terms-acceptance'] })
     await queryClient.invalidateQueries({ queryKey: ['legal', text.type] })
     await queryClient.invalidateQueries({ queryKey: ['admin', 'text', text.type] })
-    onDone({ text: `Version ${result.value} of the ${text.label} is live on the website and in the app.`, isError: false })
+    onDone({ text: `Version ${result.value.version} of the ${text.label} is live on the website and in the app.`, isError: false })
   }
 
   return (
@@ -117,22 +125,27 @@ function TextEditor({ text, current, onDone }: {
 
         {confirm ? (
           <div className={styles.inlinePanel}>
-            <strong>Publish version {nextVersion}?</strong>
+            <strong>{needsApproval ? 'Send for approval?' : `Publish version ${nextVersion}?`}</strong>
             <span className={styles.panelHint}>
-              It replaces the current {text.label} for everyone, on the website and in the app, straight away. Older
-              versions are kept unchanged.
+              {needsApproval
+                ? `Another owner must approve it on Approvals before it goes live. They'll see exactly this wording. `
+                : ''}
+              {needsApproval ? 'Once approved, it' : 'It'} replaces the current {text.label} for everyone, on the
+              website and in the app{needsApproval ? '' : ', straight away'}. Older versions are kept unchanged.
               {text.type === 'Terms' && ` Everyone will be asked to accept version ${nextVersion}; until they do, they can browse but not order, send parcels or sell.`}
               {text.type === 'Privacy' && ' Everyone will see a short notice that it has changed.'}
             </span>
             <div className={styles.row}>
-              <Button small variant="cta" busy={busy} busyText="Publishing…" onClick={onPublish}>Yes, publish</Button>
+              <Button small variant="cta" busy={busy} busyText={needsApproval ? 'Sending…' : 'Publishing…'} onClick={onPublish}>
+                {needsApproval ? 'Yes, send for approval' : 'Yes, publish'}
+              </Button>
               <Button small variant="outline" onClick={() => setConfirm(false)}>Not yet</Button>
             </div>
           </div>
         ) : (
           <div className={styles.row}>
             <Button variant="cta" disabled={!changed || !canPublish} onClick={() => { setConfirm(true); setError(null); onDone(null) }}>
-              Publish as version {nextVersion}
+              {needsApproval ? 'Publish (needs a second owner)' : `Publish as version ${nextVersion}`}
             </Button>
             {changed && <Button variant="outline" onClick={() => setDraft(start)}>Discard changes</Button>}
             {!changed && <span className={styles.panelHint}>Make a change to publish a new version.</span>}

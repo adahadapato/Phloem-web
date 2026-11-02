@@ -3,9 +3,10 @@ import { Navigate, NavLink, Outlet, useLocation } from 'react-router'
 import { unwrap } from '../../api/apiError'
 import { Permissions } from '../../api/contracts/permissions'
 import { getContactMessages, getDishSuggestions, getShopStats } from '../../api/services/adminService'
+import { getApprovalCount } from '../../api/services/approvalService'
 import { useSession } from '../../state/SessionContext'
 import styles from './Admin.module.css'
-import { ADMIN_MENU, menuTarget, pagePermission } from './adminAccess'
+import { ADMIN_MENU, APPROVALS, menuTarget, pagePermission } from './adminAccess'
 
 /**
  * The admin area: a menu on the left on a big screen (a row of chips that scrolls sideways on a phone), and the page
@@ -13,7 +14,7 @@ import { ADMIN_MENU, menuTarget, pagePermission } from './adminAccess'
  *
  * Everyone sees only the pages their permissions open (owners see everything): the backend sends the permissions
  * with the sign-in, and the API still checks every call. Opening a page you can't use takes you to your first page.
- * Shops, Dish names and Contact messages show how many wait.
+ * Shops, Dish names, Contact messages and Approvals show how many wait.
  */
 export default function AdminLayout() {
   const { isAdmin, hasPermission } = useSession()
@@ -36,7 +37,14 @@ export default function AdminLayout() {
     staleTime: 30_000,
     enabled: hasPermission(Permissions.ContactRead),
   })
+  const approvals = useQuery({
+    queryKey: ['admin', 'approvals', 'count'],
+    queryFn: async ({ signal }) => unwrap(await getApprovalCount(signal)),
+    staleTime: 30_000,
+    enabled: hasPermission(APPROVALS),
+  })
   const counts: Record<string, number> = {
+    '/admin/approvals': approvals.data ?? 0,
     '/admin/shops': stats.data?.pendingApproval ?? 0,
     '/admin/dishes': suggestions.data?.length ?? 0,
     '/admin/messages': inbox.data?.newCount ?? 0,

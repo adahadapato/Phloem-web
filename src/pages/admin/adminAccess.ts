@@ -18,6 +18,9 @@ export interface AdminMenuItem {
 const OVERVIEW = [Permissions.ShopsManage, Permissions.UsersManage, Permissions.CatalogManage,
   Permissions.ParcelsManage] as const
 
+/** Approvals: anyone who can propose or decide a change that needs a second person. */
+export const APPROVALS = [Permissions.LegalPublish, Permissions.ShopsManage] as const
+
 /** The admin menu, in order. */
 export const ADMIN_MENU: AdminMenuItem[] = [
   { to: '/admin', label: 'Overview', icon: '◎', end: true, permission: OVERVIEW },
@@ -30,6 +33,8 @@ export const ADMIN_MENU: AdminMenuItem[] = [
   { to: '/admin/messages', label: 'Contact messages', icon: '✉', permission: [Permissions.ContactRead] },
   { to: '/admin/texts', label: 'Terms & Help', icon: '📄', permission: [Permissions.LegalPublish] },
   { to: '/admin/audit', label: 'Audit log', icon: '🧾', permission: [Permissions.AuditView] },
+  // Two-person approval: whoever can publish Terms or block shops proposes; owners and Country managers decide
+  { to: '/admin/approvals', label: 'Approvals', icon: '✅', permission: APPROVALS },
 ]
 
 /** Pages inside an area that need something narrower than the area itself. */
