@@ -3,6 +3,7 @@ import { useState, type FormEvent } from 'react'
 import { useSearchParams } from 'react-router'
 import { unwrap, type ApiResult } from '../../../api/apiError'
 import type { AdminUserDto } from '../../../api/contracts/dtos'
+import { Permissions } from '../../../api/contracts/permissions'
 import { assignableRoles, roleName, Roles } from '../../../api/contracts/roles'
 import { getUsers, grantRole, reinstateUser, removeRole, suspendUser } from '../../../api/services/adminService'
 import { ApiImage } from '../../../components/ui/ApiImage'
@@ -11,6 +12,7 @@ import { CountryFlag } from '../../../components/ui/CountryFlag'
 import { Pager } from '../../../components/ui/Pager'
 import { StatusBanner } from '../../../components/ui/StatusBanner'
 import { useCountry } from '../../../state/CountryContext'
+import { useSession } from '../../../state/SessionContext'
 import styles from '../Admin.module.css'
 import { AdminHead } from '../AdminParts'
 
@@ -46,11 +48,15 @@ function RoleChips({ roles }: { roles: string[] }) {
  * Admin → Users: everyone who has signed up, newest first, as cards (two per row on a big screen): photo, name,
  * email and phone, Active / Suspended; then country, joined, shop and roles; then, under a line, the buttons.
  * Search by name, or show only suspended people. Each card opens, under its buttons:
- * <b>Roles</b>: tick or untick Admin and the staff roles (your own Admin can't be removed; Seller follows the shop),
+ * <b>Roles</b> (people with the Staff permission): tick or untick the job roles and Courier; only owners can give or
+ * take Admin, staff can't change their own roles (your own Admin can't be removed either; Seller follows the shop),
  * or <b>Suspend</b>: how long and why (they see the reason; their shop is hidden with them). Lift ends a suspension.
+ * Staff covering only some countries see only people in those countries (the API filters the list).
  */
 export default function AdminUsersPage() {
   const { countries } = useCountry()
+  const { isAdmin, hasPermission } = useSession()
+  const canChangeRoles = hasPermission(Permissions.StaffManage)
   const queryClient = useQueryClient()
   const [params, setParams] = useSearchParams()
   const search = params.get('q') ?? ''
@@ -193,10 +199,12 @@ export default function AdminUsersPage() {
 
                     {/* Actions, under a line */}
                     <div className={styles.personActions}>
-                      <Button small variant={isOpen && panel?.kind === 'roles' ? 'primary' : 'secondary'}
-                              aria-expanded={isOpen && panel?.kind === 'roles'} onClick={() => open(u, 'roles')}>
-                        Roles
-                      </Button>
+                      {canChangeRoles && (
+                        <Button small variant={isOpen && panel?.kind === 'roles' ? 'primary' : 'secondary'}
+                                aria-expanded={isOpen && panel?.kind === 'roles'} onClick={() => open(u, 'roles')}>
+                          Roles
+                        </Button>
+                      )}
                       {u.isSuspended ? (
                         <Button small variant="outline" disabled={busy}
                                 onClick={() => run(() => reinstateUser(u.id), `${u.fullName} can sign in again.`)}>
@@ -215,14 +223,19 @@ export default function AdminUsersPage() {
                         <ul className={styles.roleList}>
                           {assignableRoles.map((r) => {
                             const has = u.roles.includes(r.role)
-                            const locked = !!u.isYou && r.role === Roles.Admin && has
+                            // Why this box can't be changed by the person looking (null = it can)
+                            const lockNote =
+                              !!u.isYou && r.role === Roles.Admin && has ? "You can't remove your own Admin role. Another admin has to."
+                              : !isAdmin && r.role === Roles.Admin ? 'Only owners can give or take Admin.'
+                              : !isAdmin && u.isYou ? "You can't change your own roles. Ask an owner."
+                              : null
                             return (
                               <li key={r.role}>
-                                <label className={locked ? styles.locked : undefined}>
-                                  <input type="checkbox" checked={has} disabled={busy || locked}
+                                <label className={lockNote ? styles.locked : undefined}>
+                                  <input type="checkbox" checked={has} disabled={busy || !!lockNote}
                                          onChange={() => toggleRole(u, r.role, has)} />
                                   <span><strong>{r.name}</strong><span className={styles.roleAbout}>{r.about}</span>
-                                    {locked && <span className={styles.lockNote}>You can't remove your own Admin role. Another admin has to.</span>}
+                                    {lockNote && <span className={styles.lockNote}>{lockNote}</span>}
                                   </span>
                                 </label>
                               </li>
@@ -230,8 +243,8 @@ export default function AdminUsersPage() {
                           })}
                         </ul>
                         <p className={styles.panelHint}>
-                          Seller follows their shop, and everyone is a Customer. Taking a role away signs them out so it
-                          applies straight away.
+                          Seller follows their shop, and everyone is a Customer. A new job role starts with their home
+                          country (change it on the Staff page). Taking a role away signs them out so it applies straight away.
                         </p>
                       </div>
                     ) : (

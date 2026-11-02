@@ -66,3 +66,9 @@ export type HandoverMethod = 'InPerson' | 'FrontDoor' | 'Neighbour' | 'SafePlace
 
 /** What a courier is delivering: a food order or a parcel. */
 export type DeliveryKind = 'Order' | 'Parcel'
+
+/** What a staff member did, as recorded in the staff audit log (same as the API's `StaffAction`). */
+export type StaffAction =
+  | 'RoleGiven' | 'RoleRemoved' | 'CountriesChanged' | 'UserSuspended' | 'UserReinstated'
+  | 'ContactMessagesViewed' | 'ContactMessageUpdated' | 'ParcelViewed' | 'RolePermissionsChanged'
+  | 'ShopDocumentOpened'

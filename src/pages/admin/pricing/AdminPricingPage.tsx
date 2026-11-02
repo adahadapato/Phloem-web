@@ -3,6 +3,7 @@ import { useState, type FormEvent } from 'react'
 import { unwrap, type ApiResult } from '../../../api/apiError'
 import type { CommissionDto, CountryDto, DeliveryPricingDto } from '../../../api/contracts/dtos'
 import type { DeliveryWindow } from '../../../api/contracts/enums'
+import { Permissions } from '../../../api/contracts/permissions'
 import {
   getCommissions, getDeliveryPricing, removeWindow, setCommission, setShopFeeRange, setWindowCharge,
 } from '../../../api/services/adminService'
@@ -11,6 +12,7 @@ import { CountryFlag } from '../../../components/ui/CountryFlag'
 import { deliveryWindows } from '../../../components/ui/labels'
 import { StatusBanner } from '../../../components/ui/StatusBanner'
 import { useCountry } from '../../../state/CountryContext'
+import { useSession } from '../../../state/SessionContext'
 import styles from '../Admin.module.css'
 import { AdminHead } from '../AdminParts'
 
@@ -29,12 +31,15 @@ const toNumber = (text: string) => Number(text.trim().replace(',', '.'))
 /**
  * One country's money settings on a card: Phloem's commission (on dishes only), the range shops may charge for
  * delivery, and the delivery times offered with what each adds. A country without delivery fees set up can't take
- * orders, so its card says so and offers to set them up first.
+ * orders, so its card says so and offers to set them up first. Each part shows only for staff whose permissions
+ * cover it (commission: Finance; fees and times: pricing staff; owners see both).
  */
-function CountryCard({ country, commission, pricing }: {
+function CountryCard({ country, commission, pricing, canCommission, canDelivery }: {
   country: CountryDto
   commission: CommissionDto | undefined
   pricing: DeliveryPricingDto | undefined
+  canCommission: boolean
+  canDelivery: boolean
 }) {
   const queryClient = useQueryClient()
   const [editing, setEditing] = useState<Editing>(null)
@@ -98,14 +103,14 @@ function CountryCard({ country, commission, pricing }: {
       <div className={styles.priceCardHead}>
         <span className={styles.place}><CountryFlag country={country} /> <strong>{country.name}</strong></span>
         <span className="muted">{country.currency}</span>
-        {ready
+        {canDelivery && (ready
           ? <span className={`${styles.chip} ${styles.chipGo}`}>Taking orders</span>
-          : <span className={`${styles.chip} ${styles.chipWait}`}>Not set up</span>}
+          : <span className={`${styles.chip} ${styles.chipWait}`}>Not set up</span>)}
       </div>
       <StatusBanner message={message?.text} isError={message?.isError} />
 
       {/* ── Commission ── */}
-      <div className={styles.priceBlock}>
+      {canCommission && <div className={styles.priceBlock}>
         <div className={styles.priceLine}>
           <span>
             <strong>Phloem's commission</strong>
@@ -132,10 +137,10 @@ function CountryCard({ country, commission, pricing }: {
             <Button small variant="plain" onClick={() => setEditing(null)}>Cancel</Button>
           </form>
         )}
-      </div>
+      </div>}
 
       {/* ── Shop delivery fee range ── */}
-      <div className={styles.priceBlock}>
+      {canDelivery && <div className={styles.priceBlock}>
         <div className={styles.priceLine}>
           <span>
             <strong>Shop delivery fee</strong>
@@ -178,10 +183,10 @@ function CountryCard({ country, commission, pricing }: {
             <Button small variant="plain" onClick={() => setEditing(null)}>Cancel</Button>
           </form>
         )}
-      </div>
+      </div>}
 
       {/* ── Delivery times ── */}
-      {pricing && (
+      {canDelivery && pricing && (
         <div className={styles.priceBlock}>
           <strong>Delivery times buyers can pick</strong>
           <ul className={styles.windowList}>
@@ -234,19 +239,24 @@ function CountryCard({ country, commission, pricing }: {
  */
 export default function AdminPricingPage() {
   const { countries } = useCountry()
+  const { hasPermission, coversCountry } = useSession()
+  const canCommission = hasPermission(Permissions.Commission)
+  const canDelivery = hasPermission(Permissions.PricingManage)
   const commissions = useQuery({
     queryKey: ['admin', 'pricing', 'commissions'],
     queryFn: async ({ signal }) => unwrap(await getCommissions(signal)),
+    enabled: canCommission,
   })
   const pricing = useQuery({
     queryKey: ['admin', 'pricing', 'delivery'],
     queryFn: async ({ signal }) => unwrap(await getDeliveryPricing(signal)),
+    enabled: canDelivery,
   })
-  const failed = commissions.isError || pricing.isError
-  const loading = commissions.isPending || pricing.isPending
+  const failed = (canCommission && commissions.isError) || (canDelivery && pricing.isError)
+  const loading = (canCommission && commissions.isPending) || (canDelivery && pricing.isPending)
 
-  // Countries still to set up come first
-  const ordered = [...countries].sort((a, b) =>
+  // Only the person's countries; countries still to set up come first
+  const ordered = countries.filter((c) => coversCountry(c.country)).sort((a, b) =>
     Number(!!pricing.data?.some((p) => p.country === a.country)) - Number(!!pricing.data?.some((p) => p.country === b.country)))
 
   return (
@@ -262,7 +272,7 @@ export default function AdminPricingPage() {
       {!loading && !failed && (
         <ul className={styles.priceCards}>
           {ordered.map((c) => (
-            <CountryCard key={c.country} country={c}
+            <CountryCard key={c.country} country={c} canCommission={canCommission} canDelivery={canDelivery}
                          commission={commissions.data?.find((x) => x.country === c.country)}
                          pricing={pricing.data?.find((x) => x.country === c.country)} />
           ))}

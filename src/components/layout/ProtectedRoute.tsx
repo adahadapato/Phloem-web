@@ -3,10 +3,21 @@ import { useSession } from '../../state/SessionContext'
 
 /**
  * Pages that need a signed-in person (My orders, Checkout, Account…). Signed out → Log in, then straight back to
- * the page they wanted (?returnTo=…). Optionally limited to a role (e.g. Admin), or to any of several roles.
+ * the page they wanted (?returnTo=…).
+ *
+ * Optionally limited further (anyone who doesn't qualify is sent Home):
+ * - `role`: a role, or any of several roles;
+ * - `permission`: a staff permission, or any of several (owners always pass);
+ * - `staff`: anyone with at least one staff permission (the admin area; each page inside checks its own).
+ *
+ * This only decides what is SHOWN: the API checks every call itself.
  */
-export function ProtectedRoute({ role }: { role?: string | string[] }) {
-  const { status, isInRole } = useSession()
+export function ProtectedRoute({ role, permission, staff }: {
+  role?: string | string[]
+  permission?: string | string[]
+  staff?: boolean
+}) {
+  const { status, isInRole, hasPermission, isStaff } = useSession()
   const location = useLocation()
 
   // A kept sign-in is still being restored: wait, so the page doesn't flash "Log in"
@@ -21,6 +32,8 @@ export function ProtectedRoute({ role }: { role?: string | string[] }) {
 
   const allowed = role === undefined ? [] : Array.isArray(role) ? role : [role]
   if (allowed.length > 0 && !allowed.some(isInRole)) return <Navigate to="/" replace />
+  if (permission !== undefined && !hasPermission(permission)) return <Navigate to="/" replace />
+  if (staff && !isStaff) return <Navigate to="/" replace />
 
   return <Outlet />
 }

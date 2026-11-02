@@ -10,7 +10,6 @@ import { createBrowserRouter, type RouteObject } from 'react-router'
 import { PageShell } from './components/layout/PageShell'
 import { ProtectedRoute } from './components/layout/ProtectedRoute'
 import { SellerRoute } from './components/layout/SellerRoute'
-import { Roles } from './api/contracts/roles'
 
 /** Loads a page file only when its address is opened. */
 const page = (load: () => Promise<{ default: ComponentType }>): Pick<RouteObject, 'lazy'> => ({
@@ -76,9 +75,10 @@ export const router = createBrowserRouter([
         ],
       },
 
-      // Admins (everything) and support agents (Contact messages only); others are sent Home
+      // Owners and staff (anyone the backend gave a staff permission); others are sent Home. Each page inside is
+      // checked against the person's permissions by AdminLayout (see pages/admin/adminAccess.ts).
       {
-        element: <ProtectedRoute role={[Roles.Admin, Roles.SupportAgent]} />,
+        element: <ProtectedRoute staff />,
         children: [
           {
             path: 'admin',
@@ -88,6 +88,9 @@ export const router = createBrowserRouter([
               { path: 'shops', ...page(() => import('./pages/admin/shops/AdminShopsPage')) },
               { path: 'shops/:shopId', ...page(() => import('./pages/admin/shops/AdminShopPage')) },
               { path: 'users', ...page(() => import('./pages/admin/users/AdminUsersPage')) },
+              { path: 'staff', ...page(() => import('./pages/admin/staff/AdminStaffPage')) },
+              { path: 'staff/roles', ...page(() => import('./pages/admin/staff/AdminJobRolesPage')) },
+              { path: 'audit', ...page(() => import('./pages/admin/staff/AdminAuditPage')) },
               { path: 'dishes', ...page(() => import('./pages/admin/dishes/AdminDishesPage')) },
               { path: 'pricing', ...page(() => import('./pages/admin/pricing/AdminPricingPage')) },
               { path: 'shipping', ...page(() => import('./pages/admin/shipping/AdminRoutesPage')) },

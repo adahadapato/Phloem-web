@@ -49,11 +49,11 @@ function Tile({ to, icon, title, sub, tone }: { to: string; icon: keyof typeof I
  * My account, laid out for a big screen (tiles in a grid rather than the app's one long list): a profile band
  * (photo, name, Admin / Seller, email, country, member since, Edit profile), then the tiles in three groups:
  * Shopping (orders, shipments, addresses, send a parcel), Selling & admin (Seller dashboard or Become a seller;
- * Admin dashboard for admins), Account & security (profile, password, two-step sign-in, notifications), Help & info
+ * Admin dashboard or Staff area for staff), Account & security (profile, password, two-step sign-in, notifications), Help & info
  * (Help & support, About, Terms, Privacy); then Log out and "Delete my account". On a phone the tiles stack one under the other.
  */
 export default function AccountPage() {
-  const { profile, logout, isAdmin } = useSession()
+  const { profile, logout, isAdmin, isStaff } = useSession()
   const { countries } = useCountry()
   const navigate = useNavigate()
   const [deleteNote, setDeleteNote] = useState(false)
@@ -82,7 +82,9 @@ export default function AccountPage() {
         <div className={styles.who}>
           <h2>
             {profile.fullName}
-            {(isAdmin || profile.hasShop) && <span className={styles.pill}>{isAdmin ? 'Admin' : 'Seller'}</span>}
+            {(isStaff || profile.hasShop) && (
+              <span className={styles.pill}>{isAdmin ? 'Admin' : isStaff ? 'Staff' : 'Seller'}</span>
+            )}
           </h2>
           <p>{profile.email}</p>
           <p className={styles.meta}>
@@ -120,13 +122,14 @@ export default function AccountPage() {
 
       {/* ── Selling & admin ── */}
       <section aria-labelledby="selling-title" className={styles.group}>
-        <h2 id="selling-title" className={styles.groupTitle}>{isAdmin ? 'Selling & admin' : 'Selling'}</h2>
+        <h2 id="selling-title" className={styles.groupTitle}>{isStaff ? 'Selling & admin' : 'Selling'}</h2>
         <ul className={styles.tiles}>
           {profile.hasShop
             ? <Tile to="/seller" icon="shop" title="Seller dashboard" sub="Your shop, orders and dishes" tone="orange" />
             : <Tile to="/sell" icon="shop" title="Become a seller" sub="Start selling your food on Phloem" tone="orange" />}
-          {isAdmin && (
-            <Tile to="/admin" icon="shield" title="Admin dashboard" sub="Approve sellers, users and shipments" tone="orange" />
+          {isStaff && (
+            <Tile to="/admin" icon="shield" title={isAdmin ? 'Admin dashboard' : 'Staff area'}
+                  sub={isAdmin ? 'Approve sellers, users and shipments' : 'The pages your job role uses'} tone="orange" />
           )}
         </ul>
       </section>

@@ -21,6 +21,10 @@ interface StoredTokens {
   accessTokenExpiresAt: number
   refreshToken: string
   roles: string[]
+  /** Staff permissions from the backend ("*" = all); missing in sign-ins kept before this was added. */
+  permissions?: string[]
+  /** Staff countries from the backend ("*" = all). */
+  countries?: string[]
 }
 
 let current: StoredTokens | null = null
@@ -74,6 +78,16 @@ export const tokens = {
     return current?.roles ?? []
   },
 
+  /** The staff permissions the backend sent with the last sign-in or renewal ("*" = all). */
+  get permissions(): string[] {
+    return current?.permissions ?? []
+  },
+
+  /** The countries the backend says this staff member covers ("*" = all). */
+  get countries(): string[] {
+    return current?.countries ?? []
+  },
+
   /** True when a refresh token exists (the sign-in can be renewed). */
   get canRefresh(): boolean {
     return !!current?.refreshToken
@@ -101,6 +115,8 @@ export const tokens = {
       accessTokenExpiresAt: dto.expiresAt ? Date.parse(dto.expiresAt) : Date.now(),
       refreshToken: dto.refreshToken,
       roles: dto.roles ?? [],
+      permissions: dto.permissions ?? [],
+      countries: dto.countries ?? [],
     }
     remember = rememberMe
     persist()

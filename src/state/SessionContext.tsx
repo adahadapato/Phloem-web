@@ -1,6 +1,8 @@
 /**
- * Who is signed in, for every page: the profile from the API and the roles from the sign-in token.
- * Same job as the app's SessionService.
+ * Who is signed in, for every page: the profile from the API, and the roles, staff permissions and countries the
+ * backend sent with the sign-in. Same job as the app's SessionService.
+ *
+ * Permissions only decide which menus and pages are SHOWN; the API checks every call itself.
  *
  * - On start, a kept sign-in is restored (status "loading" until then, so protected pages don't flash "Log in").
  * - When the sign-in runs out and can't be renewed, the person is shown as signed out.
@@ -8,6 +10,8 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { ProfileDto } from '../api/contracts/dtos'
+import type { Country } from '../api/contracts/enums'
+import { Permissions } from '../api/contracts/permissions'
 import { Roles } from '../api/contracts/roles'
 import { getProfile } from '../api/services/accountService'
 import { logout as apiLogout, restoreSession } from '../api/services/authService'
@@ -25,6 +29,16 @@ interface SessionState {
   isSeller: boolean
   /** Checks a role from the sign-in token. */
   isInRole: (role: string) => boolean
+  /** True when the person holds this permission, or ANY of these (always true for owners). */
+  hasPermission: (permission: string | readonly string[]) => boolean
+  /** True for owners and anyone with at least one staff permission (opens the admin area). */
+  isStaff: boolean
+  /** True for owners and staff given every country. */
+  coversAllCountries: boolean
+  /** The countries the person covers as staff (empty when `coversAllCountries`). */
+  staffCountries: Country[]
+  /** True when the person covers this country as staff. */
+  coversCountry: (country: Country) => boolean
   /** After a successful sign-in (Log in, Sign up, 2FA): shows the person as signed in. */
   signedIn: (profile: ProfileDto) => void
   /** Reloads the profile (after changing details, opening a shop…). */
@@ -40,10 +54,21 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<Status>(tokens.canRefresh ? 'loading' : 'signedOut')
   const [profile, setProfile] = useState<ProfileDto | null>(null)
   const [roles, setRoles] = useState<string[]>(tokens.roles)
+  const [permissions, setPermissions] = useState<string[]>(tokens.permissions)
+  const [countries, setCountries] = useState<string[]>(tokens.countries)
+
+  /** Reads what the latest sign-in or renewal said. */
+  const readAccess = useCallback(() => {
+    setRoles(tokens.roles)
+    setPermissions(tokens.permissions)
+    setCountries(tokens.countries)
+  }, [])
 
   const showSignedOut = useCallback(() => {
     setProfile(null)
     setRoles([])
+    setPermissions([])
+    setCountries([])
     setStatus('signedOut')
     queryClient.clear()   // nobody's private data stays in the cache
   }, [queryClient])
@@ -56,7 +81,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       if (!active) return
       if (restored) {
         setProfile(restored)
-        setRoles(tokens.roles)
+        readAccess()
         setStatus('signedIn')
       } else {
         setStatus('signedOut')
@@ -65,7 +90,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     return () => {
       active = false
     }
-  }, [])
+  }, [readAccess])
 
   // The sign-in ran out and couldn't be renewed
   useEffect(() => tokens.onExpired(showSignedOut), [showSignedOut])
@@ -73,23 +98,36 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const value = useMemo<SessionState>(() => {
     const isInRole = (role: string) =>
       status === 'signedIn' && roles.some((r) => r.toLowerCase() === role.toLowerCase())
+    const isAdmin = isInRole(Roles.Admin)
+
+    // Owners hold everything (also when an older kept sign-in has no permission list yet)
+    const all = isAdmin || permissions.includes(Permissions.Everything)
+    const hasPermission = (wanted: string | readonly string[]) =>
+      status === 'signedIn' && (all || (typeof wanted === 'string' ? [wanted] : wanted).some((p) => permissions.includes(p)))
+    const coversAllCountries = isAdmin || countries.includes('*')
+    const staffCountries = coversAllCountries ? [] : (countries as Country[])
 
     return {
       status,
       profile,
-      isAdmin: isInRole(Roles.Admin),
+      isAdmin,
       isSeller: isInRole(Roles.Seller),
       isInRole,
+      hasPermission,
+      isStaff: status === 'signedIn' && (all || permissions.length > 0),
+      coversAllCountries,
+      staffCountries,
+      coversCountry: (country) => coversAllCountries || staffCountries.includes(country),
       signedIn: (signedInProfile) => {
         setProfile(signedInProfile)
-        setRoles(tokens.roles)
+        readAccess()
         setStatus('signedIn')
       },
       refreshProfile: async () => {
         const result = await getProfile()
         if (result.ok) {
           setProfile(result.value)
-          setRoles(tokens.roles)
+          readAccess()
         }
       },
       logout: async () => {
@@ -97,7 +135,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         showSignedOut()
       },
     }
-  }, [status, profile, roles, showSignedOut])
+  }, [status, profile, roles, permissions, countries, readAccess, showSignedOut])
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>
 }

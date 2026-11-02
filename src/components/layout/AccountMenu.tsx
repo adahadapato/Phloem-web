@@ -7,11 +7,12 @@ import styles from './HeaderMenu.module.css'
 
 /**
  * The signed-in person in the header: their photo (or initial) and first name; opens a menu with My account,
- * My orders, My shipments, My deliveries (couriers and sellers), Seller dashboard (people with a shop), Admin dashboard (admins) and Log out. Closes on a pick, on Escape, or on a click outside.
+ * My orders, My shipments, My deliveries (couriers and sellers), Seller dashboard (people with a shop), Admin dashboard
+ * (owners) or Staff area (anyone the backend gave staff permissions) and Log out. Closes on a pick, on Escape, or on a
+ * click outside.
  */
 export function AccountMenu() {
-  const { profile, logout, isAdmin, isInRole } = useSession()
-  const isSupport = !isAdmin && isInRole(Roles.SupportAgent)
+  const { profile, logout, isAdmin, isStaff, isInRole } = useSession()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const box = useRef<HTMLDivElement>(null)
@@ -88,17 +89,10 @@ export function AccountMenu() {
               </Link>
             </li>
           )}
-          {isAdmin && (
+          {isStaff && (
             <li role="none">
               <Link role="menuitem" className={styles.option} to="/admin" onClick={() => setOpen(false)}>
-                Admin dashboard
-              </Link>
-            </li>
-          )}
-          {isSupport && (
-            <li role="none">
-              <Link role="menuitem" className={styles.option} to="/admin/messages" onClick={() => setOpen(false)}>
-                Contact messages
+                {isAdmin ? 'Admin dashboard' : 'Staff area'}
               </Link>
             </li>
           )}

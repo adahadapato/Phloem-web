@@ -5,7 +5,7 @@
 import type {
   CatalogGroup, ContactMessageStatus, ContactTopic, Country, Currency, DeliverySpeed, DeliveryWindow,
   DeliveryKind, DishCategory, DocumentStatus, HandoverMethod, LegalDocumentType, OrderStatus, ParcelItemRuleKind,
-  ShipmentItemCategory, ShipmentStatus, VendorDocumentType, VendorStatus,
+  ShipmentItemCategory, ShipmentStatus, StaffAction, VendorDocumentType, VendorStatus,
 } from './enums'
 
 /** Answer of login, register, two-factor, refresh and Google exchange. */
@@ -22,6 +22,13 @@ export interface AuthTokensDto {
   /** True: no tokens yet; ask for the 2FA code and send it with `twoFactorChallengeToken`. */
   requiresTwoFactor: boolean
   twoFactorChallengeToken: string | null
+  /**
+   * Staff permissions the BACKEND gave this person ("*" = every permission, the owners); empty or missing for
+   * everyone else. Only used to show or hide menus: the API checks every call itself.
+   */
+  permissions?: string[] | null
+  /** The countries they cover as staff ("*" = every country), e.g. ["Ghana"]. */
+  countries?: string[] | null
 }
 
 /** One country from GET /api/countries. Send `country` back to the API; show the rest. */
@@ -951,3 +958,60 @@ export interface DeliveryJobDto {
   /** Delivered ones: "Left at the front door". */
   handoverSummary: string | null
 }
+
+// ───────────────────────────── Staff (Admin → Staff, Job roles, Audit log) ─────────────────────────────
+
+/** One person on Admin → Staff: an owner (Admin) or someone with a staff job role. */
+export interface StaffMemberDto {
+  id: string
+  fullName: string
+  email: string
+  /** The country on their profile. */
+  homeCountry: Country
+  /** The owners: everything, everywhere. */
+  isAdmin: boolean
+  /** Stored names, e.g. "ShipmentManager". */
+  jobRoles: string[]
+  /** As people read them, e.g. "Parcel hub". */
+  jobRoleNames: string[]
+  coversAllCountries: boolean
+  /** Empty when `coversAllCountries`. */
+  countries: Country[]
+  twoFactorEnabled: boolean
+  /** ISO, UTC; null = never. */
+  lastSignIn: string | null
+  isSuspended: boolean
+  /** The person looking: they can't change their own access. */
+  isYou: boolean
+}
+
+/** One staff job role and what it's allowed to do. */
+export interface JobRoleDto {
+  /** Stored name, used in addresses. */
+  role: string
+  name: string
+  description: string | null
+  permissions: string[]
+  memberCount: number
+}
+
+/** Admin → Job roles: every role, every permission, and whether the viewer may edit (owners only). */
+export interface JobRolesDto {
+  roles: JobRoleDto[]
+  allPermissions: string[]
+  canEdit: boolean
+}
+
+/** One line of the staff audit log. */
+export interface StaffAuditEntryDto {
+  id: string
+  /** ISO, UTC. */
+  at: string
+  actorId: string
+  actorName: string
+  action: StaffAction
+  target: string
+  country: Country | null
+  detail: string | null
+}
+
