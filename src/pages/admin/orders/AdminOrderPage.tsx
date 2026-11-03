@@ -139,6 +139,9 @@ export default function AdminOrderPage() {
           <div className={styles.stackForm}>
             <Link to={`/admin/orders?shop=${encodeURIComponent(o.shopId)}`}>All orders from {o.shopName} ›</Link>
             {hasPermission(Permissions.ShopsManage) && <Link to={`/admin/shops/${o.shopId}`}>Open the shop ›</Link>}
+            {hasPermission(Permissions.ChatsRead) && o.status !== 'AwaitingPayment' && (
+              <Link to={`/admin/chats/${encodeURIComponent(o.orderNumber)}`}>Read the order chat ›</Link>
+            )}
           </div>
           <p className={styles.priceHint}>Your view of this order is recorded in the audit log.</p>
         </aside>

@@ -3,7 +3,7 @@
  * Grows feature by feature; keep in step with the app's Services/Api/Contracts/Dtos.
  */
 import type {
-  AiCallOutcome, AiProvider, CatalogGroup, ContentReviewStatus, ModerationKind, ModerationState, ModerationVerdict, ContactMessageStatus, ContactTopic, Country, Currency, DeliverySpeed, DeliveryWindow,
+  AiCallOutcome, AiProvider, CatalogGroup, ChatRole, ContentReviewStatus, ModerationKind, ModerationState, ModerationVerdict, ContactMessageStatus, ContactTopic, Country, Currency, DeliverySpeed, DeliveryWindow,
   DeliveryKind, DishCategory, DocumentStatus, HandoverMethod, LegalDocumentType, OrderActorKind, OrderEventKind, OrderStatus, SeoPageKind, SeoPageStatus, ParcelItemRuleKind,
   PendingChangeKind, PendingChangeStatus, ShipmentItemCategory, ShipmentStatus, StaffAction, VendorDocumentType,
   VendorStatus,
@@ -1344,4 +1344,98 @@ export interface ModerationItemDto {
   /** Dishes: false = hidden from buyers until decided. Shops: the shop is live. */
   isLive: boolean
   waitingSince: string
+}
+
+// ───────────────────────────── Order chat ─────────────────────────────
+
+/** One message in an order's chat. */
+export interface ChatMessageDto {
+  id: string
+  senderId: string
+  senderRole: ChatRole
+  /** "Grace (customer)", "Ama (Shop)"; staff see full names. */
+  senderName: string
+  body: string
+  /** A short-lived link to the photo (private), or null. */
+  photoUrl: string | null
+  sentAt: string
+  /** The sender deleted it for themselves (staff only see these). */
+  hiddenBySender: boolean
+  /** Looks like it has a phone number, email or payment details (the warning is shown under it). */
+  hasContactDetails: boolean
+}
+
+/** GET /api/orders/{orderNumber}/chat */
+export interface OrderChatDto {
+  orderNumber: string
+  shopName: string
+  myRole: ChatRole
+  otherPartyName: string
+  canWrite: boolean
+  /** Why it's read-only (null while open). */
+  closedReason: string | null
+  isReported: boolean
+  /** The other side has seen everything up to this time ("Seen"). */
+  otherReadUpTo: string | null
+  /** Oldest first. */
+  messages: ChatMessageDto[]
+  hasOlder: boolean
+  /** "Messages are saved and may be reviewed…" */
+  notice: string
+  /** Shown under messages with contact or payment details. */
+  contactWarning: string
+}
+
+/** GET /api/me/chats: one of my conversations. */
+export interface MyChatDto {
+  orderNumber: string
+  shopName: string
+  myRole: ChatRole
+  otherPartyName: string
+  lastMessage: string | null
+  lastMessageIsMine: boolean
+  lastMessageAt: string | null
+  unread: boolean
+}
+
+/** GET /api/admin/chats: one chat in the list. */
+export interface AdminChatSummaryDto {
+  orderNumber: string
+  shopName: string
+  customerName: string
+  country: Country
+  isReported: boolean
+  /** Reported and not dealt with yet. */
+  reportWaiting: boolean
+  reportReason: string | null
+  /** "Grace Mensah (customer)" / "Kofi Asante (shop)". */
+  reportedBy: string | null
+  reportedAt: string | null
+  lastMessageAt: string | null
+}
+
+/** GET /api/admin/chats/{orderNumber} */
+export interface AdminChatDto {
+  chat: AdminChatSummaryDto
+  shopOwnerName: string
+  messages: ChatMessageDto[]
+}
+
+/** Live: a new message ("chatMessage"). */
+export interface ChatMessageEvent {
+  orderNumber: string
+  message: ChatMessageDto
+}
+
+/** Live: the other side has seen the chat ("chatRead"). */
+export interface ChatReadEvent {
+  orderNumber: string
+  role: ChatRole
+  readUpTo: string
+}
+
+/** Live: the other side is typing ("chatTyping"). */
+export interface ChatTypingEvent {
+  orderNumber: string
+  role: ChatRole
 }

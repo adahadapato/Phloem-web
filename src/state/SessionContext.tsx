@@ -15,6 +15,7 @@ import { Permissions } from '../api/contracts/permissions'
 import { Roles } from '../api/contracts/roles'
 import { getProfile } from '../api/services/accountService'
 import { logout as apiLogout, restoreSession } from '../api/services/authService'
+import { stopChatHub } from '../api/chatHub'
 import { tokens } from '../api/tokens'
 
 type Status = 'loading' | 'signedOut' | 'signedIn'
@@ -132,6 +133,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       },
       logout: async () => {
         await apiLogout()
+        void stopChatHub()
         showSignedOut()
       },
     }

@@ -1,0 +1,94 @@
+/* Admin → Order chats: the list and the read-only transcript. */
+.rows {
+  display: grid;
+  gap: 8px;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--brand-border);
+  border-radius: 14px;
+  background: var(--white);
+  color: inherit;
+  text-decoration: none;
+}
+
+.row:hover {
+  border-color: var(--brand-green);
+}
+
+.waiting {
+  border-left: 4px solid var(--brand-orange);
+}
+
+.rowTop {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+}
+
+.rowMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 0;
+  color: var(--brand-text-muted);
+  font-size: var(--text-sm);
+}
+
+.flag {
+  color: var(--brand-orange-dark);
+  font-weight: 700;
+}
+
+.reason {
+  color: var(--brand-text-dark);
+  font-size: var(--text-sm);
+  font-style: italic;
+}
+
+.report {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 14px 0;
+  padding: 12px 14px;
+  border: 1px solid var(--brand-border);
+  border-radius: 12px;
+  background: var(--brand-cream);
+}
+
+.report p {
+  margin: 0;
+  font-style: italic;
+}
+
+.transcript {
+  height: auto;
+  max-height: 70vh;
+  margin-top: 14px;
+}
+
+/* Staff see the shop's messages in mint, not the participant's "mine" green */
+.staffBubble {
+  background: var(--white) !important;
+  color: var(--brand-text-dark) !important;
+}
+
+.transcript .staffBubble > span:last-child {
+  color: var(--brand-text-muted);
+}
+
+.marks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 3px;
+  color: var(--brand-orange-dark);
+  font-size: 11px;
+  font-weight: 600;
+}

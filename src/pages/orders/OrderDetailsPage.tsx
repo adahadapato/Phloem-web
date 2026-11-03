@@ -15,6 +15,7 @@ import { ActionBanner, OrderButtons, StatusChip } from './OrderParts'
 import styles from './Orders.module.css'
 import { useOrderActions } from './useOrderActions'
 import { NeedHelp } from '../../components/ui/NeedHelp'
+import { OrderChat } from '../../components/chat/OrderChat'
 
 /** The journey of an order, like the app's tracker (with Paid added: the website can pay unpaid orders). */
 const STEPS = [
@@ -56,7 +57,7 @@ function useMinutesLeft(order: OrderDetailsDto | undefined, loadedAt: number): n
 /**
  * One order, like the app's Order details: number, date and status; the journey so far (or why it was
  * cancelled); the dishes (unpaid: at today's prices, with what changed or ran out); delivery time and address;
- * the totals; then Pay now / Buy again / Cancel order.
+ * the totals; the chat with the shop (once paid); then Pay now / Buy again / Cancel order.
  */
 export default function OrderDetailsPage() {
   const { orderNumber = '' } = useParams()
@@ -190,6 +191,9 @@ export default function OrderDetailsPage() {
             <Price amount={order.total} currency={order.currency} />
           </div>
         </section>
+
+        {/* ── Chat with the shop (once paid; read-only 7 days after the order ends) ── */}
+        {!unpaid && <div id="chat"><OrderChat orderNumber={order.orderNumber} title={`Chat with ${order.shopName}`} /></div>}
 
         {/* ── Delivery and payment ── */}
         <section className={styles.card} aria-label="Delivery and payment">

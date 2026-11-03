@@ -76,7 +76,7 @@ export const permissionGroups: { title: string; items: { permission: string; nam
       { permission: Permissions.ContactRead, name: 'Contact messages', about: 'Read and answer Contact us messages.' },
       { permission: Permissions.EmailsRead, name: 'Team emails', about: 'Read the team mailboxes (coming soon).' },
       { permission: Permissions.EmailsReply, name: 'Reply to emails', about: 'Reply from the team mailboxes (coming soon).' },
-      { permission: Permissions.ChatsRead, name: 'Order chats', about: 'Read order chats for a problem report (coming soon).' },
+      { permission: Permissions.ChatsRead, name: 'Order chats', about: 'Read order chats between customers and shops, and close reported ones.' },
       { permission: Permissions.CasesManage, name: 'Problem reports', about: 'Handle "Report a problem" cases (coming soon).' },
     ],
   },

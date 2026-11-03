@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router'
 import { useCart } from '../../state/CartContext'
 import { useSession } from '../../state/SessionContext'
+import { useChatUnread } from '../chat/useChatUnread'
 import { AccountMenu } from './AccountMenu'
 import { CountryPicker } from './CountryPicker'
 import styles from './Header.module.css'
@@ -18,11 +19,13 @@ const links = [
 
 /**
  * The green bar at the top of every page, like the app's header: logo, links, the country (flag) picker, and
- * Log in / the account menu, and the basket (with its count) once something is in it. On phones the links fold into a ☰ menu.
+ * Log in / the account menu, Messages (with the unread count) when signed in, and the basket (with its count) once
+ * something is in it. On phones the links fold into a ☰ menu.
  */
 export function Header() {
   const { status } = useSession()
   const { count } = useCart()
+  const unread = useChatUnread(status === 'signedIn')
   const { pathname } = useLocation()
 
   // The phone menu belongs to the page it was opened on, so moving to another page closes it by itself
@@ -66,6 +69,16 @@ export function Header() {
                 <circle cx="17.5" cy="20" r="1.3" />
               </svg>
               <span className={styles.badge} aria-hidden="true">{count > 99 ? '99+' : count}</span>
+            </Link>
+          )}
+          {status === 'signedIn' && (
+            <Link to="/messages" className={styles.basket}
+                  aria-label={unread > 0 ? `Messages: ${unread} unread` : 'Messages'}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                   strokeLinejoin="round" aria-hidden="true">
+                <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.9A8 8 0 1 1 21 12z" />
+              </svg>
+              {unread > 0 && <span className={styles.badge} aria-hidden="true">{unread > 99 ? '99+' : unread}</span>}
             </Link>
           )}
           <CountryPicker />

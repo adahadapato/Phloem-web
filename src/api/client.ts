@@ -55,6 +55,15 @@ export function upload<T>(method: 'POST' | 'PUT', path: string, fieldName: strin
   return send<T>(method, path, form, signal)
 }
 
+/**
+ * A current access token for the live connection (/hubs/chat), renewing it first if it's about to run out.
+ * @returns The token, or an empty string when signed out.
+ */
+export async function freshAccessToken(): Promise<string> {
+  if (tokens.canRefresh && tokens.accessTokenExpiresSoon) await renew(tokens.accessToken)
+  return tokens.accessToken ?? ''
+}
+
 // ───────────────────────────── 3. Sending ─────────────────────────────
 
 async function send<T>(method: string, path: string, body: unknown, signal?: AbortSignal): Promise<ApiResult<T>> {

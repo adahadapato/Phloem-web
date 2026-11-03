@@ -82,6 +82,7 @@ export type StaffAction =
   | 'ShopDocumentOpened' | 'ChangeProposed' | 'ChangeApproved' | 'ChangeRejected' | 'ChangeWithdrawn'
   | 'ShopBlocked' | 'ShopUnblocked' | 'OrderViewed' | 'AiPromptSaved' | 'AiPromptRestored' | 'AiPromptReset'
   | 'AiCallViewed' | 'SeoEdited' | 'SeoRewritten' | 'ContentApproved' | 'ContentRejected'
+  | 'ChatViewed' | 'ChatReportClosed'
 
 /** A change that needs a second person (same as the API's `PendingChangeKind`). */
 export type PendingChangeKind = 'PublishLegalDocument' | 'ConfirmShopBlock'
@@ -112,3 +113,6 @@ export type ModerationVerdict = 'Ok' | 'NeedsLook' | 'NotAllowed'
 
 /** Where a check is (same as the API's `ModerationState`). */
 export type ModerationState = 'WaitingForAi' | 'WaitingForPerson' | 'DoneByAi' | 'DecidedByStaff' | 'Replaced'
+
+/** Which side of an order chat someone is on (same as the API's `ChatRole`). */
+export type ChatRole = 'Customer' | 'Seller'

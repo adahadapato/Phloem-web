@@ -71,6 +71,11 @@ export function AccountMenu() {
             </Link>
           </li>
           <li role="none">
+            <Link role="menuitem" className={styles.option} to="/messages" onClick={() => setOpen(false)}>
+              Messages
+            </Link>
+          </li>
+          <li role="none">
             <Link role="menuitem" className={styles.option} to="/shipments" onClick={() => setOpen(false)}>
               My shipments
             </Link>

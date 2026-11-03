@@ -10,6 +10,7 @@ import {
 } from '../../api/services/sellerOrderService'
 import { getOrder } from '../../api/services/orderService'
 import { OrderTimeline } from '../../components/orders/OrderTimeline'
+import { OrderChat } from '../../components/chat/OrderChat'
 import { CourierPicker } from '../../components/deliveries/CourierPicker'
 import { DeliveredForm } from '../../components/deliveries/DeliveredForm'
 import { Button } from '../../components/ui/Button'
@@ -169,6 +170,7 @@ function ShopOrderCard({ o, highlighted, busy, onAction }: {
         </div>
       </div>
       <OrderHistory orderNumber={o.orderNumber} />
+      <ChatToggle orderNumber={o.orderNumber} customerName={o.customerName} startOpen={highlighted} />
       {delivering && (
         <div className={styles.deliveredRow}>
           <DeliveredForm kind="Order" reference={o.orderNumber} recipient={o.deliveryRecipientName ?? o.customerName}
@@ -200,6 +202,20 @@ function OrderHistory({ orderNumber }: { orderNumber: string }) {
       {open && details.isPending && <p className="muted" aria-busy="true">Loading…</p>}
       {open && details.isError && <p className="muted">We couldn't load the history.</p>}
       {open && details.data && <OrderTimeline timeline={details.data.timeline ?? []} />}
+    </div>
+  )
+}
+
+/** "Chat with the customer" under an order: opens the order's chat (loaded only when opened). */
+function ChatToggle({ orderNumber, customerName, startOpen }: { orderNumber: string; customerName: string; startOpen: boolean }) {
+  const [open, setOpen] = useState(startOpen)
+  const first = customerName.split(' ')[0]
+  return (
+    <div className={styles.historyRow}>
+      <button type="button" className={styles.historyToggle} aria-expanded={open} onClick={() => setOpen(!open)}>
+        {open ? 'Hide chat' : `💬 Chat with ${first}`}
+      </button>
+      {open && <OrderChat orderNumber={orderNumber} title={`Chat with ${first}`} compact />}
     </div>
   )
 }

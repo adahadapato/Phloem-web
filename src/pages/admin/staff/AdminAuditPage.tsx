@@ -33,6 +33,8 @@ const ACTIONS: { value: StaffAction; label: string }[] = [
   { value: 'AiCallViewed', label: 'Opened an AI request' },
   { value: 'ContentApproved', label: 'Approved text in Moderation' },
   { value: 'ContentRejected', label: 'Rejected text in Moderation' },
+  { value: 'ChatViewed', label: 'Read an order chat' },
+  { value: 'ChatReportClosed', label: 'Closed a reported chat' },
   { value: 'SeoEdited', label: "Changed a page's search text" },
   { value: 'SeoRewritten', label: 'Asked AI to rewrite a page\'s search text' },
   { value: 'ChangeProposed', label: 'Asked for a second person' },

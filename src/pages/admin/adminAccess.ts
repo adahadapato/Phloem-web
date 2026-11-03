@@ -33,6 +33,7 @@ export const ADMIN_MENU: AdminMenuItem[] = [
   { to: '/admin/shipping', label: 'Shipping', icon: '📦', permission: [Permissions.ParcelsManage, Permissions.ParcelsSettings] },
   { to: '/admin/pricing', label: 'Pricing', icon: '💷', permission: [Permissions.PricingManage, Permissions.Commission] },
   { to: '/admin/messages', label: 'Contact messages', icon: '✉', permission: [Permissions.ContactRead] },
+  { to: '/admin/chats', label: 'Order chats', icon: '💬', permission: [Permissions.ChatsRead] },
   { to: '/admin/texts', label: 'Terms & Help', icon: '📄', permission: [Permissions.LegalPublish] },
   { to: '/admin/seo', label: 'Smart SEO', icon: '🔎', permission: [Permissions.Seo] },
   { to: '/admin/ai', label: 'AI Prompts', icon: '✨', permission: [Permissions.AiPrompts] },

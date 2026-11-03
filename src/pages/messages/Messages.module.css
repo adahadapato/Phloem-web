@@ -1,0 +1,149 @@
+/* Messages: the list of conversations beside the open chat (stacked on phones). */
+.page {
+  padding-top: 24px;
+  padding-bottom: 48px;
+}
+
+.heading h1 {
+  margin: 0 0 4px;
+  font-size: var(--text-xl);
+}
+
+.heading p {
+  margin: 0 0 18px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--brand-border);
+  border-radius: 14px;
+  background: var(--white);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.item:hover {
+  border-color: var(--brand-green);
+}
+
+.itemOn {
+  border-color: var(--brand-green);
+  background: var(--brand-mint-pale);
+}
+
+.itemTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.when {
+  flex: none;
+  color: var(--brand-text-muted);
+  font-size: 11px;
+}
+
+.itemSub {
+  color: var(--brand-text-muted);
+  font-size: var(--text-xs);
+}
+
+.preview {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  color: var(--brand-text-muted);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.unread .preview {
+  color: var(--brand-text-dark);
+  font-weight: 700;
+}
+
+.dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--brand-orange);
+}
+
+.chat {
+  min-width: 0;
+}
+
+.chatBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.back {
+  visibility: hidden;
+}
+
+.orderLink {
+  color: var(--brand-green);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.pick {
+  display: grid;
+  place-items: center;
+  gap: 6px;
+  min-height: 320px;
+  border: 1px dashed var(--brand-border);
+  border-radius: 18px;
+  color: var(--brand-text-muted);
+  text-align: center;
+}
+
+.pick span {
+  font-size: 40px;
+}
+
+@media (max-width: 800px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* On phones the open chat takes the whole width */
+  .chatOpen .list {
+    display: none;
+  }
+
+  .layout:not(.chatOpen) .chat {
+    display: none;
+  }
+
+  .back {
+    visibility: visible;
+  }
+}
