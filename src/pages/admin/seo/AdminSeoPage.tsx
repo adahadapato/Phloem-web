@@ -7,6 +7,7 @@ import type { SeoPageKind, SeoPageStatus } from '../../../api/contracts/enums'
 import { getSeoOverview, getSeoPage, getSeoPages, saveSeoPage, writeMissingSeo, writeSeoPage } from '../../../api/services/seoService'
 import { Button } from '../../../components/ui/Button'
 import { ConfirmDialog } from '../../../components/ui/ConfirmDialog'
+import { CountryFlag } from '../../../components/ui/CountryFlag'
 import { dateTimeText } from '../../../components/ui/labels'
 import { Pager } from '../../../components/ui/Pager'
 import { useCountry } from '../../../state/CountryContext'
@@ -223,7 +224,7 @@ function Pages() {
                       <span className={`${styles.pill} ${statusTone(r.status)}`}>{STATUS_TEXT[r.status]}</span>
                       {r.pageChanged && <span className={`${styles.pill} ${styles.warn}`}>Page changed</span>}
                       {r.score !== null && <span className="muted">Score {r.score}</span>}
-                      {c && <span className="muted">{c.flag} {c.name}</span>}
+                      {c && <span className="muted"><CountryFlag country={c} /> {c.name}</span>}
                     </span>
                   </button>
                 )
