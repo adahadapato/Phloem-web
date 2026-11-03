@@ -227,7 +227,7 @@ function Editor({ dish, catalog, country }: { dish: MyDishDto | null; catalog: D
       setBusy(null)
       if (!result.ok) return setError(result.error)
       await queryClient.invalidateQueries({ queryKey: ['seller', 'dishes'] })
-      await navigate('/seller/dishes', { state: { notice: `${name} saved.` } })
+      await navigate('/seller/dishes', { state: { notice: `${name} saved. If you changed the wording, we check it before buyers see it (usually within a minute).` } })
       return
     }
 
@@ -250,7 +250,7 @@ function Editor({ dish, catalog, country }: { dish: MyDishDto | null; catalog: D
     await navigate('/seller/dishes', {
       state: { notice: failed.length
         ? `${name} added, but some photos didn't upload: ${failed.join(', ')}. Open the dish to try again.`
-        : `${name} added.` },
+        : `${name} added. We check new dishes before buyers see them (usually within a minute).` },
     })
   }
 

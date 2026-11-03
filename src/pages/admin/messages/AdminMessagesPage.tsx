@@ -21,12 +21,14 @@ const TABS: { key: string; label: string; status?: ContactMessageStatus }[] = [
   { key: 'replied', label: 'Replied', status: 'Replied' },
   { key: 'closed', label: 'Closed', status: 'Closed' },
   { key: 'all', label: 'All' },
+  { key: 'spam', label: 'Spam', status: 'Spam' },
 ]
 
 const chipFor: Record<ContactMessageStatus, string> = {
   New: styles.chipWait,
   Replied: styles.chipGo,
   Closed: styles.chipOff,
+  Spam: styles.chipStop,
 }
 
 /** One message as a card: who, topic, reference, the message, a note, and what to do next. */
@@ -54,7 +56,10 @@ function MessageCard({ m, onChanged }: { m: ContactMessageDto; onChanged: (text:
           <h2 className={styles.personName}>{m.name}</h2>
           <a href={`mailto:${m.email}?subject=${subject}`} className={styles.personContact}>{m.email}</a>
         </div>
-        <span className={`${styles.chip} ${chipFor[m.status]}`}>{m.status}</span>
+        <span>
+          {m.isUrgent && m.status !== 'Spam' && <span className={`${styles.chip} ${styles.chipStop}`} title="The AI thinks this is urgent">Urgent</span>}{' '}
+          <span className={`${styles.chip} ${chipFor[m.status]}`}>{m.status}</span>
+        </span>
       </div>
       <p className={styles.messageMeta}>
         <strong>{contactTopicText(m.topic)}</strong>
@@ -62,6 +67,7 @@ function MessageCard({ m, onChanged }: { m: ContactMessageDto; onChanged: (text:
         {' · '}{dateTimeText(m.sentAt)}
         {m.fromSignedInUser && <> · <span title="They were signed in, so this is their account's email">signed in</span></>}
       </p>
+      {m.aiSummary && <p className="muted" style={{ margin: '0 0 6px' }}><strong>In short (AI):</strong> {m.aiSummary}</p>}
       <p className={styles.messageText}>{m.message}</p>
 
       {m.staffNote && !editing && <p className={styles.messageNote}><strong>Note:</strong> {m.staffNote}</p>}
@@ -92,7 +98,11 @@ function MessageCard({ m, onChanged }: { m: ContactMessageDto; onChanged: (text:
         )}
         {m.status !== 'New' && (
           <Button small variant="plain" busy={busy === 'New'} busyText="Saving…" disabled={!!busy}
-                  onClick={() => save('New', 'New')}>Back to new</Button>
+                  onClick={() => save('New', 'New')}>{m.status === 'Spam' ? 'Not spam: back to new' : 'Back to new'}</Button>
+        )}
+        {m.status !== 'Spam' && (
+          <Button small variant="plain" busy={busy === 'Spam'} busyText="Saving…" disabled={!!busy}
+                  onClick={() => save('Spam', 'Spam')}>Spam</Button>
         )}
         {!editing && (
           <button type="button" className={styles.linkButton} onClick={() => setEditing(true)}>
@@ -123,7 +133,8 @@ export default function AdminMessagesPage() {
   const data = inbox.data
   const items = data?.messages.items ?? []
   const countFor = (key: string) => key === 'new' ? data?.newCount : key === 'replied' ? data?.repliedCount
-    : key === 'closed' ? data?.closedCount : data && data.newCount + data.repliedCount + data.closedCount
+    : key === 'closed' ? data?.closedCount : key === 'spam' ? data?.spamCount
+    : data && data.newCount + data.repliedCount + data.closedCount
 
   const go = (next: { status?: string; page?: number }) => {
     const p = new URLSearchParams(params)

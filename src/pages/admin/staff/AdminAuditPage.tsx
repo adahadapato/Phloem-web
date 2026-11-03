@@ -31,6 +31,8 @@ const ACTIONS: { value: StaffAction; label: string }[] = [
   { value: 'AiPromptRestored', label: 'Restored an AI prompt' },
   { value: 'AiPromptReset', label: 'Reset an AI prompt' },
   { value: 'AiCallViewed', label: 'Opened an AI request' },
+  { value: 'ContentApproved', label: 'Approved text in Moderation' },
+  { value: 'ContentRejected', label: 'Rejected text in Moderation' },
   { value: 'SeoEdited', label: "Changed a page's search text" },
   { value: 'SeoRewritten', label: 'Asked AI to rewrite a page\'s search text' },
   { value: 'ChangeProposed', label: 'Asked for a second person' },

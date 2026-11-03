@@ -1,3 +1,4 @@
+import type { ModerationAdviceDto } from '../../api/contracts/dtos'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 import type { DocumentStatus, VendorStatus } from '../../api/contracts/enums'
@@ -51,4 +52,27 @@ export function StatTile({ label, value, to, tone, note }: {
   return to
     ? <Link to={to} className={`${styles.stat} ${styles.statLink}`}>{body}</Link>
     : <div className={styles.stat}>{body}</div>
+}
+
+/**
+ * What the AI thought of some text (a shop name, a suggested dish name), in one line with a coloured label.
+ * @param advice The check; nothing is shown when there's none yet.
+ * @param kind "name" for dish name suggestions (approve / reject wording, close match); "check" otherwise.
+ */
+export function AiAdviceNote({ advice, kind = 'check' }: { advice?: ModerationAdviceDto | null; kind?: 'check' | 'name' }) {
+  if (!advice) return null
+  if (advice.state === 'WaitingForAi') return <span className={styles.aiNote}><span className={styles.aiPill}>AI: checking…</span></span>
+  const label = advice.verdict === null ? 'AI: not checked'
+    : kind === 'name'
+      ? { Ok: 'AI suggests: approve', NeedsLook: 'AI: not sure', NotAllowed: 'AI suggests: reject' }[advice.verdict]
+      : { Ok: 'AI: looks fine', NeedsLook: 'AI: needs a look', NotAllowed: 'AI: not allowed' }[advice.verdict]
+  const tone = advice.verdict === 'Ok' ? styles.aiOk : advice.verdict === 'NotAllowed' ? styles.aiNo
+    : advice.verdict === 'NeedsLook' ? styles.aiLook : ''
+  return (
+    <span className={styles.aiNote}>
+      <span className={`${styles.aiPill} ${tone}`}>{advice.decidedByStaff ? (advice.verdict === 'Ok' ? 'Approved by staff' : 'Rejected by staff') : label}</span>
+      {advice.reason && <span>{advice.reason}</span>}
+      {kind === 'name' && advice.label && <span className="muted">Same as: <strong>{advice.label}</strong></span>}
+    </span>
+  )
 }

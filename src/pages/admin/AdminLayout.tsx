@@ -4,6 +4,7 @@ import { unwrap } from '../../api/apiError'
 import { Permissions } from '../../api/contracts/permissions'
 import { getContactMessages, getDishSuggestions, getShopStats } from '../../api/services/adminService'
 import { getApprovalCount } from '../../api/services/approvalService'
+import { getModerationCount } from '../../api/services/moderationService'
 import { useSession } from '../../state/SessionContext'
 import styles from './Admin.module.css'
 import { ADMIN_MENU, APPROVALS, menuTarget, pagePermission } from './adminAccess'
@@ -43,7 +44,14 @@ export default function AdminLayout() {
     staleTime: 30_000,
     enabled: hasPermission(APPROVALS),
   })
+  const moderation = useQuery({
+    queryKey: ['admin', 'moderation', 'count'],
+    queryFn: async ({ signal }) => unwrap(await getModerationCount(signal)),
+    staleTime: 30_000,
+    enabled: hasPermission(Permissions.ShopsManage),
+  })
   const counts: Record<string, number> = {
+    '/admin/moderation': moderation.data ?? 0,
     '/admin/approvals': approvals.data ?? 0,
     '/admin/shops': stats.data?.pendingApproval ?? 0,
     '/admin/dishes': suggestions.data?.length ?? 0,

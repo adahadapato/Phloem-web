@@ -3,7 +3,7 @@
  * Grows feature by feature; keep in step with the app's Services/Api/Contracts/Dtos.
  */
 import type {
-  AiCallOutcome, AiProvider, CatalogGroup, ContactMessageStatus, ContactTopic, Country, Currency, DeliverySpeed, DeliveryWindow,
+  AiCallOutcome, AiProvider, CatalogGroup, ContentReviewStatus, ModerationKind, ModerationState, ModerationVerdict, ContactMessageStatus, ContactTopic, Country, Currency, DeliverySpeed, DeliveryWindow,
   DeliveryKind, DishCategory, DocumentStatus, HandoverMethod, LegalDocumentType, OrderActorKind, OrderEventKind, OrderStatus, SeoPageKind, SeoPageStatus, ParcelItemRuleKind,
   PendingChangeKind, PendingChangeStatus, ShipmentItemCategory, ShipmentStatus, StaffAction, VendorDocumentType,
   VendorStatus,
@@ -692,6 +692,10 @@ export interface MyDishDto {
   rating: number
   ratingCount: number
   photos: DishPhotoDto[]
+  /** Whether the wording passed the check: buyers only see Approved dishes. Missing on an older API. */
+  reviewStatus?: ContentReviewStatus
+  /** Why it isn't allowed, when Rejected. */
+  reviewNote?: string | null
 }
 
 /** GET /api/shops/mine/dishes */
@@ -797,6 +801,8 @@ export interface AdminShopDetailsDto {
   coverPhotoUrl: string | null
   documents: AdminShopDocumentDto[]
   missingDocuments: VendorDocumentType[]
+  /** The AI's check of the shop's name; null until checked. */
+  nameCheck?: ModerationAdviceDto | null
 }
 
 /** One person on Admin → Users: who they are, their roles and shop, and any suspension. */
@@ -859,6 +865,8 @@ export interface AdminDishSuggestionDto {
   suggestedBy: string
   shopName: string | null
   suggestedAt: string
+  /** The AI's advice; null until it has looked. */
+  aiAdvice?: ModerationAdviceDto | null
 }
 
 /** GET /api/admin/commissions: Phloem's cut of the dishes in one country (isSet = false: not set yet, 0% applies). */
@@ -950,6 +958,10 @@ export interface ContactMessageDto {
   fromSignedInUser: boolean
   sentAt: string
   handledAt: string | null
+  /** The AI thinks it's urgent (null: not sorted). */
+  isUrgent?: boolean | null
+  /** The AI's one-line summary. */
+  aiSummary?: string | null
 }
 
 /** GET /api/admin/contact-messages: one page of the inbox and how many there are of each status. */
@@ -958,6 +970,8 @@ export interface ContactInboxDto {
   newCount: number
   repliedCount: number
   closedCount: number
+  /** Moved to Spam (by the AI or staff). */
+  spamCount?: number
 }
 
 /** GET /api/dishes/suggest: one search prediction: a dish name (search for it) or a shop (open it). */
@@ -1297,4 +1311,37 @@ export interface PublicSeoDto {
   canonicalUrl: string
   /** schema.org details for Google (shops). */
   jsonLd: string | null
+}
+
+// ───────────────────────────── Moderation ─────────────────────────────
+
+/** What the AI (or a person) made of some text. */
+export interface ModerationAdviceDto {
+  state: ModerationState
+  /** The person's verdict when decided, else the AI's; null when not checked. */
+  verdict: ModerationVerdict | null
+  reason: string | null
+  /** Rule broken / close match / topic. */
+  label: string | null
+  decidedByStaff: boolean
+}
+
+/** GET /api/admin/moderation: one item that needs a person. */
+export interface ModerationItemDto {
+  id: string
+  kind: ModerationKind
+  title: string
+  shopId: string | null
+  shopName: string | null
+  country: Country | null
+  /** The exact text checked (plain text). */
+  text: string
+  aiVerdict: ModerationVerdict | null
+  aiReason: string | null
+  aiRule: string | null
+  /** Why a person needs to look, in plain words. */
+  whyHere: string
+  /** Dishes: false = hidden from buyers until decided. Shops: the shop is live. */
+  isLive: boolean
+  waitingSince: string
 }

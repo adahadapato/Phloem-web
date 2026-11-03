@@ -67,7 +67,7 @@ export type ParcelItemRuleKind = 'NotAllowed' | 'Restricted'
 export type ContactTopic = 'Order' | 'Parcel' | 'Selling' | 'Account' | 'Other'
 
 /** Where a Contact us message is in the team's inbox. */
-export type ContactMessageStatus = 'New' | 'Replied' | 'Closed'
+export type ContactMessageStatus = 'New' | 'Replied' | 'Closed' | 'Spam'
 
 /** How a delivery was handed over (the courier picks one on "Delivered"). */
 export type HandoverMethod = 'InPerson' | 'FrontDoor' | 'Neighbour' | 'SafePlace' | 'Reception'
@@ -81,7 +81,7 @@ export type StaffAction =
   | 'ContactMessagesViewed' | 'ContactMessageUpdated' | 'ParcelViewed' | 'RolePermissionsChanged'
   | 'ShopDocumentOpened' | 'ChangeProposed' | 'ChangeApproved' | 'ChangeRejected' | 'ChangeWithdrawn'
   | 'ShopBlocked' | 'ShopUnblocked' | 'OrderViewed' | 'AiPromptSaved' | 'AiPromptRestored' | 'AiPromptReset'
-  | 'AiCallViewed' | 'SeoEdited' | 'SeoRewritten'
+  | 'AiCallViewed' | 'SeoEdited' | 'SeoRewritten' | 'ContentApproved' | 'ContentRejected'
 
 /** A change that needs a second person (same as the API's `PendingChangeKind`). */
 export type PendingChangeKind = 'PublishLegalDocument' | 'ConfirmShopBlock'
@@ -100,3 +100,15 @@ export type SeoPageKind = 'Main' | 'Shop'
 
 /** Where a page's search engine text stands (same as the API's `SeoPageStatus`). */
 export type SeoPageStatus = 'NotWritten' | 'WrittenByAi' | 'EditedByStaff'
+
+/** Whether a dish's text passed the check (same as the API's `ContentReviewStatus`). Buyers only see Approved. */
+export type ContentReviewStatus = 'Approved' | 'Checking' | 'WithStaff' | 'Rejected'
+
+/** What a moderation check is about (same as the API's `ModerationKind`). */
+export type ModerationKind = 'Dish' | 'ShopName' | 'DishNameSuggestion' | 'ContactMessage'
+
+/** What the AI or a person thought (same as the API's `ModerationVerdict`). */
+export type ModerationVerdict = 'Ok' | 'NeedsLook' | 'NotAllowed'
+
+/** Where a check is (same as the API's `ModerationState`). */
+export type ModerationState = 'WaitingForAi' | 'WaitingForPerson' | 'DoneByAi' | 'DecidedByStaff' | 'Replaced'

@@ -96,6 +96,7 @@ export const router = createBrowserRouter([
               { path: 'ai', ...page(() => import('./pages/admin/ai/AdminAiPage')) },
               { path: 'ai/calls', ...page(() => import('./pages/admin/ai/AdminAiCallsPage')) },
               { path: 'seo', ...page(() => import('./pages/admin/seo/AdminSeoPage')) },
+              { path: 'moderation', ...page(() => import('./pages/admin/moderation/AdminModerationPage')) },
               { path: 'approvals', ...page(() => import('./pages/admin/staff/AdminApprovalsPage')) },
               { path: 'dishes', ...page(() => import('./pages/admin/dishes/AdminDishesPage')) },
               { path: 'pricing', ...page(() => import('./pages/admin/pricing/AdminPricingPage')) },

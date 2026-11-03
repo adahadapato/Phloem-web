@@ -14,7 +14,7 @@ import { documentText } from '../../../components/ui/labels'
 import { StatusBanner } from '../../../components/ui/StatusBanner'
 import { useCountry } from '../../../state/CountryContext'
 import styles from '../Admin.module.css'
-import { DocumentStatusChip, ShopStatusChip } from '../AdminParts'
+import { AiAdviceNote, DocumentStatusChip, ShopStatusChip } from '../AdminParts'
 
 const REASON_MAX = 500   // Vendor.RejectionReasonMaxLength
 
@@ -164,6 +164,9 @@ export default function AdminShopPage() {
             </div>
             {shop.status === 'Rejected' && shop.rejectionReason && (
               <p className={styles.noteStop}><strong>Rejected:</strong> "{shop.rejectionReason}"</p>
+            )}
+            {query.data.nameCheck && query.data.nameCheck.verdict !== 'Ok' && (
+              <p className={styles.metaRow}><span className="muted">Shop name check:</span> <AiAdviceNote advice={query.data.nameCheck} /></p>
             )}
             {shop.isOwnerSuspended && (
               <p className={styles.noteStop}>The owner is suspended, so this shop is hidden until the suspension ends.</p>

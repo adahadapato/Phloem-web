@@ -149,4 +149,5 @@ export const contactStatusText: Record<ContactMessageStatus, string> = {
   New: 'New',
   Replied: 'Replied',
   Closed: 'Closed',
+  Spam: 'Spam',
 }

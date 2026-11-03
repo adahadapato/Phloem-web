@@ -1842,3 +1842,39 @@ h2 .navCount {
   border-radius: var(--radius-pill);
   background: var(--brand-green);
 }
+
+/* ── AI advice (moderation) ── */
+.aiNote {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.aiPill {
+  padding: 2px 9px;
+  border-radius: var(--radius-pill);
+  background: #eef1ef;
+  color: #42504a;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.aiOk {
+  background: #ecfdf3;
+  color: #027a48;
+}
+
+.aiLook {
+  background: #fffaeb;
+  color: #b54708;
+}
+
+.aiNo {
+  background: #fef3f2;
+  color: #b42318;
+}

@@ -119,6 +119,16 @@ export default function MyDishesPage() {
                 )}
               </span>
               {d.needsPriceUpdate && <span className={styles.warn}>Needs a new price: open it to update</span>}
+              {(d.reviewStatus === 'Checking' || d.reviewStatus === 'WithStaff') && (
+                <span className={styles.checking}>
+                  {d.reviewStatus === 'Checking'
+                    ? '⏳ Being checked: buyers will see it in about a minute'
+                    : '⏳ Being checked by our team: buyers will see it once approved'}
+                </span>
+              )}
+              {d.reviewStatus === 'Rejected' && (
+                <span className={styles.warn}>Not allowed: {d.reviewNote ?? 'please change the wording'}. Edit the dish to fix it.</span>
+              )}
 
               <label className={styles.switchRow}>
                 <input type="checkbox" className={styles.switch} checked={d.isAvailable} disabled={!!busy}

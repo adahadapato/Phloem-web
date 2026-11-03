@@ -353,6 +353,12 @@ a.tile:hover {
   font-weight: 700;
 }
 
+.checking {
+  color: var(--brand-green-dark);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .emptyDishes {
   display: flex;
   flex-direction: column;

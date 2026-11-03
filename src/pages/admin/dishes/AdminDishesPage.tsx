@@ -12,7 +12,7 @@ import { catalogGroupText, dishCategories } from '../../../components/ui/labels'
 import { StatusBanner } from '../../../components/ui/StatusBanner'
 import { useCountry } from '../../../state/CountryContext'
 import styles from '../Admin.module.css'
-import { AdminHead } from '../AdminParts'
+import { AdminHead, AiAdviceNote } from '../AdminParts'
 
 type Message = { text: string; isError: boolean } | null
 /** The price being changed: one dish in one country. `unusual` = asked "save anyway?" once. */
@@ -199,6 +199,7 @@ export default function AdminDishesPage() {
                   {categoryText(s.category)} · {catalogGroupText[s.group]} · suggested by {s.suggestedBy}
                   {s.shopName && ` (${s.shopName})`} on {day(s.suggestedAt)}
                 </span>
+                <AiAdviceNote advice={s.aiAdvice} kind="name" />
               </span>
               <span className={styles.rowButtons}>
                 <Button small variant="secondary" busy={busy === `approve:${s.id}`} busyText="Approving…" disabled={!!busy}
