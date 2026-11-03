@@ -3,7 +3,7 @@
  * Grows feature by feature; keep in step with the app's Services/Api/Contracts/Dtos.
  */
 import type {
-  CatalogGroup, ContactMessageStatus, ContactTopic, Country, Currency, DeliverySpeed, DeliveryWindow,
+  AiCallOutcome, AiProvider, CatalogGroup, ContactMessageStatus, ContactTopic, Country, Currency, DeliverySpeed, DeliveryWindow,
   DeliveryKind, DishCategory, DocumentStatus, HandoverMethod, LegalDocumentType, OrderActorKind, OrderEventKind, OrderStatus, ParcelItemRuleKind,
   PendingChangeKind, PendingChangeStatus, ShipmentItemCategory, ShipmentStatus, StaffAction, VendorDocumentType,
   VendorStatus,
@@ -1140,3 +1140,95 @@ export interface PendingChangeDto {
   legal: LegalDocumentProposalDto | null
 }
 
+
+// ───────────────────────────── Admin → AI ─────────────────────────────
+
+/** GET /api/admin/ai/status: on or off, the model, and this month's spend. */
+export interface AiStatusDto {
+  provider: AiProvider
+  model: string
+  isEnabled: boolean
+  /** Why AI is off, e.g. "No Anthropic API key yet"; null when on. */
+  notReadyReason: string | null
+  monthCalls: number
+  monthFailedCalls: number
+  monthInputTokens: number
+  monthOutputTokens: number
+  /** US dollars. */
+  monthCostUsd: number
+  monthlyCapUsd: number
+  capReached: boolean
+  logRetentionMonths: number
+}
+
+/** GET /api/admin/ai/prompts: one prompt in the list. */
+export interface AiPromptSummaryDto {
+  key: string
+  name: string
+  description: string
+  /** 0 = Phloem's default wording. */
+  version: number
+  changedAt: string | null
+  changedBy: string | null
+}
+
+/** One saved wording of a prompt. */
+export interface AiPromptVersionDto {
+  version: number
+  text: string
+  note: string | null
+  savedAt: string
+  savedBy: string
+}
+
+/** GET /api/admin/ai/prompts/{key}: one prompt for editing. */
+export interface AiPromptDetailsDto {
+  key: string
+  name: string
+  description: string
+  inputDescription: string
+  /** Answer fields the wording must keep asking for. */
+  requiredFields: string[]
+  sampleAnswer: string
+  text: string
+  version: number
+  defaultText: string
+  maxLength: number
+  /** Newest first. */
+  versions: AiPromptVersionDto[]
+}
+
+/** POST /api/admin/ai/prompts/{key}/suggest: a suggested wording (not saved). */
+export interface AiPromptSuggestionDto {
+  text: string
+  summary: string
+  /** Required fields the suggestion forgot (add them back before saving). */
+  missingFields: string[]
+}
+
+/** GET /api/admin/ai/calls: one row of the AI call log. */
+export interface AiCallSummaryDto {
+  id: string
+  at: string
+  promptKey: string
+  promptName: string
+  promptVersion: number
+  subject: string | null
+  model: string
+  outcome: AiCallOutcome
+  inputTokens: number
+  outputTokens: number
+  costUsd: number
+  durationMs: number
+  finalDecision: string | null
+}
+
+/** GET /api/admin/ai/calls/{id}: one call with its text (opening it is audited). */
+export interface AiCallDetailsDto {
+  call: AiCallSummaryDto
+  input: string
+  output: string | null
+  error: string | null
+  decidedBy: string | null
+  decidedAt: string | null
+}

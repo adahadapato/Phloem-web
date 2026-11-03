@@ -80,10 +80,17 @@ export type StaffAction =
   | 'RoleGiven' | 'RoleRemoved' | 'CountriesChanged' | 'UserSuspended' | 'UserReinstated'
   | 'ContactMessagesViewed' | 'ContactMessageUpdated' | 'ParcelViewed' | 'RolePermissionsChanged'
   | 'ShopDocumentOpened' | 'ChangeProposed' | 'ChangeApproved' | 'ChangeRejected' | 'ChangeWithdrawn'
-  | 'ShopBlocked' | 'ShopUnblocked' | 'OrderViewed'
+  | 'ShopBlocked' | 'ShopUnblocked' | 'OrderViewed' | 'AiPromptSaved' | 'AiPromptRestored' | 'AiPromptReset'
+  | 'AiCallViewed'
 
 /** A change that needs a second person (same as the API's `PendingChangeKind`). */
 export type PendingChangeKind = 'PublishLegalDocument' | 'ConfirmShopBlock'
 
 /** Where a change waiting for a second person stands (same as the API's `PendingChangeStatus`). */
 export type PendingChangeStatus = 'Waiting' | 'Approved' | 'Rejected' | 'Withdrawn' | 'Expired' | 'Failed'
+
+/** Which AI service the API talks to (same as the API's `AiProvider`). */
+export type AiProvider = 'Off' | 'Fake' | 'Anthropic' | 'OpenAiCompatible'
+
+/** How one AI call ended (same as the API's `AiCallOutcome`). */
+export type AiCallOutcome = 'Succeeded' | 'ProviderFailed' | 'BadAnswer'

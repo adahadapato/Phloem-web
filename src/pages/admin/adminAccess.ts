@@ -33,6 +33,7 @@ export const ADMIN_MENU: AdminMenuItem[] = [
   { to: '/admin/pricing', label: 'Pricing', icon: '💷', permission: [Permissions.PricingManage, Permissions.Commission] },
   { to: '/admin/messages', label: 'Contact messages', icon: '✉', permission: [Permissions.ContactRead] },
   { to: '/admin/texts', label: 'Terms & Help', icon: '📄', permission: [Permissions.LegalPublish] },
+  { to: '/admin/ai', label: 'AI', icon: '✨', permission: [Permissions.AiPrompts] },
   { to: '/admin/audit', label: 'Audit log', icon: '🧾', permission: [Permissions.AuditView] },
   // Two-person approval: whoever can publish Terms or block shops proposes; owners and Country managers decide
   { to: '/admin/approvals', label: 'Approvals', icon: '✅', permission: APPROVALS },

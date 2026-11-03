@@ -85,7 +85,7 @@ export const permissionGroups: { title: string; items: { permission: string; nam
     items: [
       { permission: Permissions.LegalPublish, name: 'Terms & Help', about: 'Publish Terms, Privacy and Help.' },
       { permission: Permissions.Seo, name: 'Search engines', about: 'Search engine titles and descriptions (coming soon).' },
-      { permission: Permissions.AiPrompts, name: 'AI prompts', about: 'The prompts the AI features use (coming soon).' },
+      { permission: Permissions.AiPrompts, name: 'AI prompts', about: 'The prompts the AI features use, the AI log and spend.' },
       { permission: Permissions.Settings, name: 'Settings', about: 'Settings and system health (coming soon).' },
       { permission: Permissions.AuditView, name: 'Audit log', about: 'See who did what.' },
     ],
