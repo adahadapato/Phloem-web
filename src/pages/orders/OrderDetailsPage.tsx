@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router'
+import { Link, useLocation, useParams } from 'react-router'
 import { unwrap } from '../../api/apiError'
 import type { OrderDetailsDto } from '../../api/contracts/dtos'
 import { getOrder } from '../../api/services/orderService'
@@ -70,6 +70,13 @@ export default function OrderDetailsPage() {
   })
   const order = query.data
   const minutesLeft = useMinutesLeft(order, query.dataUpdatedAt)
+  const { hash } = useLocation()
+
+  // "💬 Message the shop" (…#chat): bring the chat into view once the order has loaded
+  const loaded = !!order
+  useEffect(() => {
+    if (loaded && hash === '#chat') document.getElementById('chat')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [loaded, hash])
 
   if (!order) {
     return (

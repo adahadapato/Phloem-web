@@ -83,6 +83,13 @@ export function OrderButtons({ orderNumber, status, canCancel, actions, full, st
           Pay now
         </Button>
       )}
+      {/* Paid orders have a chat with the shop (on the order's page) */}
+      {status !== 'AwaitingPayment' && (
+        <Link to={`/orders/${encodeURIComponent(orderNumber)}#chat`}
+              className={[styles.trackLink, styles.trackPlain, small && styles.trackSmall].filter(Boolean).join(' ')}>
+          💬 Message the shop
+        </Link>
+      )}
       <Button small={small} variant="secondary" busy={busy === `again:${orderNumber}`} busyText="Adding…"
               disabled={!!busy} onClick={() => actions.buyAgain(orderNumber)}>
         ↻ Buy again
