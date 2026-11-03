@@ -190,7 +190,11 @@ export default function SendParcelPage() {
       <div className={styles.heading}>
         <p className="eyebrow">Parcels</p>
         <h1>Send a parcel</h1>
-        <p className="muted">Book a parcel, drop it at our hub, we deliver it.</p>
+        <p className="muted">
+          Send a parcel between the United Kingdom, Ghana and Nigeria. Book online and get a price estimate, drop the
+          parcel at our hub where we weigh it and set the final price, then track it to the door. Check below what
+          can and can't be sent.
+        </p>
       </div>
 
       <ol className={styles.howSteps} aria-label="How it works">

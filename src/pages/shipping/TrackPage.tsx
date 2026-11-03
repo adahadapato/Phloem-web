@@ -48,7 +48,10 @@ export default function TrackPage() {
       <div className={styles.narrow}>
         <p className="eyebrow">Parcels</p>
         <h1>Track a parcel</h1>
-        <p className="muted">Type the tracking number from the booking, e.g. PHS-261024-482193.</p>
+        <p className="muted">
+          Type the tracking number from your booking (it starts with PHS, e.g. PHS-261024-482193) to see every step:
+          received at the hub, in transit, arrived, out for delivery and delivered, with a photo of the handover.
+        </p>
 
         <form className={styles.trackForm} onSubmit={onSubmit} role="search">
           <input value={text} onChange={(e) => setText(e.target.value)} placeholder="PHS-261024-482193"

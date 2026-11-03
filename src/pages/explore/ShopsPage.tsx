@@ -56,9 +56,10 @@ export default function ShopsPage() {
     <div className={`container ${page.page}`}>
       <div className={page.head}>
         <div>
-          <h1>Shops</h1>
+          <h1>African food shops{selected ? ` in ${selected.name}` : ''}</h1>
           <p className="muted">
-            Home cooks and food businesses {selected ? `in ${selected.name}` : 'on Phloem'}.
+            Every home cook and food business selling on Phloem{selected ? ` in ${selected.name}` : ''}. Open a shop
+            to see its full menu, prices and ratings. Shops with the ✓ Verified badge have been checked by Phloem.
           </p>
         </div>
       </div>

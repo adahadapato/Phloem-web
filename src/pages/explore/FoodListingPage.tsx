@@ -67,8 +67,12 @@ export default function FoodListingPage() {
     <div className={`container ${page.page}`}>
       <div className={page.head}>
         <div>
-          <h1>Browse &amp; order</h1>
-          <p className="muted">Authentic African food {selected ? `in ${selected.name}` : 'near you'}.</p>
+          <h1>African dishes to order{selected ? ` in ${selected.name}` : ''}</h1>
+          <p className="muted">
+            Jollof rice, waakye, egusi soup, suya and more, cooked by home cooks and food businesses
+            {selected ? ` in ${selected.name}` : ' near you'}. See photos, prices and ratings, add dishes to your
+            basket and get them delivered today or tomorrow.
+          </p>
         </div>
       </div>
 
