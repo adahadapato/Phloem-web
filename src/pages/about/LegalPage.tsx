@@ -9,6 +9,7 @@ import { Markdown } from '../../components/ui/Markdown'
 import { sections } from '../../components/ui/markdownParts'
 import { StatusBanner } from '../../components/ui/StatusBanner'
 import styles from './LegalPage.module.css'
+import { usePageSeo } from '../../components/layout/usePageSeo'
 
 /** The other two pages, linked under "On this page". */
 const OTHERS: Record<LegalDocumentType, { to: string; label: string }[]> = {
@@ -26,7 +27,8 @@ const OTHERS: Record<LegalDocumentType, { to: string; label: string }[]> = {
 export default function LegalPage() {
   const matches = useMatches()
   const type = ((matches[matches.length - 1]?.handle as { legal?: LegalDocumentType } | undefined)?.legal) ?? 'Terms'
-  const { hash } = useLocation()
+  const { hash, pathname } = useLocation()
+  usePageSeo(pathname)
   const query = useQuery({
     queryKey: ['legal', type],
     queryFn: async ({ signal }) => unwrap(await getLegalDocument(type, signal)),

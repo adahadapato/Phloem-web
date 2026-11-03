@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useParams } from 'react-router'
 import { ApiError, unwrap } from '../../api/apiError'
-import { fileUrl } from '../../api/config'
+import { apiBaseUrl, fileUrl } from '../../api/config'
 import type { DishCategory } from '../../api/contracts/enums'
 import { searchDishes } from '../../api/services/dishService'
 import { getShop } from '../../api/services/shopService'
@@ -16,6 +16,8 @@ import { Price } from '../../components/ui/Price'
 import { Stars } from '../../components/ui/Stars'
 import { dishCategories } from '../../components/ui/labels'
 import page from './Explore.module.css'
+import { usePageSeo } from '../../components/layout/usePageSeo'
+import { Button } from '../../components/ui/Button'
 
 const PAGE_SIZE = 24
 
@@ -25,6 +27,7 @@ const PAGE_SIZE = 24
  */
 export default function ShopPage() {
   const { shopId = '' } = useParams()
+  usePageSeo(`/shops/${shopId}`)
   const [category, setCategory] = useState<DishCategory | undefined>()
   const [pageNumber, setPageNumber] = useState(1)
 
@@ -90,6 +93,7 @@ export default function ShopPage() {
                 </span>
               )}
               {since && <span className="muted">On Phloem since {since}</span>}
+              <ShareShop shopId={details.id} name={details.name} />
             </div>
           </div>
         </div>
@@ -120,5 +124,32 @@ export default function ShopPage() {
         <Pager page={pageNumber} totalPages={menu.data?.totalPages ?? 0} onChange={setPageNumber} />
       </div>
     </>
+  )
+}
+
+
+/**
+ * "Share": the phone's share sheet where there is one, otherwise copies the link. The link is the API's share page,
+ * so WhatsApp and Facebook show the shop's name, picture and description, then open the shop.
+ */
+function ShareShop({ shopId, name }: { shopId: string; name: string }) {
+  const [copied, setCopied] = useState(false)
+  const url = `${apiBaseUrl}/share/shops/${encodeURIComponent(shopId)}`
+
+  const onShare = async () => {
+    try {
+      if (navigator.share) { await navigator.share({ title: name, url }); return }
+      await navigator.clipboard.writeText(url)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2500)
+    } catch {
+      // Share sheet closed, or copying blocked: nothing to do
+    }
+  }
+
+  return (
+    <Button small variant="outline" onClick={() => void onShare()} aria-live="polite">
+      {copied ? '✓ Link copied' : '↗ Share'}
+    </Button>
   )
 }

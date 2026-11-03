@@ -4,7 +4,7 @@
  */
 import type {
   AiCallOutcome, AiProvider, CatalogGroup, ContactMessageStatus, ContactTopic, Country, Currency, DeliverySpeed, DeliveryWindow,
-  DeliveryKind, DishCategory, DocumentStatus, HandoverMethod, LegalDocumentType, OrderActorKind, OrderEventKind, OrderStatus, ParcelItemRuleKind,
+  DeliveryKind, DishCategory, DocumentStatus, HandoverMethod, LegalDocumentType, OrderActorKind, OrderEventKind, OrderStatus, SeoPageKind, SeoPageStatus, ParcelItemRuleKind,
   PendingChangeKind, PendingChangeStatus, ShipmentItemCategory, ShipmentStatus, StaffAction, VendorDocumentType,
   VendorStatus,
 } from './enums'
@@ -1231,4 +1231,70 @@ export interface AiCallDetailsDto {
   error: string | null
   decidedBy: string | null
   decidedAt: string | null
+}
+
+// ───────────────────────────── Smart SEO ─────────────────────────────
+
+/** GET /api/admin/seo/overview: website health. */
+export interface SeoOverviewDto {
+  aiIsOn: boolean
+  aiNotReadyReason: string | null
+  mainPages: number
+  mainPagesWritten: number
+  shops: number
+  shopsWritten: number
+  shopsByStaff: number
+  /** AI-written pages whose page changed since (rewritten by themselves soon). */
+  pagesChanged: number
+  sitemapUrl: string
+  robotsUrl: string
+  pagesInSitemap: number
+}
+
+/** GET /api/admin/seo/pages: one page in the list. */
+export interface SeoPageRowDto {
+  key: string
+  kind: SeoPageKind
+  name: string
+  path: string
+  country: Country | null
+  status: SeoPageStatus
+  pageChanged: boolean
+  title: string
+  score: number | null
+}
+
+/** GET /api/admin/seo/pages/{key}: one page's text, tips and score. */
+export interface SeoPageDetailsDto {
+  key: string
+  kind: SeoPageKind
+  name: string
+  path: string
+  url: string
+  /** Shops: the link that shows a preview on WhatsApp / Facebook. */
+  shareUrl: string | null
+  country: Country | null
+  status: SeoPageStatus
+  pageChanged: boolean
+  title: string
+  description: string
+  keywords: string[]
+  improvements: string[]
+  /** 0–100, the AI's estimate (not a Google score). */
+  score: number | null
+  scoreExplanation: string | null
+  whatTheAiGets: string
+  changedBy: string | null
+  changedAt: string | null
+}
+
+/** GET /api/seo?path=…: what a public page puts in its head. */
+export interface PublicSeoDto {
+  title: string
+  description: string
+  keywords: string
+  imageUrl: string | null
+  canonicalUrl: string
+  /** schema.org details for Google (shops). */
+  jsonLd: string | null
 }

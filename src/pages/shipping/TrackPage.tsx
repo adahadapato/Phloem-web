@@ -8,6 +8,7 @@ import { arrivalText } from '../../components/ui/labels'
 import { StatusBanner } from '../../components/ui/StatusBanner'
 import { RouteText, ShipmentChip, ShipmentTimeline } from './ShipmentParts'
 import styles from './Shipping.module.css'
+import { usePageSeo } from '../../components/layout/usePageSeo'
 
 /** Tracking numbers look like "PHS-261024-482193": capitals, no spaces. */
 const tidy = (text: string) => text.trim().toUpperCase().replace(/\s+/g, '')
@@ -18,6 +19,7 @@ const tidy = (text: string) => text.trim().toUpperCase().replace(/\s+/g, '')
  * addresses, what's inside or prices. The number is in the address (/track/PHS-…), so a tracking link can be shared.
  */
 export default function TrackPage() {
+  usePageSeo('/track')
   const { trackingNumber = '' } = useParams()
   const navigate = useNavigate()
   const [text, setText] = useState(trackingNumber)

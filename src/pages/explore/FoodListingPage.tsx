@@ -13,6 +13,7 @@ import { Pager } from '../../components/ui/Pager'
 import { dishCategories, dishSorts } from '../../components/ui/labels'
 import { useCountry } from '../../state/CountryContext'
 import page from './Explore.module.css'
+import { usePageSeo } from '../../components/layout/usePageSeo'
 
 const PAGE_SIZE = 20
 
@@ -22,6 +23,7 @@ const PAGE_SIZE = 20
  * bookmarked, and Home's search box lands here.
  */
 export default function FoodListingPage() {
+  usePageSeo('/explore')
   const country = useCountry()
   const { selected } = country
   const [params, setParams] = useSearchParams()

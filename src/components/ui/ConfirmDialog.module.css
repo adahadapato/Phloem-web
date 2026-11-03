@@ -1,0 +1,30 @@
+.dialog {
+  width: min(440px, calc(100vw - 32px));
+  padding: 22px 22px 18px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow: 0 20px 60px rgb(0 0 0 / 0.25);
+}
+
+.dialog::backdrop {
+  background: rgb(0 0 0 / 0.4);
+}
+
+.dialog h2 {
+  margin: 0 0 8px;
+  font-size: 19px;
+}
+
+.dialog p {
+  margin: 0 0 18px;
+  color: var(--brand-text-muted);
+  line-height: 1.5;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}

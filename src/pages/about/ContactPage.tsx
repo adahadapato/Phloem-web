@@ -11,6 +11,7 @@ import { contactTopics } from '../../components/ui/labels'
 import { StatusBanner } from '../../components/ui/StatusBanner'
 import { useSession } from '../../state/SessionContext'
 import styles from './ContactPage.module.css'
+import { usePageSeo } from '../../components/layout/usePageSeo'
 
 const MESSAGE_MIN = 10
 const MESSAGE_MAX = 2000
@@ -33,6 +34,7 @@ const whatsAppLink = (number: string) => `https://wa.me/${number.replace(/[^\d]/
  * thank-you with when to expect a reply.
  */
 export default function ContactPage() {
+  usePageSeo('/contact')
   const { profile } = useSession()
   const details = useQuery({
     queryKey: ['contact', 'details'],

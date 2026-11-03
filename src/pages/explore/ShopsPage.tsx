@@ -10,6 +10,7 @@ import { Pager } from '../../components/ui/Pager'
 import { ShopCard } from '../../components/ui/ShopCard'
 import { useCountry } from '../../state/CountryContext'
 import page from './Explore.module.css'
+import { usePageSeo } from '../../components/layout/usePageSeo'
 
 const PAGE_SIZE = 20
 
@@ -18,6 +19,7 @@ const PAGE_SIZE = 20
  * and page live in the address (?search=…&page=…).
  */
 export default function ShopsPage() {
+  usePageSeo('/shops')
   const country = useCountry()
   const { selected } = country
   const [params, setParams] = useSearchParams()

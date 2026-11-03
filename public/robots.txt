@@ -1,0 +1,19 @@
+# Phloem: what search engines may read.
+# Private pages (signing in needed) are skipped; everything else is open.
+User-agent: *
+Disallow: /admin
+Disallow: /seller
+Disallow: /checkout
+Disallow: /cart
+Disallow: /orders
+Disallow: /shipments
+Disallow: /account
+Disallow: /deliveries
+Disallow: /login
+Disallow: /register
+Disallow: /confirm-email
+Disallow: /reset-password
+Allow: /
+
+# The list of public pages (built by the API from live shops)
+Sitemap: https://phloemapi.phloemmarket.com/sitemap.xml

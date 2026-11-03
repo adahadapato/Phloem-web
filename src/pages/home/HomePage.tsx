@@ -6,6 +6,7 @@ import { HomeHero } from './HomeHero'
 import { HomeHowItWorks } from './HomeHowItWorks'
 import { HomeSell } from './HomeSell'
 import { HomeSendHome } from './HomeSendHome'
+import { usePageSeo } from '../../components/layout/usePageSeo'
 
 /**
  * Home, laid out like a restaurant's landing page (not like the app): the big food photo with the headline and
@@ -15,6 +16,7 @@ import { HomeSendHome } from './HomeSendHome'
  * app's (tokens.css).
  */
 export default function HomePage() {
+  usePageSeo('/')
   return (
     <>
       <HomeHero />

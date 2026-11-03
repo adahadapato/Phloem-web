@@ -17,6 +17,7 @@ import { ParcelRules } from './ParcelRules'
 import { RouteText } from './ShipmentParts'
 import styles from './Shipping.module.css'
 import { NeedHelp } from '../../components/ui/NeedHelp'
+import { usePageSeo } from '../../components/layout/usePageSeo'
 
 /** Same limits as the API (Shipment / ShipmentItem). */
 const MIN_KG = 0.1
@@ -70,6 +71,7 @@ function Booked({ booked, onAnother }: { booked: BookedShipmentDto; onAnother: (
  * address (18 or over), as the API requires. The final price is set when the parcel is weighed at the hub.
  */
 export default function SendParcelPage() {
+  usePageSeo('/send-parcel')
   const { status, profile } = useSession()
   const { countries, selected } = useCountry()
   const queryClient = useQueryClient()

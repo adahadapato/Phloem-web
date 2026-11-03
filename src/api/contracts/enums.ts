@@ -81,7 +81,7 @@ export type StaffAction =
   | 'ContactMessagesViewed' | 'ContactMessageUpdated' | 'ParcelViewed' | 'RolePermissionsChanged'
   | 'ShopDocumentOpened' | 'ChangeProposed' | 'ChangeApproved' | 'ChangeRejected' | 'ChangeWithdrawn'
   | 'ShopBlocked' | 'ShopUnblocked' | 'OrderViewed' | 'AiPromptSaved' | 'AiPromptRestored' | 'AiPromptReset'
-  | 'AiCallViewed'
+  | 'AiCallViewed' | 'SeoEdited' | 'SeoRewritten'
 
 /** A change that needs a second person (same as the API's `PendingChangeKind`). */
 export type PendingChangeKind = 'PublishLegalDocument' | 'ConfirmShopBlock'
@@ -94,3 +94,9 @@ export type AiProvider = 'Off' | 'Fake' | 'Anthropic' | 'OpenAiCompatible'
 
 /** How one AI call ended (same as the API's `AiCallOutcome`). */
 export type AiCallOutcome = 'Succeeded' | 'ProviderFailed' | 'BadAnswer'
+
+/** Fixed website page or a shop's page (same as the API's `SeoPageKind`). */
+export type SeoPageKind = 'Main' | 'Shop'
+
+/** Where a page's search engine text stands (same as the API's `SeoPageStatus`). */
+export type SeoPageStatus = 'NotWritten' | 'WrittenByAi' | 'EditedByStaff'
