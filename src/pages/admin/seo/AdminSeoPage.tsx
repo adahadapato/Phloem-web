@@ -171,7 +171,7 @@ function Pages() {
     for (const [k, v] of Object.entries(next)) { if (v) p.set(k, v); else p.delete(k) }
     if (!('p' in next)) p.delete('p')
     if (!('page' in next)) p.delete('page')
-    setParams(p)
+    setParams(p, { preventScrollReset: true })   // stay where you are: only the list or the chosen page changes
   }
 
   return (

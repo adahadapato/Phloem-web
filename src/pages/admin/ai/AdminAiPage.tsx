@@ -51,7 +51,7 @@ export default function AdminAiPage() {
   const select = (key: string) => {
     if (key === selectedKey) return
     if (dirty) { setConfirmSwitch(key); return }
-    setParams({ prompt: key })
+    setParams({ prompt: key }, { preventScrollReset: true })
   }
 
   return (
@@ -104,7 +104,7 @@ export default function AdminAiPage() {
         message="You have edited this prompt without saving. Switching prompts will lose those changes."
         confirmText="Discard changes"
         danger
-        onConfirm={() => { const key = confirmSwitch!; setConfirmSwitch(null); setDirty(false); setParams({ prompt: key }) }}
+        onConfirm={() => { const key = confirmSwitch!; setConfirmSwitch(null); setDirty(false); setParams({ prompt: key }, { preventScrollReset: true }) }}
         onCancel={() => setConfirmSwitch(null)}
       />
     </>
