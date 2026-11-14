@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
-import { Link, useLocation, useParams } from 'react-router'
+import { Link, useLocation, useParams, useSearchParams } from 'react-router'
 import { unwrap } from '../../api/apiError'
 import type { OrderDetailsDto } from '../../api/contracts/dtos'
 import { getOrder } from '../../api/services/orderService'
@@ -16,6 +16,7 @@ import styles from './Orders.module.css'
 import { useOrderActions } from './useOrderActions'
 import { NeedHelp } from '../../components/ui/NeedHelp'
 import { OrderChat } from '../../components/chat/OrderChat'
+import { RateCard } from '../../components/reviews/RateCard'
 
 /** The journey of an order, like the app's tracker (with Paid added: the website can pay unpaid orders). */
 const STEPS = [
@@ -71,6 +72,7 @@ export default function OrderDetailsPage() {
   const order = query.data
   const minutesLeft = useMinutesLeft(order, query.dataUpdatedAt)
   const { hash } = useLocation()
+  const [search] = useSearchParams()
 
   // "💬 Message the shop" (…#chat): bring the chat into view once the order has loaded
   const loaded = !!order
@@ -198,6 +200,10 @@ export default function OrderDetailsPage() {
             <Price amount={order.total} currency={order.currency} />
           </div>
         </section>
+
+        {/* ── "How was your food?" once delivered (?review=1 from the email scrolls here) ── */}
+        <RateCard target={{ kind: 'Order', reference: order.orderNumber }} title={`How was your food from ${order.shopName}?`}
+                  enabled={order.status === 'Delivered'} highlight={search.get('review') === '1'} />
 
         {/* ── Chat with the shop (once paid; read-only 7 days after the order ends) ── */}
         {!unpaid && <div id="chat"><OrderChat orderNumber={order.orderNumber} title={`Chat with ${order.shopName}`} /></div>}

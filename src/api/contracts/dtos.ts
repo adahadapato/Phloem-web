@@ -3,7 +3,7 @@
  * Grows feature by feature; keep in step with the app's Services/Api/Contracts/Dtos.
  */
 import type {
-  AiCallOutcome, AiProvider, CatalogGroup, ChatRole, ContentReviewStatus, ModerationKind, ModerationState, ModerationVerdict, ContactMessageStatus, ContactTopic, Country, Currency, DeliverySpeed, DeliveryWindow,
+  AiCallOutcome, AiProvider, CatalogGroup, ChatRole, ContentReviewStatus, ModerationKind, ModerationState, ModerationVerdict, ReviewKind, ReviewStatus, ContactMessageStatus, ContactTopic, Country, Currency, DeliverySpeed, DeliveryWindow,
   DeliveryKind, DishCategory, DocumentStatus, HandoverMethod, LegalDocumentType, OrderActorKind, OrderEventKind, OrderStatus, SeoPageKind, SeoPageStatus, ParcelItemRuleKind,
   PendingChangeKind, PendingChangeStatus, ShipmentItemCategory, ShipmentStatus, StaffAction, VendorDocumentType,
   VendorStatus, ParcelBoxKind, ParcelDelivery, ParcelHandOver, TownSource,
@@ -1615,4 +1615,62 @@ export interface ChatReadEvent {
 export interface ChatTypingEvent {
   orderNumber: string
   role: ChatRole
+}
+
+// ───────────────────────────── Reviews ─────────────────────────────
+
+/** My review of an order or parcel (same as the API's `MyReviewDto`). */
+export interface MyReviewDto {
+  stars: number
+  comment: string | null
+  showPublicly: boolean
+  status: ReviewStatus
+  displayName: string
+  placeText: string
+  writtenAt: string
+}
+
+/** The Rate card: can I review it, and my review if written (same as the API's `ReviewStateDto`). */
+export interface ReviewStateDto {
+  canReview: boolean
+  /** Why not (e.g. not delivered yet, or more than 60 days ago). */
+  reason: string | null
+  review: MyReviewDto | null
+  /** "Chioma A. · Order from Mama's Kitchen": how it would show on the site. */
+  showAs: string
+}
+
+/** One review in "What our customers say" (same as the API's `PublicReviewDto`). */
+export interface PublicReviewDto {
+  stars: number
+  comment: string
+  displayName: string
+  placeText: string
+  kind: ReviewKind
+  publishedAt: string
+}
+
+/** "What our customers say" (same as the API's `PublicReviewsDto`). Empty below the minimum on Home / parcels. */
+export interface PublicReviewsDto {
+  items: PublicReviewDto[]
+  count: number
+  averageStars: number
+}
+
+/** A review in Admin → Reviews (same as the API's `AdminReviewDto`). */
+export interface AdminReviewDto {
+  id: string
+  kind: ReviewKind
+  /** Order or tracking number. */
+  reference: string
+  authorName: string
+  displayName: string
+  placeText: string
+  country: Country
+  stars: number
+  comment: string | null
+  showPublicly: boolean
+  status: ReviewStatus
+  staffNote: string | null
+  writtenAt: string
 }

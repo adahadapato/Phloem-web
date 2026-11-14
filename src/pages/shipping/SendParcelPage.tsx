@@ -24,6 +24,7 @@ import { emptyPlace, type PlaceDraft } from './parcel/place'
 import { PriceBreakdown } from './parcel/PriceBreakdown'
 import { figures, newBox, toNumber, type BoxDraft } from './parcel/parcelMath'
 import parcel from './parcel/Parcel.module.css'
+import { CustomerReviews } from '../../components/reviews/CustomerReviews'
 
 /** Same limits as the API (Shipment / ShipmentItem). */
 const MAX_KG = 1000
@@ -531,6 +532,7 @@ export default function SendParcelPage() {
           </aside>
         </form>
       )}
+      <CustomerReviews kind="Parcel" eyebrow="Parcel reviews" title="What senders say" compact />
     </div>
   )
 }

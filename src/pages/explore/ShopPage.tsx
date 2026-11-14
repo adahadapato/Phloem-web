@@ -18,6 +18,7 @@ import { dishCategories } from '../../components/ui/labels'
 import page from './Explore.module.css'
 import { usePageSeo } from '../../components/layout/usePageSeo'
 import { Button } from '../../components/ui/Button'
+import { CustomerReviews } from '../../components/reviews/CustomerReviews'
 
 const PAGE_SIZE = 24
 
@@ -122,6 +123,8 @@ export default function ShopPage() {
         )}
 
         <Pager page={pageNumber} totalPages={menu.data?.totalPages ?? 0} onChange={setPageNumber} />
+
+        <CustomerReviews vendorId={details.id} title={`What customers say about ${details.name}`} compact />
       </div>
     </>
   )

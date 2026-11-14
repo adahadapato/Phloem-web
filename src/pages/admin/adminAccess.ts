@@ -27,6 +27,7 @@ export const ADMIN_MENU: AdminMenuItem[] = [
   { to: '/admin/shops', label: 'Shops', icon: '🏪', permission: [Permissions.ShopsManage] },
   { to: '/admin/orders', label: 'Orders', icon: '🧺', permission: [Permissions.OrdersView] },
   { to: '/admin/moderation', label: 'Moderation', icon: '🛡️', permission: [Permissions.ShopsManage] },
+  { to: '/admin/reviews', label: 'Reviews', icon: '⭐', permission: [Permissions.ShopsManage] },
   { to: '/admin/users', label: 'Users', icon: '👥', permission: [Permissions.UsersManage] },
   { to: '/admin/staff', label: 'Staff', icon: '🪪', permission: [Permissions.StaffManage] },
   { to: '/admin/dishes', label: 'Dish names', icon: '🍲', permission: [Permissions.CatalogManage] },

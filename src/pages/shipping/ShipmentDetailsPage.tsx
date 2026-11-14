@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import { Link, useParams } from 'react-router'
+import { Link, useParams, useSearchParams } from 'react-router'
 import { unwrap } from '../../api/apiError'
 import { getMyShipment } from '../../api/services/shipmentService'
 import { DeliveryProofCard } from '../../components/deliveries/DeliveryProofCard'
+import { RateCard } from '../../components/reviews/RateCard'
 import { Button } from '../../components/ui/Button'
 import { arrivalText, dateTimeText, shipmentCategories } from '../../components/ui/labels'
 import { Price } from '../../components/ui/Price'
@@ -22,6 +23,7 @@ const categoryText = (c: string) => shipmentCategories.find((x) => x.value === c
 export default function ShipmentDetailsPage() {
   const { trackingNumber = '' } = useParams()
   const actions = useShipmentActions()
+  const [search] = useSearchParams()
   const query = useQuery({
     queryKey: ['shipments', 'detail', trackingNumber],
     queryFn: async ({ signal }) => unwrap(await getMyShipment(trackingNumber, signal)),
@@ -95,6 +97,10 @@ export default function ShipmentDetailsPage() {
             <span className="muted">{s.recipientName} can collect it with photo ID and the tracking number.</span>
           </section>
         )}
+
+        {/* ── "How did we do?" once delivered (?review=1 from the email scrolls here) ── */}
+        <RateCard target={{ kind: 'Parcel', reference: s.trackingNumber }} title="How did we do with your parcel?"
+                  enabled={s.status === 'Delivered'} highlight={search.get('review') === '1'} />
 
         {/* ── Pay / Track / Cancel ── */}
         <div className={styles.detailButtons}>

@@ -94,7 +94,7 @@ export type StaffAction =
   | 'ShopDocumentOpened' | 'ChangeProposed' | 'ChangeApproved' | 'ChangeRejected' | 'ChangeWithdrawn'
   | 'ShopBlocked' | 'ShopUnblocked' | 'OrderViewed' | 'AiPromptSaved' | 'AiPromptRestored' | 'AiPromptReset'
   | 'AiCallViewed' | 'SeoEdited' | 'SeoRewritten' | 'ContentApproved' | 'ContentRejected'
-  | 'ChatViewed' | 'ChatReportClosed'
+  | 'ChatViewed' | 'ChatReportClosed' | 'ReviewHidden' | 'ReviewShown'
 
 /** A change that needs a second person (same as the API's `PendingChangeKind`). */
 export type PendingChangeKind = 'PublishLegalDocument' | 'ConfirmShopBlock'
@@ -118,7 +118,17 @@ export type SeoPageStatus = 'NotWritten' | 'WrittenByAi' | 'EditedByStaff'
 export type ContentReviewStatus = 'Approved' | 'Checking' | 'WithStaff' | 'Rejected'
 
 /** What a moderation check is about (same as the API's `ModerationKind`). */
-export type ModerationKind = 'Dish' | 'ShopName' | 'DishNameSuggestion' | 'ContactMessage'
+export type ModerationKind = 'Dish' | 'ShopName' | 'DishNameSuggestion' | 'ContactMessage' | 'Review'
+
+/** What a review is about (same as the API's `ReviewKind`). */
+export type ReviewKind = 'Order' | 'Parcel'
+
+/**
+ * Where a review is (same as the API's `ReviewStatus`). The stars count in every status; only the comment's
+ * visibility changes: Checking (the AI is looking) → Published, or WaitingForStaff → Published / Rejected; staff can
+ * later hide a published one.
+ */
+export type ReviewStatus = 'Checking' | 'Published' | 'WaitingForStaff' | 'Rejected' | 'Hidden'
 
 /** What the AI or a person thought (same as the API's `ModerationVerdict`). */
 export type ModerationVerdict = 'Ok' | 'NeedsLook' | 'NotAllowed'

@@ -21,6 +21,7 @@ const TABS: { kind?: ModerationKind; key: string; label: string }[] = [
   { key: 'all', label: 'All' },
   { kind: 'Dish', key: 'dishes', label: 'Dishes' },
   { kind: 'ShopName', key: 'shops', label: 'Shop names' },
+  { kind: 'Review', key: 'reviews', label: 'Reviews' },
 ]
 
 const VERDICT: Record<ModerationVerdict, { text: string; tone: string }> = {
@@ -30,8 +31,8 @@ const VERDICT: Record<ModerationVerdict, { text: string; tone: string }> = {
 }
 
 /**
- * Admin → Moderation (/admin/moderation, permission shops.manage, your countries): dishes and shop names the AI
- * flagged or couldn't check. Each card shows the exact text, what the AI thought and why; Approve makes a dish
+ * Admin → Moderation (/admin/moderation, permission shops.manage, your countries): dishes, shop names and review
+ * comments the AI flagged or couldn't check. Each card shows the exact text, what the AI thought and why; Approve makes a dish
  * visible, Reject keeps it hidden and the seller sees your reason. Tabs in the address (?show=dishes).
  */
 export default function AdminModerationPage() {
@@ -103,6 +104,8 @@ function ItemCard({ item }: { item: ModerationItemDto }) {
   const [error, setError] = useState<string | null>(null)
   const country = item.country ? countries.find((c) => c.country === item.country) : null
   const isDish = item.kind === 'Dish'
+  const isReview = item.kind === 'Review'
+  const kindText = isDish ? 'Dish' : isReview ? 'Review' : 'Shop name'
   const verdict = item.aiVerdict ? VERDICT[item.aiVerdict] : { text: '⚪ Not checked by the AI', tone: styles.none }
 
   const decide = async (approve: boolean) => {
@@ -114,10 +117,10 @@ function ItemCard({ item }: { item: ModerationItemDto }) {
   }
 
   return (
-    <article className={styles.card} aria-label={`${isDish ? 'Dish' : 'Shop name'}: ${item.title}`}>
+    <article className={styles.card} aria-label={`${kindText}: ${item.title}`}>
       <div className={styles.cardHead}>
         <div>
-          <span className={`${styles.pill} ${styles.kind}`}>{isDish ? 'Dish' : 'Shop name'}</span>
+          <span className={`${styles.pill} ${styles.kind}`}>{kindText}</span>
           <h2>{item.title}</h2>
           <div className={styles.meta}>
             {isDish && item.shopName && <span>from {item.shopName}</span>}
@@ -129,7 +132,9 @@ function ItemCard({ item }: { item: ModerationItemDto }) {
       </div>
 
       <p className={styles.visibility}>
-        {isDish
+        {isReview
+          ? 'The stars already count. The comment goes on the site only if you approve it.'
+          : isDish
           ? item.isLive ? 'Still visible to buyers (it was on Phloem before checks began).' : 'Hidden from buyers until you decide.'
           : item.isLive ? 'This shop is live.' : 'This shop is not live yet.'}
       </p>
@@ -150,21 +155,21 @@ function ItemCard({ item }: { item: ModerationItemDto }) {
       {!rejecting ? (
         <div className={styles.actions}>
           <Button variant="primary" busy={busy === 'approve'} busyText="Saving…" disabled={!!busy} onClick={() => void decide(true)}>
-            {isDish ? '✓ Approve: show it to buyers' : '✓ Looks fine'}
+            {isDish ? '✓ Approve: show it to buyers' : isReview ? '✓ Approve: put it on the site' : '✓ Looks fine'}
           </Button>
           <Button variant="outline" disabled={!!busy} onClick={() => setRejecting(true)}>
-            {isDish ? 'Reject…' : 'Not OK…'}
+            {isDish || isReview ? 'Reject…' : 'Not OK…'}
           </Button>
         </div>
       ) : (
         <div className={styles.reject}>
           <label htmlFor={`reason-${item.id}`}>
-            <strong>{isDish ? 'Why isn\'t it allowed? The seller will see this.' : 'Why isn\'t the name OK? (for the record)'}</strong>
+            <strong>{isDish ? 'Why isn\'t it allowed? The seller will see this.' : isReview ? 'Why can\'t it go on the site? (staff only)' : 'Why isn\'t the name OK? (for the record)'}</strong>
           </label>
           <textarea id={`reason-${item.id}`} rows={3} value={reason} maxLength={REASON_MAX}
-                    placeholder={isDish ? 'e.g. Please remove the phone number: orders and payments go through Phloem.' : 'e.g. Uses a well-known brand name.'}
+                    placeholder={isDish ? 'e.g. Please remove the phone number: orders and payments go through Phloem.' : isReview ? 'e.g. Contains a phone number.' : 'e.g. Uses a well-known brand name.'}
                     onChange={(e) => setReason(e.target.value)} />
-          {!isDish && (
+          {!isDish && !isReview && (
             <p className="muted" style={{ margin: 0 }}>
               This only records your decision. To ask them to rename, or to block the shop, open the shop.
             </p>
@@ -172,7 +177,7 @@ function ItemCard({ item }: { item: ModerationItemDto }) {
           <div className={styles.actions}>
             <Button variant="cta" busy={busy === 'reject'} busyText="Saving…" disabled={!reason.trim() || !!busy}
                     onClick={() => void decide(false)}>
-              {isDish ? 'Reject: keep it hidden' : 'Save: not OK'}
+              {isDish ? 'Reject: keep it hidden' : isReview ? 'Reject: keep it off the site' : 'Save: not OK'}
             </Button>
             <Button variant="outline" disabled={!!busy} onClick={() => setRejecting(false)}>Cancel</Button>
           </div>

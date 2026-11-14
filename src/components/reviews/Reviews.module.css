@@ -1,0 +1,266 @@
+/* ── Rate card (order / parcel details) ── */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  margin-bottom: 16px;
+  background: var(--white);
+  border-radius: 18px;
+  box-shadow: var(--shadow-card);
+  scroll-margin-top: calc(var(--header-height) + 16px);
+}
+
+.card h2 {
+  margin: 0;
+  font-size: var(--text-lg);
+}
+
+.highlight {
+  outline: 2px solid var(--brand-gold);
+  outline-offset: 2px;
+}
+
+.muted {
+  margin: 0;
+  color: var(--brand-text-muted);
+  font-size: var(--text-sm);
+}
+
+/* ── Star picker: five big tappable stars (radio buttons underneath) ── */
+.picker {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.picker legend {
+  padding: 0;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.pickerRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.pickerStar {
+  position: relative;
+  cursor: pointer;
+  font-size: 34px;
+  line-height: 1;
+  padding: 2px;
+  color: var(--brand-border);
+  transition: transform 0.1s ease;
+}
+
+.pickerStar input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.pickerStar.on {
+  color: var(--brand-star);
+}
+
+.pickerStar:hover {
+  transform: scale(1.1);
+}
+
+.pickerStar:has(input:focus-visible) {
+  outline: 2px solid var(--brand-green);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.pickerWord {
+  margin-left: 8px;
+  font-weight: 600;
+  color: var(--brand-text-muted);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form textarea {
+  width: 100%;
+  min-height: 96px;
+  padding: 12px;
+  font: inherit;
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-field);
+  background: var(--brand-card);
+  resize: vertical;
+}
+
+.counter {
+  align-self: flex-end;
+  margin-top: -6px;
+  font-size: var(--text-xs);
+  color: var(--brand-text-muted);
+}
+
+.check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: var(--text-sm);
+}
+
+.check input {
+  margin-top: 2px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--brand-green);
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.error {
+  margin: 0;
+  color: var(--brand-danger);
+}
+
+/* My review once written */
+.mine {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.status {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-field);
+  background: var(--brand-mint-pale);
+  font-size: var(--text-sm);
+}
+
+.statusWait {
+  background: var(--brand-peach);
+}
+
+/* ── Stars as text (read only) ── */
+.stars {
+  color: var(--brand-star);
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.starsOff {
+  color: var(--brand-border);
+}
+
+/* ── What our customers say ── */
+.band {
+  padding: 48px 0;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: var(--brand-gold);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(24px, 3.4vw, 34px);
+}
+
+.titleSmall {
+  margin: 0;
+  font-size: var(--text-lg);
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.summaryScore {
+  font-size: 22px;
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.review {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  padding: 18px;
+  background: var(--white);
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-card);
+}
+
+.quote {
+  margin: 0;
+  flex: 1;
+  line-height: 1.5;
+}
+
+.who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--brand-mint);
+  color: var(--brand-green-dark);
+  font-weight: 700;
+}
+
+.whoText strong {
+  display: block;
+  font-size: var(--text-sm);
+}
+
+.whoText span {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--brand-text-muted);
+}
