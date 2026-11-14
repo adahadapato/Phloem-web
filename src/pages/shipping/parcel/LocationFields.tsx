@@ -82,7 +82,7 @@ export function LocationFields({ country, hasList, place, onChange, fieldError }
 
   const pickTown = (t: TownDto) => {
     onChange({ ...place, town: t.name, townId: t.townId, regionId: t.regionId, regionName: t.regionName, districtId: t.districtId })
-    setHint({ tone: 'info', text: `${t.name}: ${t.districtName} ${districtLabel}, ${t.regionName} ${regionLabel}.` })
+    setHint({ tone: 'info', text: `${t.name}: ${t.districtName} ${districtLabel}, ${t.regionName}.` })
   }
 
   return (

@@ -856,3 +856,8 @@
     margin-top: 8px;
   }
 }
+
+.choice:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

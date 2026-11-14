@@ -393,14 +393,15 @@ export default function SendParcelPage() {
                   <span>No extra charge</span>
                   <span className={`muted ${parcel.optionNote}`}>{route.dropOffAddress}{'\n'}{route.dropOffHours}</span>
                 </button>
-                {pickupOffered && (
-                  <button type="button" role="radio" aria-checked={handOverChoice === 'HomePickup'} className={styles.choice}
-                          onClick={() => setHandOver('HomePickup')}>
-                    <strong>Collect it from me</strong>
-                    <span>+<Price amount={route.homePickupCharge!} currency={route.currency} className={styles.plain} /></span>
-                    <span className="muted">We call you to arrange a time</span>
-                  </button>
-                )}
+                <button type="button" role="radio" aria-checked={handOverChoice === 'HomePickup'} className={styles.choice}
+                        disabled={!pickupOffered} aria-disabled={!pickupOffered}
+                        onClick={() => setHandOver('HomePickup')}>
+                  <strong>Collect it from me</strong>
+                  {pickupOffered
+                    ? <><span>+<Price amount={route.homePickupCharge!} currency={route.currency} className={styles.plain} /></span>
+                        <span className="muted">We call you to arrange a time</span></>
+                    : <span className="muted">Not available on this route yet</span>}
+                </button>
               </div>
               {handOverChoice === 'HomePickup' && (
                 <>
@@ -438,23 +439,25 @@ export default function SendParcelPage() {
               </div>
               <LocationFields country={route.toCountry} hasList={route.hasLocationList} place={place} onChange={setPlace}
                               fieldError={(name) => fieldError(name)} />
-              {collectionOffered && (
-                <div className={styles.choices} role="radiogroup" aria-label="How it reaches them">
-                  <button type="button" role="radio" aria-checked={deliveryChoice === 'ToDoor'} className={styles.choice}
-                          onClick={() => setDelivery('ToDoor')}>
-                    <strong>Deliver to their door</strong>
-                    <span className="muted">{quote && quote.doorDeliveryCharge > 0
-                      ? <>+<Price amount={quote.doorDeliveryCharge} currency={quote.currency} className={styles.plain} />{quote.deliveryZoneName ? ` (${quote.deliveryZoneName})` : ''}</>
-                      : 'Charge depends on the state'}</span>
-                  </button>
-                  <button type="button" role="radio" aria-checked={deliveryChoice === 'CollectFromHub'} className={styles.choice}
-                          onClick={() => setDelivery('CollectFromHub')}>
-                    <strong>They collect it from our hub</strong>
-                    <span>No delivery charge</span>
-                    <span className={`muted ${parcel.optionNote}`}>{route.collectionHubAddress}{'\n'}{route.collectionHubHours}</span>
-                  </button>
-                </div>
-              )}
+              <p className={parcel.choiceTitle}>How it reaches them</p>
+              <div className={styles.choices} role="radiogroup" aria-label="How it reaches them">
+                <button type="button" role="radio" aria-checked={deliveryChoice === 'ToDoor'} className={styles.choice}
+                        onClick={() => setDelivery('ToDoor')}>
+                  <strong>Delivered to their door</strong>
+                  <span className="muted">{quote && quote.doorDeliveryCharge > 0
+                    ? <>+<Price amount={quote.doorDeliveryCharge} currency={quote.currency} className={styles.plain} />{quote.deliveryZoneName ? ` (${quote.deliveryZoneName})` : ''}</>
+                    : route.hasLocationList && !place.regionId ? 'Charge depends on the state' : 'A courier brings it to the address below'}</span>
+                </button>
+                <button type="button" role="radio" aria-checked={deliveryChoice === 'CollectFromHub'} className={styles.choice}
+                        disabled={!collectionOffered} aria-disabled={!collectionOffered}
+                        onClick={() => setDelivery('CollectFromHub')}>
+                  <strong>They collect it from our hub</strong>
+                  {collectionOffered
+                    ? <><span>No delivery charge</span>
+                        <span className={`muted ${parcel.optionNote}`}>{route.collectionHubAddress}{'\n'}{route.collectionHubHours}</span></>
+                    : <span className="muted">Not available on this route yet</span>}
+                </button>
+              </div>
               {deliveryChoice === 'ToDoor' && (
                 <Field label="Street and house number" autoComplete="off" maxLength={300} value={recipient.addressLine}
                        onChange={(e) => setRecipient({ ...recipient, addressLine: e.target.value })}
@@ -493,6 +496,8 @@ export default function SendParcelPage() {
               <dl className={styles.sums}>
                 <dt>Speed</dt><dd>{speed.speed}</dd>
                 <dt>Usually</dt><dd>{days(speed.minTransitDays, speed.maxTransitDays)}</dd>
+                <dt>We get it</dt><dd>{handOverChoice === 'HomePickup' ? 'Collected from you' : 'You drop it off'}</dd>
+                <dt>They get it</dt><dd>{deliveryChoice === 'CollectFromHub' ? 'Collect from our hub' : 'Delivered to the door'}</dd>
               </dl>
               {quote && <PriceBreakdown quote={quote} />}
               <div className={styles.total}>
