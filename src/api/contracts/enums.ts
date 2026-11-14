@@ -42,6 +42,18 @@ export type ShipmentStatus =
 /** How fast a parcel travels (each route prices its own speeds). */
 export type DeliverySpeed = 'Standard' | 'Express' | 'Bulk'
 
+/** How the parcel gets to us in the origin country. */
+export type ParcelHandOver = 'HubDropOff' | 'HomePickup'
+
+/** How the parcel reaches the recipient. */
+export type ParcelDelivery = 'ToDoor' | 'CollectFromHub'
+
+/** Box lines as the sender declared them, or as measured at the hub. */
+export type ParcelBoxKind = 'Declared' | 'Measured'
+
+/** Where a town on the list came from. */
+export type TownSource = 'Seeded' | 'AiSuggested' | 'Staff'
+
 /** What kind of item is in a parcel (for customs). */
 export type ShipmentItemCategory = 'PackagedFood' | 'Clothing' | 'Documents' | 'Electronics' | 'Other'
 

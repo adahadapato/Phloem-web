@@ -1878,3 +1878,112 @@ h2 .navCount {
   background: #fef3f2;
   color: #b42318;
 }
+
+/* ── Hub: weigh and measure each box ── */
+.hubBox {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid var(--brand-border);
+  border-radius: 10px;
+  background: var(--brand-cream);
+}
+
+.hubBox label {
+  gap: 2px;
+  font-size: 11px;
+}
+
+.hubBox input {
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 8px;
+  border: 1px solid var(--brand-border);
+  border-radius: 8px;
+  background: var(--white);
+  font: inherit;
+  font-weight: 400;
+}
+
+.hubBoxTitle {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.hubBoxTitle button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--brand-text-muted);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.hubCounts {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--brand-text-muted);
+  font-size: 12px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--brand-peach);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.boxTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.boxTable th,
+.boxTable td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--brand-border);
+  text-align: left;
+}
+
+.boxTable th {
+  color: var(--brand-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.stackForm label.checkRow {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.stackForm label.checkRow input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--brand-green);
+}
+
+/* Zones: small selects and inputs inside cards */
+.miniSelect,
+.miniInput {
+  min-height: 34px;
+  padding: 4px 8px;
+  border: 1px solid var(--brand-border);
+  border-radius: 8px;
+  background: var(--white);
+  font: inherit;
+  font-size: 13px;
+}

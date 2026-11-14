@@ -4,8 +4,8 @@ import { useSession } from '../../../state/SessionContext'
 import styles from '../Admin.module.css'
 
 /**
- * The Shipping area's pages, under its title. Routes & prices and What can be sent need `parcels.settings`; Parcels
- * needs `parcels.manage`. Only the tabs the person can open are shown (owners see all three).
+ * The Shipping area's pages, under its title. Routes & prices, Zones & towns and What can be sent need
+ * `parcels.settings`; Parcels needs `parcels.manage`. Only the tabs the person can open are shown (owners see all).
  */
 export function ShippingTabs() {
   const { hasPermission } = useSession()
@@ -16,6 +16,7 @@ export function ShippingTabs() {
     <nav className={styles.subTabs} aria-label="Shipping">
       {settings && <NavLink to="/admin/shipping" end className={tab}>Routes & prices</NavLink>}
       {parcels && <NavLink to="/admin/shipping/parcels" className={tab}>Parcels</NavLink>}
+      {settings && <NavLink to="/admin/shipping/zones" className={tab}>Zones & towns</NavLink>}
       {settings && <NavLink to="/admin/shipping/rules" className={tab}>What can be sent</NavLink>}
     </nav>
   )

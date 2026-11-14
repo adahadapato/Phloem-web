@@ -1,0 +1,119 @@
+/* A dropdown you can type in: same look as Field (rules copied from Field.module.css), with a list under the box. */
+
+.label {
+  margin-left: 2px;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--brand-text-dark);
+}
+
+.box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 12px;
+  background: var(--white);
+  border: 1px solid var(--brand-border);
+  border-radius: var(--radius-field);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.box:focus-within {
+  border-color: var(--brand-green);
+  box-shadow: 0 0 0 3px rgb(4 99 52 / 0.15);
+}
+
+.invalid .box {
+  border-color: var(--brand-danger);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  height: 46px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: var(--text-md);
+  color: var(--brand-text-dark);
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--brand-text-muted);
+}
+
+.hint {
+  margin-left: 2px;
+  font-size: var(--text-xs);
+  color: var(--brand-text-muted);
+}
+
+.error {
+  margin-left: 2px;
+  font-size: var(--text-xs);
+  color: var(--brand-danger);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.box {
+  position: relative;
+}
+
+.caret {
+  color: var(--brand-text-muted);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.list {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 6px);
+  right: 0;
+  left: 0;
+  max-height: min(320px, 50vh);
+  margin: 0;
+  padding: 6px;
+  overflow-y: auto;
+  border: 1px solid var(--brand-border);
+  border-radius: 14px;
+  background: var(--white);
+  box-shadow: var(--shadow-raised);
+  list-style: none;
+}
+
+.list[hidden] {
+  display: none;
+}
+
+.option {
+  min-height: 40px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--brand-text-dark);
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.option[aria-selected="true"] {
+  font-weight: 700;
+}
+
+.active {
+  background: var(--brand-mint-pale);
+}
+
+.empty {
+  padding: 10px 12px;
+  color: var(--brand-text-muted);
+  font-size: 14px;
+}

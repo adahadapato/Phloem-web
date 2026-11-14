@@ -46,6 +46,7 @@ export const ADMIN_MENU: AdminMenuItem[] = [
 const SUB_PAGES: { path: string; exact?: boolean; permission: readonly string[] }[] = [
   { path: '/admin/shipping', exact: true, permission: [Permissions.ParcelsSettings] },   // Routes & prices
   { path: '/admin/shipping/rules', permission: [Permissions.ParcelsSettings] },
+  { path: '/admin/shipping/zones', permission: [Permissions.ParcelsSettings] },
   { path: '/admin/shipping/parcels', permission: [Permissions.ParcelsManage] },
 ]
 

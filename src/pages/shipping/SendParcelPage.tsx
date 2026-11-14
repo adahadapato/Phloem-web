@@ -3,7 +3,7 @@ import { useDeferredValue, useState, type FormEvent } from 'react'
 import { Link } from 'react-router'
 import { unwrap, type ApiError } from '../../api/apiError'
 import type { BookedShipmentDto, ShipmentRouteOptionDto } from '../../api/contracts/dtos'
-import type { Country, DeliverySpeed, ShipmentItemCategory } from '../../api/contracts/enums'
+import type { Country, DeliverySpeed, ParcelDelivery, ParcelHandOver, ShipmentItemCategory } from '../../api/contracts/enums'
 import { bookShipment, getShipmentQuote, getShipmentRoutes } from '../../api/services/shipmentService'
 import { Button, ButtonLink } from '../../components/ui/Button'
 import { EmptyState } from '../../components/ui/EmptyState'
@@ -18,11 +18,17 @@ import { RouteText } from './ShipmentParts'
 import styles from './Shipping.module.css'
 import { NeedHelp } from '../../components/ui/NeedHelp'
 import { usePageSeo } from '../../components/layout/usePageSeo'
+import { BoxList } from './parcel/BoxList'
+import { LocationFields } from './parcel/LocationFields'
+import { emptyPlace, type PlaceDraft } from './parcel/place'
+import { PriceBreakdown } from './parcel/PriceBreakdown'
+import { figures, newBox, toNumber, type BoxDraft } from './parcel/parcelMath'
+import parcel from './parcel/Parcel.module.css'
 
 /** Same limits as the API (Shipment / ShipmentItem). */
-const MIN_KG = 0.1
 const MAX_KG = 1000
 const MAX_ITEMS = 50
+const emptyPickup = { addressLine: '', city: '', postcode: '', notes: '' }
 
 /** One item row as typed (numbers stay text until sent, so the boxes can be empty while typing). */
 interface ItemDraft {
@@ -47,13 +53,28 @@ function Booked({ booked, onAnother }: { booked: BookedShipmentDto; onAnother: (
         <p className="muted">Tracking number</p>
         <p className={styles.bigNumber}>{booked.trackingNumber}</p>
         <section className={styles.card}>
-          <h2 className={styles.sectionTitle}>Drop it off at</h2>
-          <p style={{ whiteSpace: 'pre-line' }}><strong>{booked.dropOffAddress}</strong></p>
-          <p className="muted">{booked.dropOffHours}</p>
+          {booked.handOver === 'HomePickup' ? (
+            <>
+              <h2 className={styles.sectionTitle}>We'll collect it from you</h2>
+              <p>Our team will call you to arrange a pickup time. Please have the parcel packed, taped and labelled.</p>
+            </>
+          ) : (
+            <>
+              <h2 className={styles.sectionTitle}>Drop it off at</h2>
+              <p style={{ whiteSpace: 'pre-line' }}><strong>{booked.dropOffAddress}</strong></p>
+              <p className="muted">{booked.dropOffHours}</p>
+            </>
+          )}
           <p className={styles.note}>
-            Write the tracking number on the parcel. We'll weigh it at the hub; then pay the final price from
-            My shipments. Estimated price: <Price amount={booked.estimatedPrice} currency={booked.currency} />.
+            Write the tracking number on every box. We'll weigh and measure them at the hub; then pay the final price
+            from My shipments. Estimated price: <Price amount={booked.estimatedPrice} currency={booked.currency} />.
           </p>
+          {booked.delivery === 'CollectFromHub' && booked.collectionHubAddress && (
+            <p className={styles.note}>
+              The recipient collects it from <strong>{booked.collectionHubAddress}</strong> ({booked.collectionHubHours}).
+              We'll tell them when it's ready.
+            </p>
+          )}
         </section>
         <div className={styles.actions}>
           <ButtonLink to={`/shipments/${encodeURIComponent(booked.trackingNumber)}`}>View my parcel</ButtonLink>
@@ -66,9 +87,11 @@ function Booked({ booked, onAnother }: { booked: BookedShipmentDto; onAnother: (
 
 /**
  * Send a parcel, like the app's "Send food to the UK" page but laid out for a big screen: the form on the left in
- * numbered sections (route and speed, weight, what's inside, recipient, your phone, confirmations) and the live
- * price on the right. Anyone can look at routes and prices; booking needs an account with date of birth and home
- * address (18 or over), as the API requires. The final price is set when the parcel is weighed at the hub.
+ * numbered sections (route and speed, boxes, what's inside, getting it to us, recipient, your phone, confirmations)
+ * and the live price, part by part, on the right. Each box is charged as the higher of its weight and its size
+ * (explained on the page). Anyone can look at routes and prices; booking needs an account with date of birth and
+ * home address (18 or over), as the API requires. The final price is set when the boxes are weighed and measured
+ * at the hub.
  */
 export default function SendParcelPage() {
   usePageSeo('/send-parcel')
@@ -86,9 +109,14 @@ export default function SendParcelPage() {
   // ── The form ──
   const [pickedRoute, setPickedRoute] = useState<string | null>(null)
   const [pickedSpeed, setPickedSpeed] = useState<DeliverySpeed | null>(null)
-  const [weight, setWeight] = useState('')
+  const [boxes, setBoxes] = useState<BoxDraft[]>([newBox(1)])
+  const [fragile, setFragile] = useState(false)
+  const [handOver, setHandOver] = useState<ParcelHandOver>('HubDropOff')
+  const [pickup, setPickup] = useState(emptyPickup)
+  const [delivery, setDelivery] = useState<ParcelDelivery>('ToDoor')
   const [items, setItems] = useState<ItemDraft[]>([newItem(1)])
-  const [recipient, setRecipient] = useState({ name: '', phone: '', addressLine: '', city: '', regionOrPostcode: '' })
+  const [recipient, setRecipient] = useState({ name: '', phone: '', addressLine: '' })
+  const [place, setPlace] = useState<PlaceDraft>(emptyPlace)
   const [senderPhone, setSenderPhone] = useState<string | null>(null)
   const [noProhibited, setNoProhibited] = useState(false)
   const [terms, setTerms] = useState(false)
@@ -106,13 +134,33 @@ export default function SendParcelPage() {
   const phone = senderPhone ?? profile?.phoneNumber ?? ''
   const symbol = countries.find((c) => c.currency === route?.currency)?.currencySymbol ?? ''
   const destination = countries.find((c) => c.country === route?.toCountry)
-  const postcodeLabel = route?.toCountry === 'UnitedKingdom' ? 'Postcode' : 'Region'
+  const divisor = route?.volumeDivisor ?? 5000
+  // A choice the route no longer offers falls back to the free one
+  const pickupOffered = route?.homePickupCharge != null
+  const collectionOffered = !!route?.collectionHubAddress
+  const handOverChoice: ParcelHandOver = handOver === 'HomePickup' && pickupOffered ? 'HomePickup' : 'HubDropOff'
+  const deliveryChoice: ParcelDelivery = delivery === 'CollectFromHub' && collectionOffered ? 'CollectFromHub' : 'ToDoor'
 
-  // ── Live price for the typed weight ──
-  const kg = Number(weight.replace(',', '.'))
-  const weightOk = weight.trim() !== '' && kg >= MIN_KG && kg <= MAX_KG
-  const quoteInput = useDeferredValue(route && speed && weightOk
-    ? { fromCountry: route.fromCountry, toCountry: route.toCountry, speed: speed.speed, estimatedWeightKg: kg }
+  // ── Live price for the boxes and choices ──
+  const boxFigures = boxes.map((b) => figures(b, divisor))
+  const totalKg = boxFigures.reduce((sum, f) => sum + (Number.isNaN(f.weightKg) ? 0 : f.weightKg * f.quantity), 0)
+  const boxesOk = boxFigures.every((f) => f.valid) && totalKg <= MAX_KG
+  const boxInputs = boxes.map((b) => {
+    const f = figures(b, divisor)
+    return {
+      weightKg: f.weightKg,
+      lengthCm: f.hasSize ? toNumber(b.length) : null,
+      widthCm: f.hasSize ? toNumber(b.width) : null,
+      heightCm: f.hasSize ? toNumber(b.height) : null,
+      quantity: f.quantity,
+    }
+  })
+  const quoteInput = useDeferredValue(route && speed && boxesOk
+    ? {
+        fromCountry: route.fromCountry, toCountry: route.toCountry, speed: speed.speed, boxes: boxInputs,
+        isFragile: fragile, handOver: handOverChoice, delivery: deliveryChoice,
+        recipientRegionId: route.hasLocationList ? place.regionId : null,
+      }
     : null)
   const quoteQuery = useQuery({
     queryKey: ['shipment-quote', quoteInput],
@@ -125,8 +173,8 @@ export default function SendParcelPage() {
 
   if (booked) {
     return <Booked booked={booked} onAnother={() => {
-      setBooked(null); setWeight(''); setItems([newItem(1)]); setNoProhibited(false); setTerms(false)
-      setRecipient({ name: '', phone: '', addressLine: '', city: '', regionOrPostcode: '' })
+      setBooked(null); setBoxes([newBox(1)]); setFragile(false); setItems([newItem(1)]); setNoProhibited(false)
+      setTerms(false); setRecipient({ name: '', phone: '', addressLine: '' }); setPlace(emptyPlace)
     }} />
   }
 
@@ -151,8 +199,18 @@ export default function SendParcelPage() {
     if (!route || !speed) return
     setError(null)
     setLocalError(null)
-    if (!weightOk) return setLocalError(`Please enter the parcel's weight: between ${MIN_KG} kg and ${MAX_KG} kg.`)
+    if (!boxesOk) {
+      return setLocalError(totalKg > MAX_KG
+        ? `A parcel can weigh at most ${MAX_KG} kg in total. Please send it as two parcels.`
+        : 'Please check your boxes: each needs a weight, and either all three sides or none.')
+    }
     if (items.some((i) => !i.description.trim())) return setLocalError('Please describe every item in the parcel.')
+    if (handOverChoice === 'HomePickup' && (!pickup.addressLine.trim() || !pickup.city.trim() || !pickup.postcode.trim())) {
+      return setLocalError('Please give the address where we should collect your parcel.')
+    }
+    if (route.hasLocationList && (!place.regionId || !place.districtId)) {
+      return setLocalError("Please choose the recipient's state and LGA.")
+    }
 
     setBusy(true)
     const result = await bookShipment({
@@ -162,8 +220,8 @@ export default function SendParcelPage() {
       recipientName: recipient.name.trim(),
       recipientPhone: recipient.phone.trim(),
       recipientAddressLine: recipient.addressLine.trim(),
-      recipientCity: recipient.city.trim(),
-      recipientRegionOrPostcode: recipient.regionOrPostcode.trim(),
+      recipientCity: place.town.trim(),
+      recipientRegionOrPostcode: route.hasLocationList ? place.regionName : place.postcode.trim(),
       items: items.map((i) => ({
         category: i.category,
         description: i.description.trim(),
@@ -171,9 +229,20 @@ export default function SendParcelPage() {
         unitDeclaredValue: Math.max(0, Number(i.value.replace(',', '.')) || 0),
       })),
       speed: speed.speed,
-      estimatedWeightKg: kg,
+      estimatedWeightKg: null,
       confirmedNoProhibitedItems: noProhibited,
       acceptedTerms: terms,
+      boxes: boxInputs,
+      isFragile: fragile,
+      handOver: handOverChoice,
+      pickup: handOverChoice === 'HomePickup'
+        ? { addressLine: pickup.addressLine.trim(), city: pickup.city.trim(), regionOrPostcode: pickup.postcode.trim(),
+            notes: pickup.notes.trim() || null }
+        : null,
+      delivery: deliveryChoice,
+      recipientRegionId: route.hasLocationList ? place.regionId : null,
+      recipientDistrictId: route.hasLocationList ? place.districtId : null,
+      recipientTownId: route.hasLocationList ? place.townId : null,
     })
     setBusy(false)
     if (!result.ok) {
@@ -192,15 +261,15 @@ export default function SendParcelPage() {
         <h1>Send a parcel</h1>
         <p className="muted">
           Send a parcel between the United Kingdom, Ghana and Nigeria. Book online and get a price estimate, drop the
-          parcel at our hub where we weigh it and set the final price, then track it to the door. Check below what
-          can and can't be sent.
+          parcel at our hub (or we collect it from you), we weigh and measure it and set the final price, then track it
+          to the door. Check below what can and can't be sent.
         </p>
       </div>
 
       <ol className={styles.howSteps} aria-label="How it works">
         <li><strong>1</strong> Book here</li>
-        <li><strong>2</strong> Drop the parcel at the hub</li>
-        <li><strong>3</strong> We weigh it, you pay the final price</li>
+        <li><strong>2</strong> Drop it at the hub, or we collect it</li>
+        <li><strong>3</strong> We weigh and measure it, you pay the final price</li>
         <li><strong>4</strong> We deliver it</li>
       </ol>
 
@@ -256,13 +325,18 @@ export default function SendParcelPage() {
               </div>
             </section>
 
-            {/* 2. Weight */}
+            {/* 2. Boxes */}
             <section className={styles.card} aria-labelledby="s2">
-              <h2 id="s2" className={styles.sectionTitle}><span className={styles.num}>2</span> How heavy is it?</h2>
-              <Field label="Estimated weight (kg)" type="number" inputMode="decimal" min={MIN_KG} max={MAX_KG} step="0.1"
-                     value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="e.g. 7.2"
-                     error={fieldError('EstimatedWeightKg')}
-                     hint="We round up to the next 0.5 kg. The final price is set when we weigh it at the hub." />
+              <h2 id="s2" className={styles.sectionTitle}><span className={styles.num}>2</span> Your boxes</h2>
+              <BoxList boxes={boxes} onChange={setBoxes} divisor={divisor} fieldError={(name) => fieldError(name)} />
+              <label className={parcel.fragile}>
+                <input type="checkbox" checked={fragile} onChange={(e) => setFragile(e.target.checked)} />
+                <span>
+                  <strong>Fragile: handle with care</strong>
+                  {route.fragileCharge > 0 && <> (+<Price amount={route.fragileCharge} currency={route.currency} className={styles.plain} />)</>}
+                  <br /><span className="muted">Glass jars, bottles or electronics. We label the boxes and keep them on top.</span>
+                </span>
+              </label>
             </section>
 
             {/* 3. Items */}
@@ -309,44 +383,96 @@ export default function SendParcelPage() {
               )}
             </section>
 
-            {/* 4. Recipient */}
+            {/* 4. Getting it to us */}
             <section className={styles.card} aria-labelledby="s4">
-              <h2 id="s4" className={styles.sectionTitle}>
-                <span className={styles.num}>4</span> Who it's for {destination && <span className="muted">in {destination.name}</span>}
+              <h2 id="s4" className={styles.sectionTitle}><span className={styles.num}>4</span> Getting it to us</h2>
+              <div className={styles.choices} role="radiogroup" aria-label="How we get your parcel">
+                <button type="button" role="radio" aria-checked={handOverChoice === 'HubDropOff'} className={styles.choice}
+                        onClick={() => setHandOver('HubDropOff')}>
+                  <strong>I'll drop it off</strong>
+                  <span>No extra charge</span>
+                  <span className={`muted ${parcel.optionNote}`}>{route.dropOffAddress}{'\n'}{route.dropOffHours}</span>
+                </button>
+                {pickupOffered && (
+                  <button type="button" role="radio" aria-checked={handOverChoice === 'HomePickup'} className={styles.choice}
+                          onClick={() => setHandOver('HomePickup')}>
+                    <strong>Collect it from me</strong>
+                    <span>+<Price amount={route.homePickupCharge!} currency={route.currency} className={styles.plain} /></span>
+                    <span className="muted">We call you to arrange a time</span>
+                  </button>
+                )}
+              </div>
+              {handOverChoice === 'HomePickup' && (
+                <>
+                  <Field label="Street and house number" autoComplete="street-address" maxLength={300} value={pickup.addressLine}
+                         onChange={(e) => setPickup({ ...pickup, addressLine: e.target.value })}
+                         error={fieldError('Pickup.AddressLine')} />
+                  <div className={parcel.two}>
+                    <Field label="City or town" autoComplete="address-level2" maxLength={100} value={pickup.city}
+                           onChange={(e) => setPickup({ ...pickup, city: e.target.value })} error={fieldError('Pickup.City')} />
+                    <Field label={route.fromCountry === 'UnitedKingdom' ? 'Postcode' : 'Region'} autoComplete="postal-code"
+                           maxLength={50} value={pickup.postcode}
+                           onChange={(e) => setPickup({ ...pickup, postcode: e.target.value })}
+                           error={fieldError('Pickup.RegionOrPostcode')} />
+                  </div>
+                  <Field label="Notes for the driver" optional maxLength={300} value={pickup.notes}
+                         placeholder="e.g. Ring the top bell; weekday evenings are best"
+                         onChange={(e) => setPickup({ ...pickup, notes: e.target.value })} error={fieldError('Pickup.Notes')} />
+                </>
+              )}
+            </section>
+
+            {/* 5. Recipient */}
+            <section className={styles.card} aria-labelledby="s5">
+              <h2 id="s5" className={styles.sectionTitle}>
+                <span className={styles.num}>5</span> Who it's for {destination && <span className="muted">in {destination.name}</span>}
               </h2>
               <div className={styles.two}>
                 <Field label="Full name" autoComplete="off" maxLength={100} value={recipient.name}
                        onChange={(e) => setRecipient({ ...recipient, name: e.target.value })}
                        error={fieldError('RecipientName')} />
                 <Field label="Phone number" type="tel" autoComplete="off" value={recipient.phone}
-                       placeholder={route.toCountry === 'UnitedKingdom' ? '+44 7700 900123' : '+233 24 555 0192'}
+                       placeholder={route.toCountry === 'UnitedKingdom' ? '+44 7700 900123' : route.toCountry === 'Nigeria' ? '+234 803 123 4567' : '+233 24 555 0192'}
                        onChange={(e) => setRecipient({ ...recipient, phone: e.target.value })}
                        error={fieldError('RecipientPhone')} />
               </div>
-              <Field label="Street and house number" autoComplete="off" maxLength={300} value={recipient.addressLine}
-                     onChange={(e) => setRecipient({ ...recipient, addressLine: e.target.value })}
-                     error={fieldError('RecipientAddressLine')} />
-              <div className={styles.two}>
-                <Field label="City or town" autoComplete="off" maxLength={100} value={recipient.city}
-                       onChange={(e) => setRecipient({ ...recipient, city: e.target.value })}
-                       error={fieldError('RecipientCity')} />
-                <Field label={postcodeLabel} autoComplete="off" maxLength={50} value={recipient.regionOrPostcode}
-                       onChange={(e) => setRecipient({ ...recipient, regionOrPostcode: e.target.value })}
-                       error={fieldError('RecipientRegionOrPostcode')} />
-              </div>
+              <LocationFields country={route.toCountry} hasList={route.hasLocationList} place={place} onChange={setPlace}
+                              fieldError={(name) => fieldError(name)} />
+              {collectionOffered && (
+                <div className={styles.choices} role="radiogroup" aria-label="How it reaches them">
+                  <button type="button" role="radio" aria-checked={deliveryChoice === 'ToDoor'} className={styles.choice}
+                          onClick={() => setDelivery('ToDoor')}>
+                    <strong>Deliver to their door</strong>
+                    <span className="muted">{quote && quote.doorDeliveryCharge > 0
+                      ? <>+<Price amount={quote.doorDeliveryCharge} currency={quote.currency} className={styles.plain} />{quote.deliveryZoneName ? ` (${quote.deliveryZoneName})` : ''}</>
+                      : 'Charge depends on the state'}</span>
+                  </button>
+                  <button type="button" role="radio" aria-checked={deliveryChoice === 'CollectFromHub'} className={styles.choice}
+                          onClick={() => setDelivery('CollectFromHub')}>
+                    <strong>They collect it from our hub</strong>
+                    <span>No delivery charge</span>
+                    <span className={`muted ${parcel.optionNote}`}>{route.collectionHubAddress}{'\n'}{route.collectionHubHours}</span>
+                  </button>
+                </div>
+              )}
+              {deliveryChoice === 'ToDoor' && (
+                <Field label="Street and house number" autoComplete="off" maxLength={300} value={recipient.addressLine}
+                       onChange={(e) => setRecipient({ ...recipient, addressLine: e.target.value })}
+                       error={fieldError('RecipientAddressLine')} />
+              )}
             </section>
 
-            {/* 5. Sender's phone */}
-            <section className={styles.card} aria-labelledby="s5">
-              <h2 id="s5" className={styles.sectionTitle}><span className={styles.num}>5</span> Your phone number</h2>
+            {/* 6. Sender's phone */}
+            <section className={styles.card} aria-labelledby="s6">
+              <h2 id="s6" className={styles.sectionTitle}><span className={styles.num}>6</span> Your phone number</h2>
               <Field label="So the hub can reach you about this parcel" type="tel" autoComplete="tel" value={phone}
                      placeholder="+233 24 555 0192" onChange={(e) => setSenderPhone(e.target.value)}
                      error={fieldError('SenderPhone')} />
             </section>
 
-            {/* 6. Confirm */}
-            <section className={styles.card} aria-labelledby="s6">
-              <h2 id="s6" className={styles.sectionTitle}><span className={styles.num}>6</span> Please confirm</h2>
+            {/* 7. Confirm */}
+            <section className={styles.card} aria-labelledby="s7">
+              <h2 id="s7" className={styles.sectionTitle}><span className={styles.num}>7</span> Please confirm</h2>
               <ParcelRules />
               <label className={styles.check}>
                 <input type="checkbox" checked={noProhibited} onChange={(e) => setNoProhibited(e.target.checked)} />
@@ -366,21 +492,28 @@ export default function SendParcelPage() {
               <RouteText from={route.fromCountry} to={route.toCountry} />
               <dl className={styles.sums}>
                 <dt>Speed</dt><dd>{speed.speed}</dd>
-                <dt>Weight</dt>
-                <dd>{quote ? `${quote.estimatedWeightKg} kg → charged as ${quote.chargeableWeightKg} kg` : weightOk ? `${kg} kg` : '—'}</dd>
                 <dt>Usually</dt><dd>{days(speed.minTransitDays, speed.maxTransitDays)}</dd>
               </dl>
+              {quote && <PriceBreakdown quote={quote} />}
               <div className={styles.total}>
                 <span>Estimated price</span>
                 {quote ? <Price amount={quote.estimatedPrice} currency={quote.currency} />
-                  : <span className="muted" style={{ fontSize: 14 }}>{weightOk ? 'Working it out…' : 'Enter the weight'}</span>}
+                  : <span className="muted" style={{ fontSize: 14 }}>{boxesOk ? 'Working it out…' : 'Enter your boxes'}</span>}
               </div>
-              <p className="muted" style={{ fontSize: 13 }}>The final price is set when we weigh it at the hub.</p>
-              <div className={styles.dropOff}>
-                <strong>Drop it off at</strong>
-                <span style={{ whiteSpace: 'pre-line' }}>{route.dropOffAddress}</span>
-                <span className="muted">{route.dropOffHours}</span>
-              </div>
+              {quoteInput && quoteQuery.isError && (
+                <StatusBanner isError message={(quoteQuery.error as { displayMessage?: string } | null)?.displayMessage ?? "We couldn't work out the price."} />
+              )}
+              <p className="muted" style={{ fontSize: 13 }}>
+                The final price is set when we weigh and measure your boxes at the hub.
+                {route.hasLocationList && !place.regionId && deliveryChoice === 'ToDoor' && ' Door delivery is added once you choose the state.'}
+              </p>
+              {handOverChoice === 'HubDropOff' && (
+                <div className={styles.dropOff}>
+                  <strong>Drop it off at</strong>
+                  <span style={{ whiteSpace: 'pre-line' }}>{route.dropOffAddress}</span>
+                  <span className="muted">{route.dropOffHours}</span>
+                </div>
+              )}
               <StatusBanner isError message={localError ?? (error ? error.displayMessage : null)} />
               {signedIn ? (
                 <Button type="submit" variant="cta" full busy={busy} busyText="Booking…" disabled={!!needsDetails}>

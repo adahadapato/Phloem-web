@@ -107,6 +107,7 @@ export const router = createBrowserRouter([
               { path: 'shipping/parcels', ...page(() => import('./pages/admin/shipping/AdminParcelsPage')) },
               { path: 'shipping/parcels/:trackingNumber', ...page(() => import('./pages/admin/shipping/AdminParcelPage')) },
               { path: 'shipping/rules', ...page(() => import('./pages/admin/shipping/AdminParcelRulesPage')) },
+              { path: 'shipping/zones', ...page(() => import('./pages/admin/shipping/AdminZonesPage')) },
               { path: 'texts', ...page(() => import('./pages/admin/texts/AdminTextsPage')) },
               { path: 'messages', ...page(() => import('./pages/admin/messages/AdminMessagesPage')) },
             ],

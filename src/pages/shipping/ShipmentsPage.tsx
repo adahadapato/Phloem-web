@@ -25,7 +25,7 @@ function nextStep(s: ShipmentSummaryDto): string {
     case 'Paid': return 'Paid. It leaves on the next shipment.'
     case 'InTransit': return 'On its way between the two countries.'
     case 'ArrivedInDestination': return 'Arrived. Going through the local hub.'
-    case 'OutForDelivery': return `With the local courier, on its way to ${s.recipientName}.`
+    case 'OutForDelivery': return s.isReadyToCollect ? `Ready for ${s.recipientName} to collect at our hub.` : `With the local courier, on its way to ${s.recipientName}.`
     case 'Delivered': return `Delivered to ${s.recipientName}.`
     case 'Cancelled': return 'Cancelled.'
   }

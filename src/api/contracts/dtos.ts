@@ -6,7 +6,7 @@ import type {
   AiCallOutcome, AiProvider, CatalogGroup, ChatRole, ContentReviewStatus, ModerationKind, ModerationState, ModerationVerdict, ContactMessageStatus, ContactTopic, Country, Currency, DeliverySpeed, DeliveryWindow,
   DeliveryKind, DishCategory, DocumentStatus, HandoverMethod, LegalDocumentType, OrderActorKind, OrderEventKind, OrderStatus, SeoPageKind, SeoPageStatus, ParcelItemRuleKind,
   PendingChangeKind, PendingChangeStatus, ShipmentItemCategory, ShipmentStatus, StaffAction, VendorDocumentType,
-  VendorStatus,
+  VendorStatus, ParcelBoxKind, ParcelDelivery, ParcelHandOver, TownSource,
 } from './enums'
 
 /** Answer of login, register, two-factor, refresh and Google exchange. */
@@ -477,17 +477,51 @@ export interface ShipmentRouteOptionDto {
   dropOffAddress: string
   dropOffHours: string
   speeds: ShipmentSpeedOptionDto[]
+  /** L × W × H (cm) ÷ this = a box's volume weight in kg (usually 5000). */
+  volumeDivisor: number
+  /** Added for "Fragile: handle with care". */
+  fragileCharge: number
+  /** Added for home pickup; null = not offered on this route. */
+  homePickupCharge: number | null
+  /** Destination hub where recipients can collect; null = not offered. */
+  collectionHubAddress: string | null
+  collectionHubHours: string | null
+  /** The destination has State / LGA lists (Nigeria): show the pickers. */
+  hasLocationList: boolean
+}
+
+/** How one box line is charged: "This box counts as 12 kg". */
+export interface ParcelBoxChargeDto {
+  weightKg: number
+  volumeWeightKg: number | null
+  chargeableWeightKgEach: number
+  quantity: number
+  chargeableWeightKg: number
+  /** The size, not the weight, set the price. */
+  chargedBySize: boolean
 }
 
 /** POST /api/shipments/quote: the price for an estimated weight (the final price is set when weighed). */
 export interface ShipmentQuoteDto {
   speed: DeliverySpeed
+  /** Real weight of all boxes. */
   estimatedWeightKg: number
+  /** What all boxes are charged as. */
   chargeableWeightKg: number
+  /** The total. */
   estimatedPrice: number
   currency: Currency
   minTransitDays: number
   maxTransitDays: number
+  boxes: ParcelBoxChargeDto[]
+  freightCharge: number
+  fragileCharge: number
+  homePickupCharge: number
+  doorDeliveryCharge: number
+  deliveryZoneName: string | null
+  volumeDivisor: number
+  baseCharge: number
+  pricePerKg: number
 }
 
 /** POST /api/shipments: the new tracking number and where to drop the parcel off. */
@@ -497,6 +531,11 @@ export interface BookedShipmentDto {
   currency: Currency
   dropOffAddress: string
   dropOffHours: string
+  handOver: ParcelHandOver
+  delivery: ParcelDelivery
+  /** Where the recipient collects it (hub collection only). */
+  collectionHubAddress: string | null
+  collectionHubHours: string | null
 }
 
 /** One step of a parcel's journey. `note` is always null in public tracking. */
@@ -518,6 +557,9 @@ export interface PublicTrackingDto {
   estimatedArrivalTo: string | null
   /** Oldest first. */
   timeline: ShipmentEventDto[]
+  delivery?: ParcelDelivery
+  /** Waiting at our hub for the recipient ("Ready to collect"). */
+  isReadyToCollect?: boolean
 }
 
 /** One row of My shipments. */
@@ -537,6 +579,20 @@ export interface ShipmentSummaryDto {
   /** Weighed and waiting for payment. */
   canPay: boolean
   canCancel: boolean
+  delivery?: ParcelDelivery
+  isReadyToCollect?: boolean
+  boxCount?: number
+}
+
+/** A box line on a parcel's page. */
+export interface ShipmentBoxDto {
+  kind: ParcelBoxKind
+  weightKg: number
+  lengthCm: number | null
+  widthCm: number | null
+  heightCm: number | null
+  quantity: number
+  chargeableWeightKg: number
 }
 
 /** One declared item. */
@@ -584,6 +640,105 @@ export interface ShipmentDetailsDto {
   courierName?: string | null
   /** The courier's photo and handover details; null until delivered. */
   deliveryProof?: DeliveryProofDto | null
+  declaredBoxes?: ShipmentBoxDto[]
+  /** Empty until weighed and measured at the hub. */
+  measuredBoxes?: ShipmentBoxDto[]
+  estimatedChargeableWeightKg?: number
+  chargeableWeightKg?: number | null
+  volumeDivisor?: number
+  isFragile?: boolean
+  handOver?: ParcelHandOver
+  pickupAddressLine?: string | null
+  pickupCity?: string | null
+  pickupRegionOrPostcode?: string | null
+  pickupNotes?: string | null
+  delivery?: ParcelDelivery
+  collectionHubAddress?: string | null
+  collectionHubHours?: string | null
+  isReadyToCollect?: boolean
+  /** The recipient's LGA, e.g. "Eti-Osa". */
+  recipientDistrictName?: string | null
+  freightCharge?: number
+  fragileCharge?: number
+  homePickupCharge?: number
+  doorDeliveryCharge?: number
+}
+
+// ───────────────────────────── Locations ─────────────────────────────
+
+/** A state / region in a picker. */
+export interface RegionDto {
+  id: string
+  name: string
+  code: string
+}
+
+/** GET /api/locations/{country}/regions: the first-level list and what to call the levels. */
+export interface CountryLocationsDto {
+  country: Country
+  /** "State" (Nigeria), "Region" (Ghana). */
+  regionLabel: string
+  /** "LGA" (Nigeria), "District" (Ghana). */
+  districtLabel: string
+  /** Empty = no list for this country. */
+  regions: RegionDto[]
+}
+
+/** An LGA / district in a picker. */
+export interface DistrictDto {
+  id: string
+  name: string
+}
+
+/** A suggestion under the Town box (a known town, or an LGA's name: then townId is null). */
+export interface TownDto {
+  townId: string | null
+  name: string
+  regionId: string
+  regionName: string
+  districtId: string
+  districtName: string
+}
+
+/** "Which LGA is this town in?" */
+export interface TownSuggestionDto {
+  townName: string
+  townId: string | null
+  districtId: string | null
+  districtName: string | null
+  /** "known", "high", "low" or "none". */
+  confidence: 'known' | 'high' | 'low' | 'none'
+  fromAi: boolean
+}
+
+/** Admin → Zones: one zone and its states. */
+export interface AdminZoneDto {
+  id: string
+  name: string
+  sortOrder: number
+  regions: RegionDto[]
+}
+
+/** Admin → Zones for one country. */
+export interface AdminZonesDto {
+  country: Country
+  regionLabel: string
+  zones: AdminZoneDto[]
+  regionsWithoutZone: RegionDto[]
+}
+
+/** Admin → Towns to check. */
+export interface AdminTownDto {
+  id: string
+  name: string
+  country: Country
+  regionId: string
+  regionName: string
+  districtId: string
+  districtName: string
+  source: TownSource
+  isVerified: boolean
+  addedAt: string
 }
 
 // ───────────────────────────── Seller ─────────────────────────────
@@ -910,6 +1065,22 @@ export interface AdminShipmentRouteDto {
   dropOffHours: string
   isActive: boolean
   rates: ShipmentRateDto[]
+  volumeDivisor: number
+  fragileCharge: number
+  /** null = home pickup off. */
+  homePickupCharge: number | null
+  /** null = collection off. */
+  collectionHubAddress: string | null
+  collectionHubHours: string | null
+  /** Every zone of the destination country, with this route's door delivery charge (null = none set). */
+  zoneCharges: AdminZoneChargeDto[]
+}
+
+/** A destination zone and the route's door delivery charge for it. */
+export interface AdminZoneChargeDto {
+  zoneId: string
+  zoneName: string
+  doorDeliveryCharge: number | null
 }
 
 /** GET /api/staff/shipments: one parcel in the hub's list. */
@@ -930,6 +1101,12 @@ export interface StaffShipmentSummaryDto {
   bookedAt: string
   /** Who is delivering it (or delivered it); null until it's out for delivery. */
   courierName?: string | null
+  handOver?: ParcelHandOver
+  pickupCity?: string | null
+  delivery?: ParcelDelivery
+  isFragile?: boolean
+  boxCount?: number
+  recipientDistrictName?: string | null
 }
 
 /** GET /api/contact: what the Contact us page shows. Null values are left off the page. */

@@ -1,0 +1,262 @@
+/* Send a parcel: boxes, the size explainer, hand-over / delivery choices and the State / LGA / Town fields. */
+
+/* ── Size explainer and drawing ── */
+.explainer {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--brand-mint-pale);
+  font-size: 14px;
+}
+
+.explainer p {
+  margin: 0 0 6px;
+}
+
+.explainerTitle {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.explainerList {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--brand-text-muted);
+}
+
+.explainerList li + li {
+  margin-top: 3px;
+}
+
+.diagram {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  color: var(--brand-green);
+}
+
+.diagramSmall {
+  width: 120px;
+  height: auto;
+  color: var(--brand-green);
+}
+
+.face { fill: #e9c99a; stroke: #8a6a3d; stroke-width: 1.5; }
+.faceTop { fill: #f3dcb6; stroke: #8a6a3d; stroke-width: 1.5; }
+.faceSide { fill: #d6b07c; stroke: #8a6a3d; stroke-width: 1.5; }
+.tape { stroke: #c9a46c; stroke-width: 6; opacity: 0.8; }
+.arrow { fill: none; stroke: currentColor; stroke-width: 1.8; }
+
+.side, .sideActive {
+  color: var(--brand-text-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.side text, .sideActive text {
+  fill: currentColor;
+}
+
+.sideActive {
+  color: var(--brand-orange);
+}
+
+/* ── Box lines ── */
+.box {
+  margin: 0;
+  padding: 12px 0 0;
+  border: 0;
+  border-top: 1px solid var(--brand-border);
+}
+
+.boxTitle {
+  padding: 0;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.sizeNote {
+  margin: -4px 0 8px;
+  color: var(--brand-text-muted);
+  font-size: 12px;
+}
+
+.boxGrid {
+  display: grid;
+  grid-template-columns: minmax(130px, 1.3fr) repeat(3, minmax(80px, 1fr)) minmax(90px, 0.9fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.counts, .countsBySize {
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--brand-cream);
+  font-size: 14px;
+}
+
+.countsBySize {
+  background: var(--brand-peach);
+}
+
+.remove {
+  margin-top: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--brand-text-muted);
+  font: inherit;
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ── Two side by side ── */
+.two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* ── Town suggestions ── */
+.townField {
+  position: relative;
+}
+
+.townList {
+  position: absolute;
+  z-index: 30;
+  top: 78px;
+  right: 0;
+  left: 0;
+  max-height: min(320px, 50vh);
+  margin: 0;
+  padding: 6px;
+  overflow-y: auto;
+  border: 1px solid var(--brand-border);
+  border-radius: 14px;
+  background: var(--white);
+  box-shadow: var(--shadow-raised);
+  list-style: none;
+}
+
+.townList[hidden] {
+  display: none;
+}
+
+.townOption, .townOptionActive {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.townOption .muted, .townOptionActive .muted {
+  font-size: 12px;
+}
+
+.townOptionActive {
+  background: var(--brand-mint-pale);
+}
+
+/* ── "Which LGA?" notes ── */
+.hintInfo, .hintAi, .hintWarn {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.hintInfo { background: var(--brand-mint-pale); }
+.hintAi { background: var(--brand-peach); }
+.hintWarn { background: #fdecea; }
+
+.aiBadge {
+  display: inline-block;
+  margin-right: 4px;
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+  background: var(--brand-gold);
+  color: var(--brand-text-dark);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* ── Hand-over / delivery cards ── */
+.optionNote {
+  font-size: 13px;
+  white-space: pre-line;
+}
+
+/* ── Price breakdown ── */
+.breakdown {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  margin: 0;
+  font-size: 14px;
+}
+
+.breakdown dt {
+  color: var(--brand-text-muted);
+}
+
+.breakdown dd:not(.breakdownSmall) {
+  margin: 0;
+  text-align: right;
+  font-weight: 600;
+}
+
+.breakdownSmall {
+  grid-column: 1 / -1;
+  margin-left: 0;
+  text-align: left;
+  margin-top: -2px;
+  color: var(--brand-text-muted);
+  font-size: 12px;
+}
+
+.fragile {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px dashed var(--brand-border);
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.fragile input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--brand-green);
+}
+
+@media (max-width: 760px) {
+  .explainer { grid-template-columns: 1fr; justify-items: center; }
+  .sizeNote {
+  margin: -4px 0 8px;
+  color: var(--brand-text-muted);
+  font-size: 12px;
+}
+
+.boxGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .boxGrid > :first-child { grid-column: 1 / -1; }
+  .two { grid-template-columns: 1fr; }
+}
+
+.plainPrice {
+  color: inherit;
+  font-weight: 400;
+}

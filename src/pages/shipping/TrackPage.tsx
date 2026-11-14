@@ -76,7 +76,8 @@ export default function TrackPage() {
               </div>
               <ShipmentChip status={p.status} />
             </div>
-            {p.status !== 'Cancelled' && p.status !== 'Delivered' && (
+            {p.isReadyToCollect && <p className={styles.arrival}>📦 Ready to collect at our hub. Bring photo ID and the tracking number.</p>}
+            {p.status !== 'Cancelled' && p.status !== 'Delivered' && !p.isReadyToCollect && (
               <p className={styles.arrival}>
                 {arrivalText(p.estimatedArrivalFrom, p.estimatedArrivalTo) ?? 'The expected date is set once it leaves.'}
               </p>

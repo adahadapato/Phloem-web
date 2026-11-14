@@ -3,7 +3,8 @@
  * Grows feature by feature; keep in step with the app's Services/Api/Contracts/Commands.
  */
 import type {
-  CatalogGroup, ContactTopic, Country, DeliverySpeed, DeliveryWindow, DishCategory, ShipmentItemCategory,
+  CatalogGroup, ContactTopic, Country, DeliverySpeed, DeliveryWindow, DishCategory, ParcelDelivery, ParcelHandOver,
+  ShipmentItemCategory,
 } from './enums'
 
 /** POST /api/auth/login */
@@ -146,12 +147,37 @@ export interface PlaceOrderCommand {
 
 // ───────────────────────────── Parcels ─────────────────────────────
 
+/**
+ * One box line: the weight of ONE box, its OUTSIDE size in cm (all three sides or none; required at the hub) and how
+ * many identical boxes.
+ */
+export interface ParcelBoxInputDto {
+  weightKg: number
+  lengthCm: number | null
+  widthCm: number | null
+  heightCm: number | null
+  quantity: number
+}
+
+/** Home pickup address (origin country). */
+export interface ShipmentPickupInputDto {
+  addressLine: string
+  city: string
+  regionOrPostcode: string
+  notes: string | null
+}
+
 /** POST /api/shipments/quote (no sign-in needed). */
 export interface GetShipmentQuoteQuery {
   fromCountry: Country
   toCountry: Country
   speed: DeliverySpeed
-  estimatedWeightKg: number
+  boxes: ParcelBoxInputDto[]
+  isFragile: boolean
+  handOver: ParcelHandOver
+  delivery: ParcelDelivery
+  /** The recipient's state, once chosen (for the door delivery charge). */
+  recipientRegionId: string | null
 }
 
 /** One item as the sender types it. */
@@ -170,14 +196,27 @@ export interface BookShipmentCommand {
   senderPhone: string
   recipientName: string
   recipientPhone: string
+  /** May be blank when the recipient collects from our hub. */
   recipientAddressLine: string
+  /** Town / area, e.g. "Lekki". */
   recipientCity: string
+  /** State name (from the list) or UK postcode. */
   recipientRegionOrPostcode: string
   items: ShipmentItemInputDto[]
   speed: DeliverySpeed
-  estimatedWeightKg: number
+  /** Older apps only; the website sends boxes. */
+  estimatedWeightKg: number | null
   confirmedNoProhibitedItems: boolean
   acceptedTerms: boolean
+  boxes: ParcelBoxInputDto[]
+  isFragile: boolean
+  handOver: ParcelHandOver
+  pickup: ShipmentPickupInputDto | null
+  delivery: ParcelDelivery
+  /** State / LGA / known town from the lists (countries with a list). */
+  recipientRegionId: string | null
+  recipientDistrictId: string | null
+  recipientTownId: string | null
 }
 
 // ───────────────────────────── Seller ─────────────────────────────

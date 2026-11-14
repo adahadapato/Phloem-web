@@ -6,6 +6,7 @@
 import type { ApiResult } from '../apiError'
 import { withQuery } from '../apiQuery'
 import { del, get, post, put } from '../client'
+import type { ParcelBoxInputDto } from '../contracts/commands'
 import type {
   AdminDishCatalogDto, AdminDishSuggestionDto, AdminOrderDetailsDto, AdminOrderSummaryDto, AdminShopDetailsDto, AdminShopDto, AdminShopStatsDto, AdminUserDto,
   AdminShipmentRouteDto, CommissionDto, ContactInboxDto, CourierOptionDto, DeliveryPricingDto, PagedResult,
@@ -13,7 +14,7 @@ import type {
   ShipmentDetailsDto, StaffShipmentSummaryDto, TermsAcceptanceStatsDto, UserSuspendedDto,
 } from '../contracts/dtos'
 import type {
-  ContactMessageStatus, Country, DeliverySpeed, DeliveryWindow, OrderStatus, ParcelItemRuleKind, ShipmentStatus,
+  ContactMessageStatus, Country, DeliverySpeed, DeliveryWindow, OrderStatus, ParcelHandOver, ParcelItemRuleKind, ShipmentStatus,
   VendorStatus,
 } from '../contracts/enums'
 
@@ -170,13 +171,28 @@ export const setRate = (from: Country, to: Country, speed: DeliverySpeed,
 /** Stop offering a speed on a route. */
 export const removeRate = (from: Country, to: Country, speed: DeliverySpeed) => del(`${route(from, to)}/rates/${speed}`)
 
+/** Size divisor, fragile charge, home pickup (null = off) and the destination collection hub (blank = off). */
+export const setParcelOptions = (from: Country, to: Country,
+                                 options: { volumeDivisor: number; fragileCharge: number; homePickupCharge: number | null;
+                                            collectionHubAddress: string | null; collectionHubHours: string | null }) =>
+  put(`${route(from, to)}/parcel-options`, options)
+
+/** The door delivery charge for one zone of the destination country (the route's currency). */
+export const setZoneCharge = (from: Country, to: Country, zoneId: string, doorDeliveryCharge: number) =>
+  put(`${route(from, to)}/zones/${encodeURIComponent(zoneId)}`, { doorDeliveryCharge })
+
+/** Remove a zone's door delivery charge (door delivery there then costs nothing extra). */
+export const removeZoneCharge = (from: Country, to: Country, zoneId: string) =>
+  del(`${route(from, to)}/zones/${encodeURIComponent(zoneId)}`)
+
 // ───────────────────────────── Shipping: parcels at the hub ─────────────────────────────
 
 const staff = 'api/staff/shipments'
 const parcel = (n: string) => `${staff}/${encodeURIComponent(n)}`
 
 /** Every parcel, newest first, by status and / or route; one page. */
-export const getParcels = (filter: { status?: ShipmentStatus; fromCountry?: Country; toCountry?: Country; page: number; pageSize: number },
+export const getParcels = (filter: { status?: ShipmentStatus; fromCountry?: Country; toCountry?: Country;
+                                     handOver?: ParcelHandOver; page: number; pageSize: number },
                            signal?: AbortSignal): Promise<ApiResult<PagedResult<StaffShipmentSummaryDto>>> =>
   get<PagedResult<StaffShipmentSummaryDto>>(withQuery(staff, filter), signal)
 
@@ -184,9 +200,11 @@ export const getParcels = (filter: { status?: ShipmentStatus; fromCountry?: Coun
 export const getParcel = (trackingNumber: string, signal?: AbortSignal): Promise<ApiResult<ShipmentDetailsDto>> =>
   get<ShipmentDetailsDto>(parcel(trackingNumber), signal)
 
-/** Dropped off and weighed at the hub: sets the final price (returned); the sender is emailed to pay. */
-export const receiveParcel = (trackingNumber: string, weighedWeightKg: number): Promise<ApiResult<number>> =>
-  post<number>(`${parcel(trackingNumber)}/receive`, { weighedWeightKg })
+/**
+ * Received at the hub, every box weighed AND measured: sets the final price (returned); the sender is emailed to pay.
+ */
+export const receiveParcel = (trackingNumber: string, boxes: ParcelBoxInputDto[]): Promise<ApiResult<number>> =>
+  post<number>(`${parcel(trackingNumber)}/receive`, { boxes })
 
 /** The next step: InTransit or ArrivedInDestination (optional note for the timeline). */
 export const moveParcel = (trackingNumber: string, newStatus: ShipmentStatus, note: string | null) =>

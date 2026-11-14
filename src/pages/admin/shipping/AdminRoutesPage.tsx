@@ -12,6 +12,7 @@ import { useCountry } from '../../../state/CountryContext'
 import { RouteText } from '../../shipping/ShipmentParts'
 import styles from '../Admin.module.css'
 import { AdminHead } from '../AdminParts'
+import { RouteParcelOptions } from './RouteParcelOptions'
 import { ShippingTabs } from './ShippingTabs'
 
 const SPEEDS: { speed: DeliverySpeed; label: string }[] = [
@@ -29,9 +30,10 @@ const num = (t: string) => Number(t.trim().replace(',', '.'))
 const days = (a: number, b: number) => (a === b ? `${a} day${a === 1 ? '' : 's'}` : `${a}–${b} days`)
 
 /**
- * One route on a card: on/off, the drop-off hub (address and opening hours), and a price per speed (base charge +
- * price per kg, in the sending country's currency, plus the days it takes). A route can only be switched on once it
- * has at least one price.
+ * One route on a card: on/off, the drop-off hub (address and opening hours), a price per speed (base charge +
+ * price per kg, in the sending country's currency, plus the days it takes), the parcel options (size divisor,
+ * fragile, home pickup, collection hub) and door delivery per zone. A route can only be switched on once it has at
+ * least one price.
  */
 function RouteCard({ r, from }: { r: AdminShipmentRouteDto; from: CountryDto | undefined }) {
   const queryClient = useQueryClient()
@@ -158,8 +160,13 @@ function RouteCard({ r, from }: { r: AdminShipmentRouteDto; from: CountryDto | u
             ))}
           </div>
         )}
-        <p className={styles.priceHint}>Price = base charge + price per kg × weight (rounded up to the next 0.5 kg).</p>
+        <p className={styles.priceHint}>
+          Price = base charge + price per kg × chargeable weight: for each box the higher of its weight and its size
+          weight, rounded up to the next 0.5 kg.
+        </p>
       </div>
+
+      <RouteParcelOptions r={r} money={money} symbol={symbol} />
 
       {/* On / off */}
       <div className={styles.priceBlock}>
